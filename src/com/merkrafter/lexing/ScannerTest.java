@@ -55,12 +55,58 @@ class ScannerTest {
     }
 
     /**
-     * The scanner should be able to handle an assignment operation where the right side is a
-     * complex calculation including all four basic arithmetic operations as well as parentheses.
+     * The scanner should be able to handle a string containing a single identifier that also has
+     * numbers.
      */
     @org.junit.jupiter.api.Test
-    void scanAssignment() {
-        final String programCode = "int result = a+(b-c)*d/e;";
+    void scanSingleIdentifierWithNumbers() {
+        final String programCode = "x1";
+        final TokenType[] expectedTokenList = {IDENT, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle a string containing a single identifier that has mixed
+     * case letters.
+     */
+    @org.junit.jupiter.api.Test
+    void scanSingleIdentifierWithMixedCase() {
+        final String programCode = "xXcoolNameXx";
+        final TokenType[] expectedTokenList = {IDENT, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle an assignment operation where the right side is a
+     * complex calculation including all four basic arithmetic operations as well as parentheses.
+     * The program code makes extended use of spaces around operators.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAssignmentWithSpaces() {
+        final String programCode = "int result = a + ( b - c ) * d / e;";
+        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES, IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle a simple assignment operation.
+     * The program code makes extended use of whitespace (spaces, tabs and newlines).
+     */
+    @org.junit.jupiter.api.Test
+    void scanSimpleAssignmentWithWhitespace() {
+        final String programCode = "int\n\t  a  \n=\n5\t\t\t  ;";
+        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle an assignment operation where the right side is a
+     * complex calculation including all four basic arithmetic operations as well as parentheses.
+     * The program code only has mandatory whitespace.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAssignmentWithoutWhitespace() {
+        final String programCode = "int result=a+(b-c)*d/e;";
         final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES, IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
@@ -72,6 +118,17 @@ class ScannerTest {
     void scanAndIgnoreComments() {
         final String programCode = "int a /*a really important variable*/ = 5;";
         final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle asterisks in comments. That is, it should not stop
+     * processing the comment then.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreAsterisksInComments() {
+        final String programCode = "/***/";
+        final TokenType[] expectedTokenList = {EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
