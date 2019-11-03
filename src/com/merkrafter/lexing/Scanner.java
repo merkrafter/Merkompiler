@@ -225,6 +225,21 @@ public class Scanner {
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
+                if (ch == '*') {//this actually is a comment
+                    char lastCh;
+                    // skip comment ...
+                    do {
+                        lastCh = ch;
+                        if (!this.loadNextCharSuccessfully()) {
+                            return;
+                        }
+                    } while (!(lastCh == '*' && ch == '/'));
+                    // ... then read next symbol
+                    loadNextCharSuccessfully();
+                    getSym();
+                } else {
+                    charBuffer = Optional.of(ch);
+                }
                 break;
             case '=':
                 sym = TokenType.ASSIGN;
