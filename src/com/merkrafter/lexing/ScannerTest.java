@@ -66,6 +66,16 @@ class ScannerTest {
     }
 
     /**
+     * The scanner should be able to handle comments, i.e. it should not tokenize anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreComments() {
+        final String programCode = "int a /*a really important variable*/ = 5;";
+        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
      * The scanner should be able to handle a basic main function including an array as arguments.
      * This test includes the detection of square brackets and braces.
      */
