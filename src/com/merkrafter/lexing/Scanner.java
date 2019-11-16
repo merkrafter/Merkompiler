@@ -47,9 +47,6 @@ public class Scanner {
      */
     private int position;
 
-    // FIXME remove; only temporary
-    private Token currToken;
-
     /**
      * This field stores characters that were found during a looking-forward action,
      * but can not be processed yet.
@@ -67,6 +64,8 @@ public class Scanner {
         id = "";
         num = "";
         charBuffer = Optional.empty();
+        line = 1;
+        position = 0;
     }
 
     // GETTER
@@ -342,6 +341,10 @@ public class Scanner {
     private boolean loadNextCharSuccessfully(boolean setEOF) {
         if (in.hasNext()) {
             ch = in.next();
+            position++;
+            if (ch == '\n') {
+                processNewline();
+            }
             return true;
         } else {
             ch = (char) 0;
@@ -361,5 +364,14 @@ public class Scanner {
      */
     private boolean loadNextCharSuccessfully() {
         return loadNextCharSuccessfully(false);
+    }
+
+    /**
+     * Jointly changes line and position at a newline character, that is, line is incremented and
+     * position is reset to 0.
+     */
+    private void processNewline() {
+        line++;
+        position = 0;
     }
 }
