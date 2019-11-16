@@ -34,6 +34,21 @@ public class Scanner {
      * This field stores the name of the last number that this scanner found.
      */
     private String num;
+    /**
+     * This field stores the current filename.
+     */
+    private String filename;
+    /**
+     * This field stores the line inside the current file.
+     */
+    private long line;
+    /**
+     * This field stores the position inside the current line.
+     */
+    private int position;
+
+    // FIXME remove; only temporary
+    private Token currToken;
 
     /**
      * This field stores characters that were found during a looking-forward action,
@@ -66,6 +81,20 @@ public class Scanner {
 
     public String getNum() {
         return num;
+    }
+
+    // SETTER
+    //==============================================================
+
+    /**
+     * Sets the current filename for this Scanner.
+     * This method simply sets a String and does not check whether it is
+     * an actual file name, the file exists or something similar.
+     *
+     * @param filename a String representing a file name
+     */
+    public void setFilename(final String filename) {
+        this.filename = filename;
     }
 
     // METHODS
