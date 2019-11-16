@@ -24,7 +24,7 @@ public class Merkompiler {
             final Input input = new Input(filename);
             final Scanner s = new Scanner(input);
             do {
-                s.getSym();
+                s.processToken();
                 System.out.println(s.sym);
             } while (s.sym != TokenType.EOF);
 

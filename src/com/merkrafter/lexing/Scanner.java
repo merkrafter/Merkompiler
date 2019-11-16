@@ -7,7 +7,7 @@ import java.util.Optional;
  * This class can be used to tokenize an iterator of characters.
  * All possible types of tokens can be found in TokenType enum.
  *
- * To use this class, call getSym() and access the sym and id/num field afterwards.
+ * To use this class, call processToken() and access the sym and id/num field afterwards.
  *
  * @author merkrafter
  ***************************************************************/
@@ -74,7 +74,7 @@ public class Scanner {
      * It also sets the id and num fields if appropriate.
      * After sym is TokenType.EOF, this Scanner is done processing the iterator.
      */
-    public void getSym() {
+    public void processToken() {
         if (charBuffer.isPresent()) {
             ch = charBuffer.get();
             charBuffer = Optional.empty();
@@ -236,7 +236,7 @@ public class Scanner {
                     } while (!(lastCh == '*' && ch == '/'));
                     // ... then read next symbol
                     loadNextCharSuccessfully();
-                    getSym();
+                    processToken();
                 } else {
                     charBuffer = Optional.of(ch);
                 }
