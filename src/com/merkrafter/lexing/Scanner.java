@@ -21,7 +21,7 @@ public class Scanner {
     /**
      * This field stores the kind of the character that was read last.
      */
-    private TokenType sym;
+    private Token sym;
     /**
      * This field stores the character that was read last.
      */
@@ -72,7 +72,7 @@ public class Scanner {
     // GETTER
     //==============================================================
     public TokenType getSym() {
-        return sym;
+        return sym.getType();
     }
 
     public String getId() {
@@ -129,7 +129,7 @@ public class Scanner {
             case '7':
             case '8':
             case '9':
-                sym = TokenType.NUMBER;
+                sym = new Token(TokenType.NUMBER, filename, line, position);
                 num = "";
                 do {
                     num += ch;
@@ -190,7 +190,7 @@ public class Scanner {
             case 'X':
             case 'Y':
             case 'Z':
-                sym = TokenType.IDENT;
+                sym = new Token(TokenType.IDENT, filename, line, position);
                 id = "";
                 do {
                     id += ch;
@@ -200,61 +200,61 @@ public class Scanner {
                 } while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9');
                 break;
             case '(':
-                sym = TokenType.L_PAREN;
+                sym = new Token(TokenType.L_PAREN, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case ')':
-                sym = TokenType.R_PAREN;
+                sym = new Token(TokenType.R_PAREN, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '{':
-                sym = TokenType.L_BRACE;
+                sym = new Token(TokenType.L_BRACE, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '}':
-                sym = TokenType.R_BRACE;
+                sym = new Token(TokenType.R_BRACE, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '[':
-                sym = TokenType.L_SQ_BRACKET;
+                sym = new Token(TokenType.L_SQ_BRACKET, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case ']':
-                sym = TokenType.R_SQ_BRACKET;
+                sym = new Token(TokenType.R_SQ_BRACKET, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '+':
-                sym = TokenType.PLUS;
+                sym = new Token(TokenType.PLUS, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '-':
-                sym = TokenType.MINUS;
+                sym = new Token(TokenType.MINUS, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '*':
-                sym = TokenType.TIMES;
+                sym = new Token(TokenType.TIMES, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '/':
-                sym = TokenType.DIVIDE;
+                sym = new Token(TokenType.DIVIDE, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
@@ -275,12 +275,12 @@ public class Scanner {
                 }
                 break;
             case '=':
-                sym = TokenType.ASSIGN;
+                sym = new Token(TokenType.ASSIGN, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 if (ch == '=') {
-                    sym = TokenType.EQUAL;
+                    sym = new Token(TokenType.EQUAL, filename, line, position);
                     if (!this.loadNextCharSuccessfully()) {
                         return;
                     }
@@ -289,12 +289,12 @@ public class Scanner {
                 }
                 break;
             case '<':
-                sym = TokenType.LOWER;
+                sym = new Token(TokenType.LOWER, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 if (ch == '=') {
-                    sym = TokenType.LOWER_EQUAL;
+                    sym = new Token(TokenType.LOWER_EQUAL, filename, line, position);
                     if (!this.loadNextCharSuccessfully()) {
                         return;
                     }
@@ -303,12 +303,12 @@ public class Scanner {
                 }
                 break;
             case '>':
-                sym = TokenType.GREATER;
+                sym = new Token(TokenType.GREATER, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 if (ch == '=') {
-                    sym = TokenType.GREATER_EQUAL;
+                    sym = new Token(TokenType.GREATER_EQUAL, filename, line, position);
                     if (!this.loadNextCharSuccessfully()) {
                         return;
                     }
@@ -317,13 +317,13 @@ public class Scanner {
                 }
                 break;
             case ';':
-                sym = TokenType.SEMICOLON;
+                sym = new Token(TokenType.SEMICOLON, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             default:
-                sym = TokenType.OTHER;
+                sym = new Token(TokenType.OTHER, filename, line, position);
                 this.loadNextCharSuccessfully();
         }
     }
@@ -346,7 +346,7 @@ public class Scanner {
         } else {
             ch = (char) 0;
             if (setEOF) {
-                sym = TokenType.EOF;
+                sym = new Token(TokenType.EOF, filename, line, position);
             }
             return false;
         }
