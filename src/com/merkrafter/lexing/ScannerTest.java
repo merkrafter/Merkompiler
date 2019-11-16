@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import static com.merkrafter.lexing.TokenType.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class tests the getSym() method of the Scanner class with multiple different input strings.
@@ -140,8 +141,42 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanMainFunction() {
         final String programCode = "public static void main(String[] args) {}";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, IDENT, IDENT, L_PAREN, IDENT, L_SQ_BRACKET, R_SQ_BRACKET, IDENT, R_PAREN, L_BRACE, R_BRACE, EOF};
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, IDENT, IDENT, L_PAREN, IDENT, L_SQ_BRACKET, R_SQ_BRACKET, IDENT,
+                        R_PAREN, L_BRACE, R_BRACE, EOF};
         shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should start counting line and position numbers at 1 each.
+     */
+    @org.junit.jupiter.api.Test
+    void startAtCorrectPosition() {
+        final String programCode = "a";
+        stringIterator.setString(programCode);
+
+        final long expectedLine = 1;
+        final int expectedPosition = 1;
+        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token actualToken = getTokenList(scanner).get(0);
+
+        assertEquals(expectedToken, actualToken);
+    }
+
+    /**
+     * The scanner should recognize newlines and update line and position numbers accordingly.
+     */
+    @org.junit.jupiter.api.Test
+    void recognizeNewlines() {
+        final String programCode = "a\nb";
+        stringIterator.setString(programCode);
+
+        final long expectedLine = 2;
+        final int expectedPosition = 1;
+        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token actualToken = getTokenList(scanner).get(1); // second token 'b'
+
+        assertEquals(expectedToken, actualToken);
     }
 
     /**
