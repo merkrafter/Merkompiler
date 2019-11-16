@@ -5,4 +5,26 @@ package com.merkrafter.lexing;
  *
  * @author merkrafter
  ***************************************************************/
-public enum TokenType {IDENT, NUMBER, PLUS, MINUS, TIMES, DIVIDE, ASSIGN, L_PAREN, R_PAREN, L_BRACE, R_BRACE, L_SQ_BRACKET, R_SQ_BRACKET, SEMICOLON, EQUAL, LOWER_EQUAL, LOWER, GREATER_EQUAL, GREATER, EOF, OTHER}
+public enum TokenType {
+    IDENT,
+    NUMBER,
+    PLUS,
+    MINUS,
+    TIMES,
+    DIVIDE,
+    ASSIGN,
+    L_PAREN,
+    R_PAREN,
+    L_BRACE,
+    R_BRACE,
+    L_SQ_BRACKET,
+    R_SQ_BRACKET,
+    SEMICOLON,
+    EQUAL,
+    LOWER_EQUAL,
+    LOWER,
+    GREATER_EQUAL,
+    GREATER,
+    EOF,
+    OTHER
+}

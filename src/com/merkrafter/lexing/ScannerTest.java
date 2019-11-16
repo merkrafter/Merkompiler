@@ -86,7 +86,9 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithSpaces() {
         final String programCode = "int result = a + ( b - c ) * d / e;";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES, IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
+                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -109,7 +111,9 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithoutWhitespace() {
         final String programCode = "int result=a+(b-c)*d/e;";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES, IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
+                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
