@@ -71,8 +71,8 @@ public class Scanner {
 
     // GETTER
     //==============================================================
-    public TokenType getSym() {
-        return sym.getType();
+    public Token getSym() {
+        return sym;
     }
 
     public String getId() {

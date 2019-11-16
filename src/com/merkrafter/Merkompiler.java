@@ -26,7 +26,7 @@ public class Merkompiler {
             do {
                 s.processToken();
                 System.out.println(s.getSym());
-            } while (s.getSym() != TokenType.EOF);
+            } while (s.getSym().getType() != TokenType.EOF);
 
         } catch (FileNotFoundException e) {
             System.err.println(filename + " not found");
@@ -37,11 +37,13 @@ public class Merkompiler {
     /**
      * This enum defines all error codes that this program can exit with.
      */
-    public enum ErrorCodes {NOT_ENOUGH_ARGUMENTS(1), FILE_NOT_FOUND(2);
+    public enum ErrorCodes {
+        NOT_ENOUGH_ARGUMENTS(1), FILE_NOT_FOUND(2);
 
         public final int id;
 
         ErrorCodes(final int id) {
             this.id = id;
-        }}
+        }
+    }
 }

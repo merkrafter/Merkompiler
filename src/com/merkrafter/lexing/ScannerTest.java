@@ -164,8 +164,8 @@ class ScannerTest {
         LinkedList<TokenType> tokenList = new LinkedList<>();
         do {
             scanner.processToken();
-            tokenList.add(scanner.getSym());
-        } while (scanner.getSym() != TokenType.EOF);
+            tokenList.add(scanner.getSym().getType());
+        } while (scanner.getSym().getType() != TokenType.EOF);
         return tokenList;
     }
 
