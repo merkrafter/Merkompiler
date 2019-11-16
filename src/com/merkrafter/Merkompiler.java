@@ -25,8 +25,8 @@ public class Merkompiler {
             final Scanner s = new Scanner(input);
             do {
                 s.processToken();
-                System.out.println(s.sym);
-            } while (s.sym != TokenType.EOF);
+                System.out.println(s.getSym());
+            } while (s.getSym() != TokenType.EOF);
 
         } catch (FileNotFoundException e) {
             System.err.println(filename + " not found");

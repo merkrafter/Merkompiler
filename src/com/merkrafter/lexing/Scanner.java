@@ -21,7 +21,7 @@ public class Scanner {
     /**
      * This field stores the kind of the character that was read last.
      */
-    public TokenType sym;
+    private TokenType sym;
     /**
      * This field stores the character that was read last.
      */
@@ -56,6 +56,10 @@ public class Scanner {
 
     // GETTER
     //==============================================================
+    public TokenType getSym() {
+        return sym;
+    }
+
     public String getId() {
         return id;
     }
