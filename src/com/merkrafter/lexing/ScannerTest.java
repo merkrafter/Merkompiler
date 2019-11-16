@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.merkrafter.lexing.TokenType.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -160,13 +161,24 @@ class ScannerTest {
      * @param scanner the object to get the tokens from
      * @return a list of all tokens found
      */
-    private List<TokenType> getTokenList(final Scanner scanner) {
-        LinkedList<TokenType> tokenList = new LinkedList<>();
+    private List<Token> getTokenList(final Scanner scanner) {
+        LinkedList<Token> tokenList = new LinkedList<>();
         do {
             scanner.processToken();
-            tokenList.add(scanner.getSym().getType());
+            tokenList.add(scanner.getSym());
         } while (scanner.getSym().getType() != TokenType.EOF);
         return tokenList;
+
+    }
+
+    /**
+     * Collects all types of tokens emitted by this scanner.
+     *
+     * @param scanner the object to get the tokens from
+     * @return a list of all types of tokens found
+     */
+    private List<TokenType> getTokenTypeList(final Scanner scanner) {
+        return getTokenList(scanner).stream().map(Token::getType).collect(Collectors.toList());
     }
 
     /**
@@ -179,7 +191,7 @@ class ScannerTest {
      */
     private void shouldScan(final String programCode, final TokenType[] expectedTokenList) {
         stringIterator.setString(programCode);
-        final List<TokenType> actualTokenList = getTokenList(scanner);
+        final List<TokenType> actualTokenList = getTokenTypeList(scanner);
         assertArrayEquals(expectedTokenList, actualTokenList.toArray(), actualTokenList.toString());
     }
 
