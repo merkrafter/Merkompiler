@@ -257,7 +257,17 @@ public class Scanner {
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
-                if (ch == '*') {//this actually is a comment
+                if (ch == '/') {//this actually is a line comment
+                    // skip comment ...
+                    do {
+                        if (!this.loadNextCharSuccessfully(true)) {
+                            return;
+                        }
+                    } while (ch != '\n');
+                    // ... then read next symbol
+                    loadNextCharSuccessfully();
+                    processToken();
+                } else if (ch == '*') {//this actually is a block comment
                     char lastCh;
                     // skip comment ...
                     do {
