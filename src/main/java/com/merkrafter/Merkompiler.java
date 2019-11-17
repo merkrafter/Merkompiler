@@ -18,18 +18,20 @@ public class Merkompiler {
             System.exit(ErrorCodes.NOT_ENOUGH_ARGUMENTS.id);
         }
 
-        final String filename = args[0];
-
+        final Config config = Config.fromArgs(args);
+        if (config.isVerbose()) {
+            System.out.println(config);
+        }
         try {
-            final Input input = new Input(filename);
-            final Scanner s = new Scanner(input);
+            final Input input = new Input(config.getInput_file());
+            final Scanner scanner = new Scanner(input);
             do {
-                s.processToken();
-                System.out.println(s.getSym());
-            } while (s.getSym().getType() != TokenType.EOF);
+                scanner.processToken();
+                System.out.println(scanner.getSym());
+            } while (scanner.getSym().getType() != TokenType.EOF);
 
         } catch (FileNotFoundException e) {
-            System.err.println(filename + " not found");
+            System.err.println(config.getInput_file() + " not found");
             System.exit(ErrorCodes.FILE_NOT_FOUND.id);
         }
     }
