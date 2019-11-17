@@ -23,18 +23,31 @@ public class Merkompiler {
             System.exit(config.getError().getErrorCode().id);
         }
 
+        /*
+         * Main program
+         */
         try {
-            final Input input = new Input(config.getInput_file());
-            final Scanner scanner = new Scanner(input);
-            do {
-                scanner.processToken();
-                System.out.println(scanner.getSym());
-            } while (scanner.getSym().getType() != TokenType.EOF);
-
+            run(config);
         } catch (FileNotFoundException e) {
             System.err.println(config.getInput_file() + " not found");
             System.exit(ErrorCode.FILE_NOT_FOUND.id);
         }
     }
 
+    /**
+     * Contains the main application logic.
+     * Passes errors etc. to the calling method which is expected to be main.
+     *
+     * @param config configuration data for this program call
+     * @throws FileNotFoundException if the input or output file could not be found
+     */
+    private static void run(final Config config) throws FileNotFoundException {
+        final Input input = new Input(config.getInput_file());
+        final Scanner scanner = new Scanner(input);
+        do {
+            scanner.processToken();
+            System.out.println(scanner.getSym());
+        } while (scanner.getSym().getType() != TokenType.EOF);
+
+    }
 }
