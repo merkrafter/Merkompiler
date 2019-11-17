@@ -118,11 +118,100 @@ class ScannerTest {
     }
 
     /**
-     * The scanner should be able to handle comments, i.e. it should not tokenize anything inside those.
+     * The scanner should be able to handle line comments that begin a line, i.e. it
+     * should not tokenize anything inside those.
      */
     @org.junit.jupiter.api.Test
-    void scanAndIgnoreComments() {
+    void scanAndIgnoreStandaloneLineComments() {
+        final String programCode = " //in mph\nint velocity;";
+        final TokenType[] expectedTokenList = {IDENT, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle line comments that are at the end of a line, i.e. it
+     * should not tokenize anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreAppendedLineComments() {
+        final String programCode = "int velocity; //in mph\nint acceleration;";
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, SEMICOLON, IDENT, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle line comments that are at the end of the file, i.e. it
+     * should not tokenize anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreEOFLineComments() {
+        final String programCode = "} //end of main class";
+        final TokenType[] expectedTokenList = {R_BRACE, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should not recognize / / as the beginning of a comment.
+     */
+    @org.junit.jupiter.api.Test
+    void scanNoLineComment() {
+        final String programCode = " / /velocity;";
+        final TokenType[] expectedTokenList = {DIVIDE, DIVIDE, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should not recognize / * as the beginning of a comment.
+     */
+    @org.junit.jupiter.api.Test
+    void scanNoBlockCommentBegin() {
+        final String programCode = " / *velocity;";
+        final TokenType[] expectedTokenList = {DIVIDE, TIMES, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should not make errors lexing an asterisk followed by a / outside a comment.
+     */
+    @org.junit.jupiter.api.Test
+    void scanNoBlockComment() {
+        final String programCode = " */ velocity";
+        final TokenType[] expectedTokenList = {TIMES, DIVIDE, IDENT, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle multiline block comments, i.e. it should not tokenize
+     * anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreBlockCommentsMultiline() {
+        final String programCode =
+                "/*\nThis is a description of the method\n*/public abstract void draw();";
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, IDENT, IDENT, L_PAREN, R_PAREN, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle inline block comments, i.e. it should not tokenize
+     * anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreBlockCommentsInline() {
         final String programCode = "int a /*a really important variable*/ = 5;";
+        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle block comments that are at the end of a line, i.e. it
+     * should not tokenize anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreBlockCommentsAtEndOfLine() {
+        final String programCode = "int a = 5;/*a really important variable*/";
         final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
