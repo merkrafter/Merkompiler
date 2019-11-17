@@ -4,6 +4,8 @@ import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
 
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.Arrays;
 
 public class Merkompiler {
 
@@ -44,9 +46,17 @@ public class Merkompiler {
     private static void run(final Config config) throws FileNotFoundException {
         final Input input = new Input(config.getInput_file());
         final Scanner scanner = new Scanner(input);
+
+        PrintStream out = System.out;
+
+        // write to output file if given
+        if (config.getOutput_file() != null) {
+            out = new PrintStream(config.getOutput_file());
+        }
+
         do {
             scanner.processToken();
-            System.out.println(scanner.getSym());
+            out.println(scanner.getSym());
         } while (scanner.getSym().getType() != TokenType.EOF);
 
     }
