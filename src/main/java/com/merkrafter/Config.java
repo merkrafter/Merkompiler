@@ -51,7 +51,7 @@ public class Config {
         boolean verbose = false;
         boolean help = false;
 
-        if (args.length < 2) {
+        if (args.length < 1) {
             final Config config = new Config(input_file, output_file, verbose, help);
             config.error = new Error(ErrorCode.NOT_ENOUGH_ARGUMENTS, "missing input file");
             return config;
