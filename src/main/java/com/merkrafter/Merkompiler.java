@@ -15,7 +15,7 @@ public class Merkompiler {
         // to change the arguments in IntelliJ, press Alt+Shift+F10
         if (args.length < 1) {
             System.err.println("Usage: java Merkompiler <filename>");
-            System.exit(ErrorCodes.NOT_ENOUGH_ARGUMENTS.id);
+            System.exit(ErrorCode.NOT_ENOUGH_ARGUMENTS.id);
         }
 
         final Config config = Config.fromArgs(args);
@@ -32,20 +32,8 @@ public class Merkompiler {
 
         } catch (FileNotFoundException e) {
             System.err.println(config.getInput_file() + " not found");
-            System.exit(ErrorCodes.FILE_NOT_FOUND.id);
+            System.exit(ErrorCode.FILE_NOT_FOUND.id);
         }
     }
 
-    /**
-     * This enum defines all error codes that this program can exit with.
-     */
-    public enum ErrorCodes {
-        NOT_ENOUGH_ARGUMENTS(1), FILE_NOT_FOUND(2);
-
-        public final int id;
-
-        ErrorCodes(final int id) {
-            this.id = id;
-        }
-    }
 }
