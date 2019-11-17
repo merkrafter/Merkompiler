@@ -13,15 +13,16 @@ public class Merkompiler {
      */
     public static void main(String[] args) {
         // to change the arguments in IntelliJ, press Alt+Shift+F10
-        if (args.length < 1) {
-            System.err.println("Usage: java Merkompiler <filename>");
-            System.exit(ErrorCode.NOT_ENOUGH_ARGUMENTS.id);
-        }
-
         final Config config = Config.fromArgs(args);
         if (config.isVerbose()) {
             System.out.println(config);
         }
+
+        if (config.hasError()) {
+            System.err.println("Merkompiler: " + config.getError().getErrorMessage());
+            System.exit(config.getError().getErrorCode().id);
+        }
+
         try {
             final Input input = new Input(config.getInput_file());
             final Scanner scanner = new Scanner(input);
