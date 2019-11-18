@@ -6,6 +6,7 @@ import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
@@ -41,9 +42,14 @@ public class Merkompiler {
             System.out.println(config);
         }
 
-        final Input input = new Input(config.getInputFile());
+        final File inputFile = new File(config.getInputFile());
+        final Input input = new Input(inputFile.getAbsolutePath());
         final Scanner scanner = new Scanner(input);
-        scanner.setFilename(config.getInputFile());
+        if (config.isVerbose()) {
+            scanner.setFilename(inputFile.getAbsolutePath());
+        } else {
+            scanner.setFilename(inputFile.getName());
+        }
 
         PrintStream out = System.out; // write to stdout by default
 

@@ -8,6 +8,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * This class holds configuration data for this program.
+ * It also contains the description of this program's command line options etc.
  *
  * @author merkrafter
  */
@@ -48,7 +49,7 @@ public class Config {
         parser.addArgument("INPUT").required(true).type(String.class)
               .help("JavaSST source code file");
         parser.addArgument("-v", "--verbose").action(Arguments.storeTrue())
-              .help("print more information");
+              .help("print more information (absolute paths instead of simple file names in error messages, for instance");
         parser.addArgument("-o", "--output").type(String.class).metavar("OUTPUT")
               .help("output target; default is stdout");
 
