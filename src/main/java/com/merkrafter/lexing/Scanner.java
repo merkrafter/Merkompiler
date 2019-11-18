@@ -7,7 +7,7 @@ import java.util.Optional;
  * This class can be used to tokenize an iterator of characters.
  * All possible types of tokens can be found in TokenType enum.
  *
- * To use this class, call getSym() and access the sym and id/num field afterwards.
+ * To use this class, call processToken() and access the sym and id/num field afterwards.
  *
  * @author merkrafter
  ***************************************************************/
@@ -21,7 +21,7 @@ public class Scanner {
     /**
      * This field stores the kind of the character that was read last.
      */
-    public TokenType sym;
+    private Token sym;
     /**
      * This field stores the character that was read last.
      */
@@ -34,6 +34,18 @@ public class Scanner {
      * This field stores the name of the last number that this scanner found.
      */
     private String num;
+    /**
+     * This field stores the current filename.
+     */
+    private String filename;
+    /**
+     * This field stores the line inside the current file.
+     */
+    private long line;
+    /**
+     * This field stores the position inside the current line.
+     */
+    private int position;
 
     /**
      * This field stores characters that were found during a looking-forward action,
@@ -52,16 +64,36 @@ public class Scanner {
         id = "";
         num = "";
         charBuffer = Optional.empty();
+        line = 1;
+        position = 0;
     }
 
     // GETTER
     //==============================================================
+    public Token getSym() {
+        return sym;
+    }
+
     public String getId() {
         return id;
     }
 
     public String getNum() {
         return num;
+    }
+
+    // SETTER
+    //==============================================================
+
+    /**
+     * Sets the current filename for this Scanner.
+     * This method simply sets a String and does not check whether it is
+     * an actual file name, the file exists or something similar.
+     *
+     * @param filename a String representing a file name
+     */
+    public void setFilename(final String filename) {
+        this.filename = filename;
     }
 
     // METHODS
@@ -74,7 +106,7 @@ public class Scanner {
      * It also sets the id and num fields if appropriate.
      * After sym is TokenType.EOF, this Scanner is done processing the iterator.
      */
-    public void getSym() {
+    public void processToken() {
         if (charBuffer.isPresent()) {
             ch = charBuffer.get();
             charBuffer = Optional.empty();
@@ -96,7 +128,7 @@ public class Scanner {
             case '7':
             case '8':
             case '9':
-                sym = TokenType.NUMBER;
+                sym = new Token(TokenType.NUMBER, filename, line, position);
                 num = "";
                 do {
                     num += ch;
@@ -157,7 +189,7 @@ public class Scanner {
             case 'X':
             case 'Y':
             case 'Z':
-                sym = TokenType.IDENT;
+                sym = new Token(TokenType.IDENT, filename, line, position);
                 id = "";
                 do {
                     id += ch;
@@ -167,65 +199,75 @@ public class Scanner {
                 } while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9');
                 break;
             case '(':
-                sym = TokenType.L_PAREN;
+                sym = new Token(TokenType.L_PAREN, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case ')':
-                sym = TokenType.R_PAREN;
+                sym = new Token(TokenType.R_PAREN, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '{':
-                sym = TokenType.L_BRACE;
+                sym = new Token(TokenType.L_BRACE, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '}':
-                sym = TokenType.R_BRACE;
+                sym = new Token(TokenType.R_BRACE, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '[':
-                sym = TokenType.L_SQ_BRACKET;
+                sym = new Token(TokenType.L_SQ_BRACKET, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case ']':
-                sym = TokenType.R_SQ_BRACKET;
+                sym = new Token(TokenType.R_SQ_BRACKET, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '+':
-                sym = TokenType.PLUS;
+                sym = new Token(TokenType.PLUS, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '-':
-                sym = TokenType.MINUS;
+                sym = new Token(TokenType.MINUS, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '*':
-                sym = TokenType.TIMES;
+                sym = new Token(TokenType.TIMES, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             case '/':
-                sym = TokenType.DIVIDE;
+                sym = new Token(TokenType.DIVIDE, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
-                if (ch == '*') {//this actually is a comment
+                if (ch == '/') {//this actually is a line comment
+                    // skip comment ...
+                    do {
+                        if (!this.loadNextCharSuccessfully(true)) {
+                            return;
+                        }
+                    } while (ch != '\n');
+                    // ... then read next symbol
+                    loadNextCharSuccessfully();
+                    processToken();
+                } else if (ch == '*') {//this actually is a block comment
                     char lastCh;
                     // skip comment ...
                     do {
@@ -236,18 +278,18 @@ public class Scanner {
                     } while (!(lastCh == '*' && ch == '/'));
                     // ... then read next symbol
                     loadNextCharSuccessfully();
-                    getSym();
+                    processToken();
                 } else {
                     charBuffer = Optional.of(ch);
                 }
                 break;
             case '=':
-                sym = TokenType.ASSIGN;
+                sym = new Token(TokenType.ASSIGN, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 if (ch == '=') {
-                    sym = TokenType.EQUAL;
+                    sym = new Token(TokenType.EQUAL, filename, line, position);
                     if (!this.loadNextCharSuccessfully()) {
                         return;
                     }
@@ -256,12 +298,12 @@ public class Scanner {
                 }
                 break;
             case '<':
-                sym = TokenType.LOWER;
+                sym = new Token(TokenType.LOWER, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 if (ch == '=') {
-                    sym = TokenType.LOWER_EQUAL;
+                    sym = new Token(TokenType.LOWER_EQUAL, filename, line, position);
                     if (!this.loadNextCharSuccessfully()) {
                         return;
                     }
@@ -270,12 +312,12 @@ public class Scanner {
                 }
                 break;
             case '>':
-                sym = TokenType.GREATER;
+                sym = new Token(TokenType.GREATER, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 if (ch == '=') {
-                    sym = TokenType.GREATER_EQUAL;
+                    sym = new Token(TokenType.GREATER_EQUAL, filename, line, position);
                     if (!this.loadNextCharSuccessfully()) {
                         return;
                     }
@@ -284,13 +326,13 @@ public class Scanner {
                 }
                 break;
             case ';':
-                sym = TokenType.SEMICOLON;
+                sym = new Token(TokenType.SEMICOLON, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
                     return;
                 }
                 break;
             default:
-                sym = TokenType.OTHER;
+                sym = new Token(TokenType.OTHER, filename, line, position);
                 this.loadNextCharSuccessfully();
         }
     }
@@ -309,11 +351,15 @@ public class Scanner {
     private boolean loadNextCharSuccessfully(boolean setEOF) {
         if (in.hasNext()) {
             ch = in.next();
+            position++;
+            if (ch == '\n') {
+                processNewline();
+            }
             return true;
         } else {
             ch = (char) 0;
             if (setEOF) {
-                sym = TokenType.EOF;
+                sym = new Token(TokenType.EOF, filename, line, position);
             }
             return false;
         }
@@ -328,5 +374,14 @@ public class Scanner {
      */
     private boolean loadNextCharSuccessfully() {
         return loadNextCharSuccessfully(false);
+    }
+
+    /**
+     * Jointly changes line and position at a newline character, that is, line is incremented and
+     * position is reset to 0.
+     */
+    private void processNewline() {
+        line++;
+        position = 0;
     }
 }

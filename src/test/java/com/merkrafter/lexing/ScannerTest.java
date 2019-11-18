@@ -5,9 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.merkrafter.lexing.TokenType.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class tests the getSym() method of the Scanner class with multiple different input strings.
@@ -84,7 +86,9 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithSpaces() {
         final String programCode = "int result = a + ( b - c ) * d / e;";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES, IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
+                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -107,16 +111,107 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithoutWhitespace() {
         final String programCode = "int result=a+(b-c)*d/e;";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES, IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
+                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
     /**
-     * The scanner should be able to handle comments, i.e. it should not tokenize anything inside those.
+     * The scanner should be able to handle line comments that begin a line, i.e. it
+     * should not tokenize anything inside those.
      */
     @org.junit.jupiter.api.Test
-    void scanAndIgnoreComments() {
+    void scanAndIgnoreStandaloneLineComments() {
+        final String programCode = " //in mph\nint velocity;";
+        final TokenType[] expectedTokenList = {IDENT, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle line comments that are at the end of a line, i.e. it
+     * should not tokenize anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreAppendedLineComments() {
+        final String programCode = "int velocity; //in mph\nint acceleration;";
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, SEMICOLON, IDENT, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle line comments that are at the end of the file, i.e. it
+     * should not tokenize anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreEOFLineComments() {
+        final String programCode = "} //end of main class";
+        final TokenType[] expectedTokenList = {R_BRACE, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should not recognize / / as the beginning of a comment.
+     */
+    @org.junit.jupiter.api.Test
+    void scanNoLineComment() {
+        final String programCode = " / /velocity;";
+        final TokenType[] expectedTokenList = {DIVIDE, DIVIDE, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should not recognize / * as the beginning of a comment.
+     */
+    @org.junit.jupiter.api.Test
+    void scanNoBlockCommentBegin() {
+        final String programCode = " / *velocity;";
+        final TokenType[] expectedTokenList = {DIVIDE, TIMES, IDENT, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should not make errors lexing an asterisk followed by a / outside a comment.
+     */
+    @org.junit.jupiter.api.Test
+    void scanNoBlockComment() {
+        final String programCode = " */ velocity";
+        final TokenType[] expectedTokenList = {TIMES, DIVIDE, IDENT, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle multiline block comments, i.e. it should not tokenize
+     * anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreBlockCommentsMultiline() {
+        final String programCode =
+                "/*\nThis is a description of the method\n*/public abstract void draw();";
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, IDENT, IDENT, L_PAREN, R_PAREN, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle inline block comments, i.e. it should not tokenize
+     * anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreBlockCommentsInline() {
         final String programCode = "int a /*a really important variable*/ = 5;";
+        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to handle block comments that are at the end of a line, i.e. it
+     * should not tokenize anything inside those.
+     */
+    @org.junit.jupiter.api.Test
+    void scanAndIgnoreBlockCommentsAtEndOfLine() {
+        final String programCode = "int a = 5;/*a really important variable*/";
         final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
@@ -139,8 +234,42 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanMainFunction() {
         final String programCode = "public static void main(String[] args) {}";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, IDENT, IDENT, L_PAREN, IDENT, L_SQ_BRACKET, R_SQ_BRACKET, IDENT, R_PAREN, L_BRACE, R_BRACE, EOF};
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, IDENT, IDENT, L_PAREN, IDENT, L_SQ_BRACKET, R_SQ_BRACKET, IDENT,
+                        R_PAREN, L_BRACE, R_BRACE, EOF};
         shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should start counting line and position numbers at 1 each.
+     */
+    @org.junit.jupiter.api.Test
+    void startAtCorrectPosition() {
+        final String programCode = "a";
+        stringIterator.setString(programCode);
+
+        final long expectedLine = 1;
+        final int expectedPosition = 1;
+        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token actualToken = getTokenList(scanner).get(0);
+
+        assertEquals(expectedToken, actualToken);
+    }
+
+    /**
+     * The scanner should recognize newlines and update line and position numbers accordingly.
+     */
+    @org.junit.jupiter.api.Test
+    void recognizeNewlines() {
+        final String programCode = "a\nb";
+        stringIterator.setString(programCode);
+
+        final long expectedLine = 2;
+        final int expectedPosition = 1;
+        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token actualToken = getTokenList(scanner).get(1); // second token 'b'
+
+        assertEquals(expectedToken, actualToken);
     }
 
     /**
@@ -160,13 +289,24 @@ class ScannerTest {
      * @param scanner the object to get the tokens from
      * @return a list of all tokens found
      */
-    private List<TokenType> getTokenList(final Scanner scanner) {
-        LinkedList<TokenType> tokenList = new LinkedList<>();
+    private List<Token> getTokenList(final Scanner scanner) {
+        LinkedList<Token> tokenList = new LinkedList<>();
         do {
-            scanner.getSym();
-            tokenList.add(scanner.sym);
-        } while (scanner.sym != TokenType.EOF);
+            scanner.processToken();
+            tokenList.add(scanner.getSym());
+        } while (scanner.getSym().getType() != TokenType.EOF);
         return tokenList;
+
+    }
+
+    /**
+     * Collects all types of tokens emitted by this scanner.
+     *
+     * @param scanner the object to get the tokens from
+     * @return a list of all types of tokens found
+     */
+    private List<TokenType> getTokenTypeList(final Scanner scanner) {
+        return getTokenList(scanner).stream().map(Token::getType).collect(Collectors.toList());
     }
 
     /**
@@ -179,7 +319,7 @@ class ScannerTest {
      */
     private void shouldScan(final String programCode, final TokenType[] expectedTokenList) {
         stringIterator.setString(programCode);
-        final List<TokenType> actualTokenList = getTokenList(scanner);
+        final List<TokenType> actualTokenList = getTokenTypeList(scanner);
         assertArrayEquals(expectedTokenList, actualTokenList.toArray(), actualTokenList.toString());
     }
 
