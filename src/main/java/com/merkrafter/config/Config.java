@@ -35,6 +35,10 @@ public class Config {
         return verbose;
     }
 
+    public static Config fromArgs(final String args) throws ArgumentParserException {
+        return fromArgs(fromString(args));
+    }
+
     public static Config fromArgs(final String[] args) throws ArgumentParserException {
         // define the parser
         final ArgumentParser parser =
@@ -64,6 +68,16 @@ public class Config {
             verbose = namespace.getBoolean("verbose");
         }
         return new Config(inputFileName, outputFileName, verbose);
+    }
+
+    /**
+     * Splits the String of arguments at whitespace into multiple argument tokens.
+     *
+     * @param argsAsString string of arguments as written on the command line
+     * @return an array of arguments
+     */
+    public static String[] fromString(final String argsAsString) {
+        return argsAsString.split("\\s+");
     }
 
     /**

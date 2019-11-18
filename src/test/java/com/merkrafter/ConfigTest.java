@@ -4,6 +4,7 @@ import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.jupiter.api.Test;
 
+import static com.merkrafter.config.Config.fromString;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigTest {
@@ -148,13 +149,4 @@ class ConfigTest {
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
-    /**
-     * Splits the String of arguments at whitespace into multiple argument tokens.
-     *
-     * @param argsAsString string of arguments as written on the command line
-     * @return an array of arguments
-     */
-    private String[] fromString(final String argsAsString) {
-        return argsAsString.split("\\s+");
-    }
 }
