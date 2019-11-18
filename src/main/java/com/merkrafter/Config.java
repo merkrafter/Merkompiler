@@ -50,7 +50,7 @@ public class Config {
 
 
         // parse the arguments
-        Namespace namespace = null;
+        Namespace namespace;
         namespace = parser.parseArgs(args);
 
         // build Config instance
