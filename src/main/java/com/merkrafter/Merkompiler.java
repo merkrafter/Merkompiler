@@ -48,6 +48,7 @@ public class Merkompiler {
     private static void run(final Config config) throws FileNotFoundException {
         final Input input = new Input(config.getInput_file());
         final Scanner scanner = new Scanner(input);
+        scanner.setFilename(config.getInput_file());
 
         PrintStream out = System.out;
 
