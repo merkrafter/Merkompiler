@@ -16,15 +16,13 @@ public class Config {
     private final String output_file;
 
     private final boolean verbose;
-    private final boolean help;
 
     private Error error;
 
-    private Config(final String input_file, final String output_file, boolean verbose, boolean help) {
+    private Config(final String input_file, final String output_file, boolean verbose) {
         this.input_file = input_file;
         this.output_file = output_file;
         this.verbose = verbose;
-        this.help = help;
     }
 
     public String getInput_file() {
@@ -37,10 +35,6 @@ public class Config {
 
     public boolean isVerbose() {
         return verbose;
-    }
-
-    public boolean requestsHelp() {
-        return help;
     }
 
     public boolean hasError() {
@@ -84,7 +78,7 @@ public class Config {
             outputFileName = namespace.getString("output");
             verbose = namespace.getBoolean("verbose");
         }
-        return new Config(inputFileName, outputFileName, verbose, false);
+        return new Config(inputFileName, outputFileName, verbose);
     }
 
     /**
@@ -93,6 +87,6 @@ public class Config {
     @Override
     public String toString() {
         return String
-                .format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, help=%b)", input_file, output_file, verbose, help);
+                .format("Config(INPUT=%s, OUTPUT=%s, verbose=%b)", input_file, output_file, verbose);
     }
 }
