@@ -12,23 +12,23 @@ import net.sourceforge.argparse4j.inf.Namespace;
  * @author merkrafter
  */
 public class Config {
-    private final String input_file;
-    private final String output_file;
+    private final String inputFile;
+    private final String outputFile;
 
     private final boolean verbose;
 
-    private Config(final String input_file, final String output_file, boolean verbose) {
-        this.input_file = input_file;
-        this.output_file = output_file;
+    private Config(final String inputFile, final String outputFile, boolean verbose) {
+        this.inputFile = inputFile;
+        this.outputFile = outputFile;
         this.verbose = verbose;
     }
 
-    public String getInput_file() {
-        return input_file;
+    public String getInputFile() {
+        return inputFile;
     }
 
-    public String getOutput_file() {
-        return output_file;
+    public String getOutputFile() {
+        return outputFile;
     }
 
     public boolean isVerbose() {
@@ -72,6 +72,6 @@ public class Config {
     @Override
     public String toString() {
         return String
-                .format("Config(INPUT=%s, OUTPUT=%s, verbose=%b)", input_file, output_file, verbose);
+                .format("Config(INPUT=%s, OUTPUT=%s, verbose=%b)", inputFile, outputFile, verbose);
     }
 }

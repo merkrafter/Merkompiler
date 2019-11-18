@@ -3,8 +3,6 @@ package com.merkrafter;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigTest {
@@ -18,8 +16,8 @@ class ConfigTest {
         final String expectedOutputFilename = null;
         final boolean expectedVerbosity = false;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -32,8 +30,8 @@ class ConfigTest {
         final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -46,8 +44,8 @@ class ConfigTest {
         final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -60,8 +58,8 @@ class ConfigTest {
         final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -74,8 +72,8 @@ class ConfigTest {
         final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -88,8 +86,8 @@ class ConfigTest {
         final String expectedOutputFilename = "OtherTest.class";
         final boolean expectedVerbosity = false;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -102,8 +100,8 @@ class ConfigTest {
         final String expectedOutputFilename = "OtherTest.class";
         final boolean expectedVerbosity = false;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -116,8 +114,8 @@ class ConfigTest {
         final String expectedOutputFilename = "OtherTest.class";
         final boolean expectedVerbosity = false;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -130,8 +128,8 @@ class ConfigTest {
         final String expectedOutputFilename = "OtherTest.class";
         final boolean expectedVerbosity = false;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -144,8 +142,8 @@ class ConfigTest {
         final String expectedOutputFilename = "OtherTest.class";
         final boolean expectedVerbosity = true;
 
-        assertEquals(expectedInputFilename, actualConfig.getInput_file());
-        assertEquals(expectedOutputFilename, actualConfig.getOutput_file());
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 

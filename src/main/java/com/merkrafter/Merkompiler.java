@@ -6,7 +6,6 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.Arrays;
 
 public class Merkompiler {
 
@@ -33,7 +32,7 @@ public class Merkompiler {
         try {
             run(config);
         } catch (FileNotFoundException e) {
-            System.err.println(config.getInput_file() + " not found");
+            System.err.println(config.getInputFile() + " not found");
             System.exit(ErrorCode.FILE_NOT_FOUND.id);
         }
     }
@@ -46,15 +45,15 @@ public class Merkompiler {
      * @throws FileNotFoundException if the input or output file could not be found
      */
     private static void run(final Config config) throws FileNotFoundException {
-        final Input input = new Input(config.getInput_file());
+        final Input input = new Input(config.getInputFile());
         final Scanner scanner = new Scanner(input);
-        scanner.setFilename(config.getInput_file());
+        scanner.setFilename(config.getInputFile());
 
         PrintStream out = System.out;
 
         // write to output file if given
-        if (config.getOutput_file() != null) {
-            out = new PrintStream(config.getOutput_file());
+        if (config.getOutputFile() != null) {
+            out = new PrintStream(config.getOutputFile());
         }
 
         do {
