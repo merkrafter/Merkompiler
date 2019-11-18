@@ -1,5 +1,11 @@
 package com.merkrafter;
 
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+
 /**
  * This class holds configuration data for this program.
  *
@@ -45,45 +51,40 @@ public class Config {
         return error;
     }
 
-    public static Config fromArgs(String[] args) {
-        String input_file = "";
-        String output_file = "";
+    public static Config fromArgs(final String[] args) throws ArgumentParserException {
+        // define the parser
+        final ArgumentParser parser =
+                ArgumentParsers.newFor("Merkompiler").build().defaultHelp(true)
+                               .description("Compiles JavaSST files");
+
+        parser.addArgument("INPUT").required(true).type(String.class)
+              .help("JavaSST source code file");
+        parser.addArgument("-v", "--verbose").action(Arguments.storeTrue())
+              .help("print more information");
+        parser.addArgument("-o", "--output").type(String.class).metavar("OUTPUT")
+              .help("output target; default is stdout");
+
+
+        // parse the arguments
+        Namespace namespace = null;
+        try {
+            namespace = parser.parseArgs(args);
+        } catch (ArgumentParserException e) {
+            parser.handleError(e);
+            throw e;
+        }
+
+        // build Config instance
+        String inputFileName = null;
+        String outputFileName = null;
         boolean verbose = false;
-        boolean help = false;
 
-        if (args.length < 1) {
-            final Config config = new Config(input_file, output_file, verbose, help);
-            config.error = new Error(ErrorCode.NOT_ENOUGH_ARGUMENTS, "missing input file");
-            return config;
+        if (namespace != null) {
+            inputFileName = namespace.getString("INPUT");
+            outputFileName = namespace.getString("output");
+            verbose = namespace.getBoolean("verbose");
         }
-
-        boolean output_comes_next = false;
-
-        for (final String argument : args) {
-            if (output_comes_next) {
-                output_file = argument;
-                output_comes_next = false;
-                continue;
-            }
-            switch (argument) {
-                case "--verbose":
-                case "-v":
-                    verbose = true;
-                    break;
-                case "--help":
-                case "-h":
-                    help = true;
-                    break;
-                case "--output":
-                case "-o":
-                    output_comes_next = true;
-                    break;
-                default:
-                    input_file = argument;
-            }
-        }
-
-        return new Config(input_file, output_file, verbose, help);
+        return new Config(inputFileName, outputFileName, verbose, false);
     }
 
     /**
@@ -91,6 +92,7 @@ public class Config {
      */
     @Override
     public String toString() {
-        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, help=%b)", input_file, output_file, verbose, help);
+        return String
+                .format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, help=%b)", input_file, output_file, verbose, help);
     }
 }

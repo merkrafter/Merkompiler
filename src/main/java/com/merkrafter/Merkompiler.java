@@ -2,6 +2,7 @@ package com.merkrafter;
 
 import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -15,7 +16,12 @@ public class Merkompiler {
      */
     public static void main(String[] args) {
         // to change the arguments in IntelliJ, press Alt+Shift+F10
-        final Config config = Config.fromArgs(args);
+        Config config = null;
+        try {
+            config = Config.fromArgs(args);
+        } catch (ArgumentParserException e) {
+            System.exit(1);
+        }
         if (config.isVerbose()) {
             System.out.println(config);
         }

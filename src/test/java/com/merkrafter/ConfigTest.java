@@ -1,5 +1,6 @@
 package com.merkrafter;
 
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConfigTest {
 
     @Test
-    void parseOnlyInputFile() {
+    void parseOnlyInputFile() throws ArgumentParserException {
         final String[] args = fromString("Test.java");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -23,7 +24,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileWithVerbosityShortFirst() {
+    void parseInputFileWithVerbosityShortFirst() throws ArgumentParserException {
         final String[] args = fromString("-v Test.java");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -37,7 +38,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileWithVerbosityShortAfter() {
+    void parseInputFileWithVerbosityShortAfter() throws ArgumentParserException {
         final String[] args = fromString("Test.java -v");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -51,7 +52,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileWithVerbosityLongFirst() {
+    void parseInputFileWithVerbosityLongFirst() throws ArgumentParserException {
         final String[] args = fromString("--verbose Test.java");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -65,7 +66,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileWithVerbosityLongAfter() {
+    void parseInputFileWithVerbosityLongAfter() throws ArgumentParserException {
         final String[] args = fromString("Test.java --verbose");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -79,7 +80,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileAndShortOutputFileFirst() {
+    void parseInputFileAndShortOutputFileFirst() throws ArgumentParserException {
         final String[] args = fromString("-o OtherTest.class Test.java");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -93,7 +94,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileAndShortOutputFileAfter() {
+    void parseInputFileAndShortOutputFileAfter() throws ArgumentParserException {
         final String[] args = fromString("Test.java -o OtherTest.class");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -107,7 +108,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileAndLongOutputFileFirst() {
+    void parseInputFileAndLongOutputFileFirst() throws ArgumentParserException {
         final String[] args = fromString("--output OtherTest.class Test.java");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -121,7 +122,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileAndLongOutputFileAfter() {
+    void parseInputFileAndLongOutputFileAfter() throws ArgumentParserException {
         final String[] args = fromString("Test.java --output OtherTest.class");
         final Config actualConfig = Config.fromArgs(args);
 
@@ -135,7 +136,7 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileAndOutputFileAndVerbosity() {
+    void parseInputFileAndOutputFileAndVerbosity() throws ArgumentParserException {
         final String[] args = fromString("--verbose Test.java --output OtherTest.class");
         final Config actualConfig = Config.fromArgs(args);
 
