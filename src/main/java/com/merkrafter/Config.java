@@ -51,12 +51,7 @@ public class Config {
 
         // parse the arguments
         Namespace namespace = null;
-        try {
-            namespace = parser.parseArgs(args);
-        } catch (ArgumentParserException e) {
-            parser.handleError(e);
-            throw e;
-        }
+        namespace = parser.parseArgs(args);
 
         // build Config instance
         String inputFileName = null;
