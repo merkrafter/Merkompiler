@@ -6,7 +6,7 @@ package com.merkrafter;
  * @author merkrafter
  */
 public enum ErrorCode {
-    NOT_ENOUGH_ARGUMENTS(1),
+    ARGUMENTS_UNPARSABLE(1),
     FILE_NOT_FOUND(2);
 
     public final int id;

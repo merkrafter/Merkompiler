@@ -17,8 +17,6 @@ public class Config {
 
     private final boolean verbose;
 
-    private Error error;
-
     private Config(final String input_file, final String output_file, boolean verbose) {
         this.input_file = input_file;
         this.output_file = output_file;
@@ -35,14 +33,6 @@ public class Config {
 
     public boolean isVerbose() {
         return verbose;
-    }
-
-    public boolean hasError() {
-        return error != null;
-    }
-
-    public Error getError() {
-        return error;
     }
 
     public static Config fromArgs(final String[] args) throws ArgumentParserException {

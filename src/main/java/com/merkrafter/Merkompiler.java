@@ -20,15 +20,10 @@ public class Merkompiler {
         try {
             config = Config.fromArgs(args);
         } catch (ArgumentParserException e) {
-            System.exit(1);
+            System.exit(ErrorCode.ARGUMENTS_UNPARSABLE.id);
         }
         if (config.isVerbose()) {
             System.out.println(config);
-        }
-
-        if (config.hasError()) {
-            System.err.println("Merkompiler: " + config.getError().getErrorMessage());
-            System.exit(config.getError().getErrorCode().id);
         }
 
         /*
