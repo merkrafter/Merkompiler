@@ -15,24 +15,14 @@ public class Merkompiler {
      */
     public static void main(String[] args) {
         // to change the arguments in IntelliJ, press Alt+Shift+F10
-        Config config = null;
         try {
-            config = Config.fromArgs(args);
-        } catch (ArgumentParserException e) {
-            e.getParser().handleError(e);
-            System.exit(ErrorCode.ARGUMENTS_UNPARSABLE.id);
-        }
-        if (config.isVerbose()) {
-            System.out.println(config);
-        }
-
-        /*
-         * Main program
-         */
-        try {
+            final Config config = Config.fromArgs(args);
             run(config);
+        } catch (ArgumentParserException e) {
+            e.getParser().handleError(e); // prints the help message
+            System.exit(ErrorCode.ARGUMENTS_UNPARSABLE.id);
         } catch (FileNotFoundException e) {
-            System.err.println(config.getInputFile() + " not found");
+            System.err.println(e.getMessage());
             System.exit(ErrorCode.FILE_NOT_FOUND.id);
         }
     }
@@ -45,11 +35,15 @@ public class Merkompiler {
      * @throws FileNotFoundException if the input or output file could not be found
      */
     private static void run(final Config config) throws FileNotFoundException {
+        if (config.isVerbose()) {
+            System.out.println(config);
+        }
+
         final Input input = new Input(config.getInputFile());
         final Scanner scanner = new Scanner(input);
         scanner.setFilename(config.getInputFile());
 
-        PrintStream out = System.out;
+        PrintStream out = System.out; // write to stdout by default
 
         // write to output file if given
         if (config.getOutputFile() != null) {
@@ -60,6 +54,5 @@ public class Merkompiler {
             scanner.processToken();
             out.println(scanner.getSym());
         } while (scanner.getSym().getType() != TokenType.EOF);
-
     }
 }
