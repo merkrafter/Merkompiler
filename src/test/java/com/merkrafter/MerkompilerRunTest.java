@@ -49,34 +49,45 @@ class MerkompilerRunTest {
     @ValueSource(strings = "EmptyClass")
     void runWithOutputCreatesFile(final String baseFileName)
     throws ArgumentParserException, IOException {
-        final String inputFileName = baseFileName + INPUT_FILE_SUFFIX; // java source file to read
-        // file where the program output is written to
-        final String outputFileName = baseFileName + OUTPUT_FILE_SUFFIX;
+        // java source file to read
+        final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
         // file that should identical content as outputFile after run method
-        final String expectedFileName = baseFileName + EXPECTED_FILE_SUFFIX;
+        final File expectedFile = getFileFromResource(baseFileName + EXPECTED_FILE_SUFFIX);
+        // file where the program output is written to
+        final File outputFile = tempDir.resolve(baseFileName + OUTPUT_FILE_SUFFIX).toFile();
 
-        // load/create required files
-        final ClassLoader classLoader = getClass().getClassLoader();
-        final File inputFile = new File(classLoader.getResource(inputFileName).getFile());
-        final File outputFile = tempDir.resolve(outputFileName).toFile();
-        final File expectedFile = new File(classLoader.getResource(expectedFileName).getFile());
-
-        // verify that the test setup is correct
-        assumeTrue(inputFile.exists(),
-                   "Misconfigured test environment: Missing file " + inputFile.getAbsolutePath());
-        assumeTrue(expectedFile.exists(),
-                   "Misconfigured test environment: Missing file " + expectedFile.getAbsolutePath());
-
-        // run subject under test
         final Config config = Config.fromArgs(String.format("%s --output %s",
                                                             inputFile.getAbsolutePath(),
                                                             outputFile.getAbsolutePath()));
         Merkompiler.run(config);
 
-        // check results
         assertFilesEqual(expectedFile, outputFile);
     }
 
+    /**
+     * Reads the given file using this class's class loader, checks for its existence and finally
+     * returns it.
+     *
+     * @param fileName a file under <code>src/test/resources</code>
+     * @return a file under the resource directory as specified by <code>fileName</code>
+     */
+    private File getFileFromResource(final String fileName) {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource(fileName).getFile());
+
+        assumeTrue(file.exists(),
+                   "Misconfigured test environment: Missing file " + file.getAbsolutePath());
+
+        return file;
+    }
+
+    /**
+     * Checks whether two files are equal by comparing their contents line by line.
+     *
+     * @param expectedFile the file that defines the base line
+     * @param actualFile should be equal to <code>expectedFile</code>
+     * @throws IOException if there is a read/write error in one of the files
+     */
     private static void assertFilesEqual(final File expectedFile, final File actualFile)
     throws IOException {
         assertEquals(Files.readAllLines(expectedFile.toPath()),
