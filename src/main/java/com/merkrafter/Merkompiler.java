@@ -36,7 +36,7 @@ public class Merkompiler {
      * @param config configuration data for this program call
      * @throws FileNotFoundException if the input or output file could not be found
      */
-    private static void run(final Config config) throws FileNotFoundException {
+    static void run(final Config config) throws FileNotFoundException {
         if (config.isVerbose()) {
             System.out.println(config);
         }
