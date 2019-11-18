@@ -1,5 +1,7 @@
 package com.merkrafter;
 
+import com.merkrafter.config.Config;
+import com.merkrafter.config.ErrorCode;
 import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;

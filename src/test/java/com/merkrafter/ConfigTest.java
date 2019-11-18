@@ -1,5 +1,6 @@
 package com.merkrafter;
 
+import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.jupiter.api.Test;
 

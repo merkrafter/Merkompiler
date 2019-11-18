@@ -1,4 +1,4 @@
-package com.merkrafter;
+package com.merkrafter.config;
 
 /**
  * This enum defines all error codes that this program can exit with.

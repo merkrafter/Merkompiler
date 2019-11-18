@@ -1,6 +1,4 @@
-package com.merkrafter;
-
-import jdk.nashorn.internal.runtime.OptimisticReturnFilters;
+package com.merkrafter.config;
 
 /****
  * This class serves as a container to hold an ErrorCode together

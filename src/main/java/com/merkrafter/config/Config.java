@@ -1,4 +1,4 @@
-package com.merkrafter;
+package com.merkrafter.config;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
