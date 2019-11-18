@@ -1,0 +1,6 @@
+EmptyClass.java(1,1): IDENT
+EmptyClass.java(1,8): IDENT
+EmptyClass.java(1,14): IDENT
+EmptyClass.java(1,25): L_BRACE
+EmptyClass.java(1,26): R_BRACE
+EmptyClass.java(1,26): EOF

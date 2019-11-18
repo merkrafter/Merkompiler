@@ -1,9 +1,14 @@
 package com.merkrafter;
 
+import com.merkrafter.config.Config;
+import com.merkrafter.config.ErrorCode;
 import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 public class Merkompiler {
 
@@ -13,37 +18,49 @@ public class Merkompiler {
      */
     public static void main(String[] args) {
         // to change the arguments in IntelliJ, press Alt+Shift+F10
-        if (args.length < 1) {
-            System.err.println("Usage: java Merkompiler <filename>");
-            System.exit(ErrorCodes.NOT_ENOUGH_ARGUMENTS.id);
-        }
-
-        final String filename = args[0];
-
         try {
-            final Input input = new Input(filename);
-            final Scanner s = new Scanner(input);
-            do {
-                s.processToken();
-                System.out.println(s.getSym());
-            } while (s.getSym().getType() != TokenType.EOF);
-
+            final Config config = Config.fromArgs(args);
+            run(config);
+        } catch (ArgumentParserException e) {
+            e.getParser().handleError(e); // prints the help message
+            System.exit(ErrorCode.ARGUMENTS_UNPARSABLE.id);
         } catch (FileNotFoundException e) {
-            System.err.println(filename + " not found");
-            System.exit(ErrorCodes.FILE_NOT_FOUND.id);
+            System.err.println(e.getMessage());
+            System.exit(ErrorCode.FILE_NOT_FOUND.id);
         }
     }
 
     /**
-     * This enum defines all error codes that this program can exit with.
+     * Contains the main application logic.
+     * Passes errors etc. to the calling method which is expected to be main.
+     *
+     * @param config configuration data for this program call
+     * @throws FileNotFoundException if the input or output file could not be found
      */
-    public enum ErrorCodes {
-        NOT_ENOUGH_ARGUMENTS(1), FILE_NOT_FOUND(2);
-
-        public final int id;
-
-        ErrorCodes(final int id) {
-            this.id = id;
+    static void run(final Config config) throws FileNotFoundException {
+        if (config.isVerbose()) {
+            System.out.println(config);
         }
+
+        final File inputFile = new File(config.getInputFile());
+        final Input input = new Input(inputFile.getAbsolutePath());
+        final Scanner scanner = new Scanner(input);
+        if (config.isVerbose()) {
+            scanner.setFilename(inputFile.getAbsolutePath());
+        } else {
+            scanner.setFilename(inputFile.getName());
+        }
+
+        PrintStream out = System.out; // write to stdout by default
+
+        // write to output file if given
+        if (config.getOutputFile() != null) {
+            out = new PrintStream(config.getOutputFile());
+        }
+
+        do {
+            scanner.processToken();
+            out.println(scanner.getSym());
+        } while (scanner.getSym().getType() != TokenType.EOF);
     }
 }
