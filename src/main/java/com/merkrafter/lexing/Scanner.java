@@ -325,6 +325,12 @@ public class Scanner {
                     charBuffer = Optional.of(ch);
                 }
                 break;
+            case ',':
+                sym = new Token(TokenType.COMMA, filename, line, position);
+                if (!this.loadNextCharSuccessfully()) {
+                    return;
+                }
+                break;
             case ';':
                 sym = new Token(TokenType.SEMICOLON, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
