@@ -36,6 +36,37 @@ public class Parser {
     //--------------------------------------------------------------
 
     /**
+     * Parses the tokens given by the underlying token iterator.
+     */
+    public boolean parse() {
+        return false;
+    }
+
+    boolean parseInternProcedureCall() {
+        return false;
+    }
+
+    boolean parseActualParameters() {
+        return false;
+    }
+
+    boolean parseExpression() {
+        return false;
+    }
+
+    boolean parseSimpleExpression() {
+        return false;
+    }
+
+    boolean parseTerm() {
+        return false;
+    }
+
+    boolean parseFactor() {
+        return false;
+    }
+
+    /**
      * Checks the underlying token iterator for a single number.
      *
      * @return whether a single NUMBER token comes next
