@@ -284,6 +284,30 @@ class ScannerTest {
     }
 
     /**
+     * The scanner should be able to tokenize a method call with two comma separated arguments.
+     */
+    @org.junit.jupiter.api.Test
+    void scanMethodCallWithTwoArguments() {
+        final String programCode = "int sum = add(a,b)";
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, ASSIGN, IDENT, L_PAREN, IDENT, COMMA, IDENT, R_PAREN, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to tokenize a method call with three comma separated arguments.
+     * Two of them are identifiers and the third is a number constant.
+     */
+    @org.junit.jupiter.api.Test
+    void scanMethodCallWithMultipleArguments() {
+        final String programCode = "int sum = add(a,b,5)";
+        final TokenType[] expectedTokenList =
+                {IDENT, IDENT, ASSIGN, IDENT, L_PAREN, IDENT, COMMA, IDENT, COMMA, NUMBER, R_PAREN,
+                        EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
      * Collects all tokens emitted by this scanner.
      *
      * @param scanner the object to get the tokens from
