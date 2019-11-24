@@ -14,6 +14,74 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     /**
+     * The parser should accept a single "int" as a type.
+     */
+    @Test
+    void parseType() {
+        // TODO implement this when int token is available
+        final Scanner scanner = new TestScanner(new Token[]{});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseType());
+    }
+
+    /**
+     * The parser should accept an assignment of the result of a binary operation to a variable,
+     * as "a = a*5;".
+     */
+    @ParameterizedTest
+    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
+    void parseAssignmentWithBinOp(final TokenType binOp) {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(binOp, "", 0, 0),
+                new Token(TokenType.NUMBER, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseAssignment());
+    }
+
+    /**
+     * The parser should accept a direct assignment of a number to a variable ident, as "a = 5;".
+     */
+    @Test
+    void parseDirectAssignmentOfNumber() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new Token(TokenType.NUMBER, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseAssignment());
+    }
+
+    /**
+     * The parser should accept a simple procedure call, as "parse();"
+     */
+    @Test
+    void parseProcedureCall() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseProcedureCall());
+    }
+
+    /**
+     * The parser should accept a single return statement.
+     */
+    @Test
+    void parseStandaloneReturnStatement() {
+        // TODO implement this when return token is available
+        final Scanner scanner = new TestScanner(new Token[]{});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseReturnStatement());
+    }
+
+    /**
      * The parser should accept a single pair of parentheses as actual parameters.
      */
     @Test
