@@ -1,6 +1,8 @@
 package com.merkrafter.lexing;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,6 +36,17 @@ class ScannerTest {
     void setUp() {
         stringIterator = new StringIterator();
         scanner = new Scanner(stringIterator);
+    }
+
+    /**
+     * The scanner should be able to detect keyword arguments.
+     */
+    @ParameterizedTest
+    @EnumSource(Keyword.class)
+    void scanKeyword(final Keyword keyword) {
+        final String programCode = keyword.name().toLowerCase();
+        final TokenType[] expectedTokenList = {KEYWORD, EOF};
+        shouldScan(programCode, expectedTokenList);
     }
 
     /**
