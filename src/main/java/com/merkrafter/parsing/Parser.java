@@ -42,11 +42,27 @@ public class Parser {
         return false;
     }
 
+    boolean parseType() {
+        return false;
+    }
+
+    boolean parseAssignment() {
+        return false;
+    }
+
+    boolean parseProcedureCall() {
+        return false;
+    }
+
     boolean parseInternProcedureCall() {
         if (parseIdentifier()) {
             scanner.processToken();
             return parseActualParameters();
         }
+        return false;
+    }
+
+    boolean parseReturnStatement() {
         return false;
     }
 
