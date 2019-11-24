@@ -43,27 +43,101 @@ public class Parser {
     }
 
     boolean parseInternProcedureCall() {
+        if (parseIdentifier()) {
+            scanner.processToken();
+            return parseActualParameters();
+        }
         return false;
     }
 
     boolean parseActualParameters() {
-        return false;
+        if (scanner.getSym().getType() == L_PAREN) {
+            scanner.processToken();
+            if (parseExpression()) {
+                while (scanner.getSym().getType() == COMMA) {
+                    scanner.processToken();
+                    if (!parseExpression()) {
+                        error("Expected expression after comma in actual parameters");
+                        return false;
+                    }
+                }
+            } else {
+                return true; // it is okay if no expression comes here
+            }
+        } else {
+            error("Expected left parenthesis in actual parameters");
+            return false;
+        }
+        if (scanner.getSym().getType() == R_PAREN) {
+            return true;
+        } else {
+            error("Wrong use of parenthesis");
+            return false;
+        }
     }
 
     boolean parseExpression() {
-        return false;
+        if (parseSimpleExpression()) {
+            switch (scanner.getSym().getType()) {
+                case EQUAL:
+                case LOWER:
+                case LOWER_EQUAL:
+                case GREATER:
+                case GREATER_EQUAL:
+                    scanner.processToken();
+                    return parseSimpleExpression();
+                default:
+                    return true;
+            }
+        } else {
+            error("Error parsing expression");
+            return false;
+        }
     }
 
     boolean parseSimpleExpression() {
-        return false;
+        boolean success = parseTerm();
+        while (success) {
+            if (scanner.getSym().getType() == PLUS || scanner.getSym().getType() == MINUS) {
+                scanner.processToken();
+                success = parseTerm();
+            } else {
+                break;
+            }
+        }
+        return success;
     }
 
     boolean parseTerm() {
-        return false;
+        boolean success = parseFactor();
+        while (success) {
+            if (scanner.getSym().getType() == TIMES || scanner.getSym().getType() == DIVIDE) {
+                scanner.processToken();
+                success = parseFactor();
+            } else {
+                break;
+            }
+        }
+        return success;
     }
 
     boolean parseFactor() {
-        return false;
+        if (parseIdentifier()) {
+            return true;
+        } else if (parseNumber()) {
+            return true;
+        } else if (scanner.getSym().getType() == L_PAREN) {
+            scanner.processToken();
+            final boolean success = parseExpression();
+            if (scanner.getSym().getType() == R_PAREN) {
+                scanner.processToken();
+            } else {
+                error("Wrong use of parenthesis");
+                return false;
+            }
+            return success; // whether the above parseExpression() was successful
+        }
+        return parseInternProcedureCall();
     }
 
     /**
