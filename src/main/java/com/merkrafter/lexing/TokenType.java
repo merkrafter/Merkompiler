@@ -6,6 +6,7 @@ package com.merkrafter.lexing;
  * @author merkrafter
  ***************************************************************/
 public enum TokenType {
+    KEYWORD,
     IDENT,
     NUMBER,
     PLUS,
