@@ -222,11 +222,15 @@ class ParserTest {
         }
 
         /**
-         * @return the token at the current index
+         * @return the token at the current index or TokenType.EOF if index is out of bounds
          */
         @Override
         public Token getSym() {
-            return tokens[index];
+            if (index == tokens.length) {
+                return new Token(TokenType.EOF, "", 0, 0);
+            } else {
+                return tokens[index];
+            }
         }
     }
 }
