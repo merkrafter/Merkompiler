@@ -45,7 +45,9 @@ class ScannerTest {
     @EnumSource(Keyword.class)
     void scanKeyword(final Keyword keyword) {
         final String programCode = keyword.name().toLowerCase();
-        final TokenType[] expectedTokenList = {KEYWORD, EOF};
+        final Token[] expectedTokenList = {
+                new KeywordToken(keyword, null, 1, 1),
+                new Token(EOF, null, 1, keyword.name().length())};
         shouldScan(programCode, expectedTokenList);
     }
 
