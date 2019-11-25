@@ -76,6 +76,25 @@ public class Parser {
     }
 
     boolean parseReturnStatement() {
+        if (scanner.getSym() instanceof KeywordToken
+            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.RETURN) {
+
+            scanner.processToken();
+            if (scanner.getSym().getType() == SEMICOLON) {
+                // there is no simple expression in between
+                scanner.processToken();
+                return true;
+            } else if (parseSimpleExpression()) {
+                if (scanner.getSym().getType() == SEMICOLON) {
+                    scanner.processToken();
+                    return true;
+                } else {
+                    return false;
+                }
+            } else { // neither a semicolon nor a simple expression
+                return false;
+            }
+        }
         return false;
     }
 
