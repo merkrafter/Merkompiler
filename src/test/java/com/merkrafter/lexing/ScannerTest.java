@@ -361,6 +361,20 @@ class ScannerTest {
     }
 
     /**
+     * Conveniently wraps the assertions of equal tokens between expected and the ones emitted by a scanner.
+     * It therefore sets the programCode as an input to this class's stringIterator and reads from
+     * its scanner. Both must be initialized before this method can be called safely.
+     *
+     * @param programCode the string to tokenize by this class's scanner
+     * @param expectedTokenList an array with all expected tokens in the right order
+     */
+    private void shouldScan(final String programCode, final Token[] expectedTokenList) {
+        stringIterator.setString(programCode);
+        final List<Token> actualTokenList = getTokenList(scanner);
+        assertArrayEquals(expectedTokenList, actualTokenList.toArray(), actualTokenList.toString());
+    }
+
+    /**
      * This class provides the possibility to iterate over strings.
      * It can be used as a tool to mock a file as the input to a Scanner.
      */
