@@ -70,7 +70,6 @@ public class Parser {
 
     boolean parseInternProcedureCall() {
         if (parseIdentifier()) {
-            scanner.processToken();
             return parseActualParameters();
         }
         return false;
@@ -99,6 +98,7 @@ public class Parser {
             return false;
         }
         if (scanner.getSym().getType() == R_PAREN) {
+            scanner.processToken();
             return true;
         } else {
             error("Wrong use of parenthesis");
