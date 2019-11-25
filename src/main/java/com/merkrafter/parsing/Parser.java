@@ -44,6 +44,22 @@ public class Parser {
         return false;
     }
 
+    boolean parseMethodType() {
+        return false;
+    }
+
+    boolean parseFormalParameters() {
+        return false;
+    }
+
+    boolean parseFpSection() {
+        return false;
+    }
+
+    boolean parseLocalDeclaration() {
+        return false;
+    }
+
     /**
      * @return whether the current symbol is a KeywordToken and represents an "int"
      */
