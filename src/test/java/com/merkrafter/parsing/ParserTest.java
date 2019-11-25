@@ -1,8 +1,6 @@
 package com.merkrafter.parsing;
 
-import com.merkrafter.lexing.Scanner;
-import com.merkrafter.lexing.Token;
-import com.merkrafter.lexing.TokenType;
+import com.merkrafter.lexing.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -18,8 +16,8 @@ class ParserTest {
      */
     @Test
     void parseType() {
-        // TODO implement this when int token is available
-        final Scanner scanner = new TestScanner(new Token[]{});
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.INT, null, 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseType());
     }
@@ -64,19 +62,22 @@ class ParserTest {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.IDENT, "", 0, 0),
                 new Token(TokenType.L_PAREN, "", 0, 0),
+                new IdentToken("a", "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0),
                 new Token(TokenType.SEMICOLON, "", 0, 0)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseProcedureCall());
     }
 
+
     /**
      * The parser should accept a single return statement.
      */
     @Test
     void parseStandaloneReturnStatement() {
-        // TODO implement this when return token is available
-        final Scanner scanner = new TestScanner(new Token[]{});
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.RETURN, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseReturnStatement());
     }
