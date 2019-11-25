@@ -61,6 +61,10 @@ public class Parser {
     }
 
     boolean parseProcedureCall() {
+        if (parseInternProcedureCall() && scanner.getSym().getType() == SEMICOLON) {
+            scanner.processToken();
+            return true;
+        }
         return false;
     }
 
