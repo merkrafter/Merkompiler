@@ -32,7 +32,7 @@ public class KeywordToken extends Token {
     /**
      * @return the keyword this token stands for
      */
-    Keyword getKeyword() {
+    public Keyword getKeyword() {
         return keyword;
     }
 
