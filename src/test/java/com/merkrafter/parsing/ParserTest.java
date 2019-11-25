@@ -12,6 +12,56 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     /**
+     * The parser should accept "void" and "int" as method types.
+     */
+    @ParameterizedTest
+    @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
+    void parseMethodType(final Keyword keyword) {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(keyword, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseMethodType());
+    }
+
+    /**
+     * The parser should accept a single "(int a)" as formal parameters.
+     */
+    @Test
+    void parseFormalParameters() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.L_PAREN, null, 1, 1),
+                new KeywordToken(Keyword.INT, null, 1, 1),
+                new IdentToken("a", null, 1, 1),
+                new Token(TokenType.R_PAREN, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseFormalParameters());
+    }
+
+    /**
+     * The parser should accept a single "int a" as a fp_section.
+     */
+    @Test
+    void parseFpSection() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.INT, null, 1, 1), new IdentToken("a", null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseFpSection());
+    }
+
+    /**
+     * The parser should accept a single "int a;" as a local declaration.
+     */
+    @Test
+    void parseLocalDeclaration() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.INT, null, 1, 1),
+                new IdentToken("a", null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseLocalDeclaration());
+    }
+
+    /**
      * The parser should accept a single "int" as a type.
      */
     @Test
