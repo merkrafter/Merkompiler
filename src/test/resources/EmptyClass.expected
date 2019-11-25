@@ -1,5 +1,5 @@
-EmptyClass.java(1,1): KEYWORD
-EmptyClass.java(1,8): KEYWORD
+EmptyClass.java(1,1): KEYWORD(public)
+EmptyClass.java(1,8): KEYWORD(class)
 EmptyClass.java(1,14): IDENT
 EmptyClass.java(1,25): L_BRACE
 EmptyClass.java(1,26): R_BRACE
