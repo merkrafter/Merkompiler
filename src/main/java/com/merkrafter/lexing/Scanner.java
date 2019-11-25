@@ -190,13 +190,17 @@ public class Scanner {
             case 'Y':
             case 'Z':
                 sym = new Token(TokenType.IDENT, filename, line, position);
+                // TODO change this if it turns out to be a keyword
                 id = "";
                 do {
                     id += ch;
                     if (!this.loadNextCharSuccessfully()) {
+                        checkAndSetKeyword();
                         return;
                     }
-                } while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9');
+                } while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z'
+                         || ch >= '0' && ch <= '9');
+                checkAndSetKeyword();
                 break;
             case '(':
                 sym = new Token(TokenType.L_PAREN, filename, line, position);
@@ -390,4 +394,18 @@ public class Scanner {
         line++;
         position = 0;
     }
+
+    /**
+     * Tests whether id currently holds a keyword. If that's the case, <code>sym</code> is changed
+     * accordingly.
+     */
+    private void checkAndSetKeyword() {
+        try {
+            final Keyword keyword = Keyword.valueOf(id.toUpperCase());
+            // if this actually is a keyword:
+            sym = new KeywordToken(keyword, sym.getFilename(), sym.getLine(), sym.getPosition());
+        } catch (IllegalArgumentException ignored) { // this is thrown if `id` is not a keyword
+        }
+    }
+
 }
