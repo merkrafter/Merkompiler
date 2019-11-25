@@ -83,6 +83,17 @@ class ParserTest {
     }
 
     /**
+     * The parser must not accept a single return statement (without semicolon).
+     */
+    @Test
+    void parseStandaloneReturnStatementWithoutSemicolon() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.RETURN, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertFalse(parser.parseReturnStatement());
+    }
+
+    /**
      * The parser should accept a single pair of parentheses as actual parameters.
      */
     @Test
