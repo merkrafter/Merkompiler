@@ -189,18 +189,19 @@ public class Scanner {
             case 'X':
             case 'Y':
             case 'Z':
+                // will be replaced in `setIdentOrKeyword` in a few lines, but this token is needed
+                // in order to store the starting position of this token
                 sym = new Token(TokenType.IDENT, filename, line, position);
-                // TODO change this if it turns out to be a keyword
                 id = "";
                 do {
                     id += ch;
                     if (!this.loadNextCharSuccessfully()) {
-                        checkAndSetKeyword();
+                        setIdentOrKeyword();
                         return;
                     }
                 } while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z'
                          || ch >= '0' && ch <= '9');
-                checkAndSetKeyword();
+                setIdentOrKeyword();
                 break;
             case '(':
                 sym = new Token(TokenType.L_PAREN, filename, line, position);
@@ -399,12 +400,14 @@ public class Scanner {
      * Tests whether id currently holds a keyword. If that's the case, <code>sym</code> is changed
      * accordingly.
      */
-    private void checkAndSetKeyword() {
+    private void setIdentOrKeyword() {
         try {
             final Keyword keyword = Keyword.valueOf(id.toUpperCase());
             // if this actually is a keyword:
             sym = new KeywordToken(keyword, sym.getFilename(), sym.getLine(), sym.getPosition());
-        } catch (IllegalArgumentException ignored) { // this is thrown if `id` is not a keyword
+        } catch (IllegalArgumentException ignored) {
+            // id is not a keyword
+            sym = new IdentToken(id, sym.getFilename(), sym.getLine(), sym.getPosition());
         }
     }
 
