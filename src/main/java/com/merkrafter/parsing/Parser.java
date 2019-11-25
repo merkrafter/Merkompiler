@@ -1,5 +1,7 @@
 package com.merkrafter.parsing;
 
+import com.merkrafter.lexing.Keyword;
+import com.merkrafter.lexing.KeywordToken;
 import com.merkrafter.lexing.Scanner;
 
 import static com.merkrafter.lexing.TokenType.*;
@@ -42,7 +44,15 @@ public class Parser {
         return false;
     }
 
+    /**
+     * @return whether the current symbol is a KeywordToken and represents an "int"
+     */
     boolean parseType() {
+        if (scanner.getSym() instanceof KeywordToken
+            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.INT) {
+            scanner.processToken();
+            return true;
+        }
         return false;
     }
 
