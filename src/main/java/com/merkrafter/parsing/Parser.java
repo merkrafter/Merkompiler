@@ -114,6 +114,28 @@ public class Parser {
     }
 
     boolean parseStatement() {
+        // factoring of
+        // statement = ident '=' expression ';' | ident actual_parameters ';'
+        //             ^ assignment               ^ procedure call
+        if (parseStatementForAssignmentOrProcedureCall()) {
+            return true;
+        }
+        if (parseReturnStatement()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean parseStatementForAssignmentOrProcedureCall() {
+        if (parseIdentifier()) {
+            if (parseAssignmentWithoutIdent()) {
+                return true;
+            } else if (parseActualParameters() && scanner.getSym().getType() == SEMICOLON) {
+                // this actually is a procedure call
+                scanner.processToken();
+                return true;
+            }
+        }
         return false;
     }
 
