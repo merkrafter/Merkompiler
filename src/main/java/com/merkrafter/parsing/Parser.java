@@ -45,6 +45,15 @@ public class Parser {
     }
 
     boolean parseMethodHead() {
+        if (scanner.getSym() instanceof KeywordToken
+            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC) {
+            scanner.processToken();
+            if (parseMethodType()) {
+                if (parseIdentifier()) {
+                    return parseFormalParameters();
+                }
+            }
+        }
         return false;
     }
 
