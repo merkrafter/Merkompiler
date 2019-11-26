@@ -45,6 +45,15 @@ public class Parser {
     }
 
     boolean parseMethodType() {
+        // expecting a keyword
+        if (scanner.getSym() instanceof KeywordToken && (
+                // check whether this is "void"
+                ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.VOID
+                //check whether this is "int"
+                || ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.INT)) {
+            scanner.processToken();
+            return true;
+        }
         return false;
     }
 
