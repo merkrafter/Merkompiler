@@ -62,6 +62,9 @@ public class Parser {
     }
 
     boolean parseFpSection() {
+        if (parseType()) {
+            return parseIdentifier(); // already reads the next token
+        }
         return false;
     }
 
