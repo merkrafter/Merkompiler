@@ -109,6 +109,14 @@ public class Parser {
         return false;
     }
 
+    boolean parseStatementSequence() {
+        return false;
+    }
+
+    boolean parseStatement() {
+        return false;
+    }
+
     /**
      * @return whether the current symbol is a KeywordToken and represents an "int"
      */
