@@ -58,6 +58,22 @@ public class Parser {
     }
 
     boolean parseFormalParameters() {
+        if (scanner.getSym().getType() == L_PAREN) {
+            scanner.processToken();
+            if (parseFpSection()) {
+                while (scanner.getSym().getType() == COMMA) {
+                    scanner.processToken();
+                    if (!parseFpSection()) {
+                        return false;
+                    }
+                }
+            }
+            if (scanner.getSym().getType() == R_PAREN) {
+                scanner.processToken();
+                return true;
+            }
+
+        }
         return false;
     }
 
