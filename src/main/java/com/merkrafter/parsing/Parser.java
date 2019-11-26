@@ -196,6 +196,14 @@ public class Parser {
         return false;
     }
 
+    boolean parseIfStatement() {
+        return false;
+    }
+
+    boolean parseWhileStatement() {
+        return false;
+    }
+
     boolean parseReturnStatement() {
         if (scanner.getSym() instanceof KeywordToken
             && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.RETURN) {
