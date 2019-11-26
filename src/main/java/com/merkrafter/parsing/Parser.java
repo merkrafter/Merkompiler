@@ -130,7 +130,22 @@ public class Parser {
     }
 
     boolean parseAssignment() {
-        if (parseIdentifier() && scanner.getSym().getType() == ASSIGN) {
+        if (parseIdentifier()) {
+            return parseAssignmentWithoutIdent();
+        }
+        return false;
+    }
+
+    /**
+     * This method is a helper for parsing assignments that assumes that the token stream was
+     * already checked for an identifier.
+     * It is needed to distinguish assignments and intern procedure calls who both start with
+     * an IDENT.
+     *
+     * @return whether tokens after an ident match the grammar of assignments
+     */
+    private boolean parseAssignmentWithoutIdent() {
+        if (scanner.getSym().getType() == ASSIGN) {
             scanner.processToken();
             if (parseExpression() && scanner.getSym().getType() == SEMICOLON) {
                 scanner.processToken();
