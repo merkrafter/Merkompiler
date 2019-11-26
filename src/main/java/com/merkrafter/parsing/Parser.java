@@ -69,6 +69,14 @@ public class Parser {
     }
 
     boolean parseLocalDeclaration() {
+        if (parseType()) {
+            if (parseIdentifier()) {
+                if (scanner.getSym().getType() == SEMICOLON) {
+                    scanner.processToken();
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
