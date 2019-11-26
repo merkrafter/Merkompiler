@@ -78,6 +78,141 @@ class ParserTest {
     }
 
     /**
+     * The parser should accept an assignment and a return statement as a statement sequence.
+     */
+    @Test
+    void parseStatementSequence() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new Token(TokenType.NUMBER, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new KeywordToken(Keyword.RETURN, "", 0, 0),
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatementSequence());
+    }
+
+    /**
+     * The parser should accept an assignment of the result of a binary operation to a variable
+     * as a statement sequence.
+     */
+    @ParameterizedTest
+    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
+    void parseAssignmentWithBinOpAsStatementSequence(final TokenType binOp) {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(binOp, "", 0, 0),
+                new Token(TokenType.NUMBER, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatementSequence());
+    }
+
+    /**
+     * The parser should accept a simple assignment of a number as a statement sequence.
+     */
+    @Test
+    void parseAssignmentAsStatementSequence() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new Token(TokenType.NUMBER, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatementSequence());
+    }
+
+    /**
+     * The parser should accept a simple procedure call as a statement sequence.
+     */
+    @Test
+    void parseProcedureCallAsStatementSequence() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new IdentToken("a", "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatementSequence());
+    }
+
+    /**
+     * The parser should accept a single return keyword as a statement sequence.
+     */
+    @Test
+    void parseStandaloneReturnAsStatementSequence() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.RETURN, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatementSequence());
+    }
+
+    /**
+     * The parser should accept an assignment of the result of a binary operation to a variable
+     * as a statement.
+     */
+    @ParameterizedTest
+    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
+    void parseAssignmentWithBinOpAsStatement(final TokenType binOp) {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(binOp, "", 0, 0),
+                new Token(TokenType.NUMBER, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatement());
+    }
+
+    /**
+     * The parser should accept a simple assignment of a number as a statement.
+     */
+    @Test
+    void parseAssignmentAsStatement() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new Token(TokenType.NUMBER, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatement());
+    }
+
+    /**
+     * The parser should accept a simple procedure call as a statement.
+     */
+    @Test
+    void parseProcedureCallAsStatement() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.IDENT, "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new IdentToken("a", "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatement());
+    }
+
+    /**
+     * The parser should accept a single return keyword as a statement.
+     */
+    @Test
+    void parseStandaloneReturnAsStatement() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.RETURN, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatement());
+    }
+
+    /**
      * The parser should accept a single "int" as a type.
      */
     @Test
