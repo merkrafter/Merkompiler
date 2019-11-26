@@ -44,6 +44,10 @@ public class Parser {
         return false;
     }
 
+    boolean parseMethodHead() {
+        return false;
+    }
+
     boolean parseMethodType() {
         // expecting a keyword
         if (scanner.getSym() instanceof KeywordToken && (
