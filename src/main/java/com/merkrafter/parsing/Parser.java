@@ -110,6 +110,10 @@ public class Parser {
     }
 
     boolean parseStatementSequence() {
+        if (parseStatement()) {
+            while(parseStatement()); // just read all statements for now; creating AST follows
+            return true;
+        }
         return false;
     }
 
