@@ -12,6 +12,22 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     /**
+     * The parser should accept simple method heads without any formal parameters.
+     */
+    @ParameterizedTest
+    @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
+    void parseMethodHead(final Keyword methodType) {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.PUBLIC, null, 1, 1),
+                new KeywordToken(methodType, null, 1, 1),
+                new IdentToken("foo", null, 1, 1),
+                new Token(TokenType.L_PAREN, null, 1, 1),
+                new Token(TokenType.R_PAREN, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseMethodHead());
+    }
+
+    /**
      * The parser should accept "void" and "int" as method types.
      */
     @ParameterizedTest
