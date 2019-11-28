@@ -45,6 +45,15 @@ public class Parser {
     }
 
     boolean parseClass() {
+        if (scanner.getSym() instanceof KeywordToken
+            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.CLASS) {
+            scanner.processToken();
+            if (parseIdentifier()) {
+                if (parseClassBody()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
