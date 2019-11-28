@@ -6,6 +6,7 @@ package com.merkrafter.lexing;
  * @author merkrafter
  ***************************************************************/
 public enum TokenType {
+    KEYWORD,
     IDENT,
     NUMBER,
     PLUS,
@@ -19,6 +20,7 @@ public enum TokenType {
     R_BRACE,
     L_SQ_BRACKET,
     R_SQ_BRACKET,
+    COMMA,
     SEMICOLON,
     EQUAL,
     LOWER_EQUAL,
