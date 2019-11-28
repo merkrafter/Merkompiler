@@ -5,6 +5,13 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * This class holds configuration data for this program.
@@ -46,6 +53,11 @@ public class Config {
                                                      .build()
                                                      .defaultHelp(true)
                                                      .description("Compiles JavaSST files");
+        try {
+            parser.version("${prog} " + getVersion());
+        } catch (XmlPullParserException | IOException ignored) {
+            parser.version("No version information available.");
+        }
         parser.addArgument("INPUT")
               .required(true)
               .type(String.class)
@@ -53,6 +65,9 @@ public class Config {
         parser.addArgument("-v", "--verbose")
               .action(Arguments.storeTrue())
               .help("print more information (absolute paths instead of simple file names in error messages, for instance");
+        parser.addArgument("-V", "--version")
+              .action(Arguments.version())
+              .help("print version information and exit");
         parser.addArgument("-o", "--output")
               .type(String.class)
               .metavar("OUTPUT")
@@ -96,5 +111,15 @@ public class Config {
                              outputFile,
                              verbose);
     }
+
+    /**
+     * Retrieve version information from the pom.xml file.
+     *
+     * @return a String containing the software version
+     */
+    private static String getVersion() throws IOException, XmlPullParserException {
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = reader.read(new FileReader("pom.xml"));
+        return model.getVersion();
     }
 }
