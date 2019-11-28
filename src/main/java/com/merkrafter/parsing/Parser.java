@@ -111,7 +111,7 @@ public class Parser {
 
     boolean parseStatementSequence() {
         if (parseStatement()) {
-            while(parseStatement()); // just read all statements for now; creating AST follows
+            while (parseStatement()) ; // just read all statements for now; creating AST follows
             return true;
         }
         return false;
@@ -294,7 +294,6 @@ public class Parser {
                 while (scanner.getSym().getType() == COMMA) {
                     scanner.processToken();
                     if (!parseExpression()) {
-                        error("Expected expression after comma in actual parameters");
                         return false;
                     }
                 }
@@ -302,14 +301,12 @@ public class Parser {
                 return true; // it is okay if no expression comes here
             }
         } else {
-            error("Expected left parenthesis in actual parameters");
             return false;
         }
         if (scanner.getSym().getType() == R_PAREN) {
             scanner.processToken();
             return true;
         } else {
-            error("Wrong use of parenthesis");
             return false;
         }
     }
@@ -328,7 +325,6 @@ public class Parser {
                     return true;
             }
         } else {
-            error("Error parsing expression");
             return false;
         }
     }
@@ -370,7 +366,6 @@ public class Parser {
             if (scanner.getSym().getType() == R_PAREN) {
                 scanner.processToken();
             } else {
-                error("Wrong use of parenthesis");
                 return false;
             }
             return success; // whether the above parseExpression() was successful
@@ -388,7 +383,6 @@ public class Parser {
             scanner.processToken();
             return true;
         } else {
-            error("Expected number but found " + scanner.getSym().getType().name());
             return false;
         }
     }
@@ -403,19 +397,8 @@ public class Parser {
             scanner.processToken();
             return true;
         } else {
-            error("Expected identifier but found " + scanner.getSym().getType().name());
             return false;
         }
-    }
-
-    /**
-     * Prints the given message to stderr.
-     * Change soon, as only the main class should be printing.
-     *
-     * @param msg the message to print
-     */
-    private static void error(final String msg) {
-        System.err.println(msg);
     }
 
 }
