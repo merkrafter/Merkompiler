@@ -102,6 +102,16 @@ public class Parser {
     }
 
     boolean parseMethodBody() {
+        if (scanner.getSym().getType() == L_BRACE) {
+            scanner.processToken();
+            while (parseLocalDeclaration()) ; // only iterate through them for now
+            if (parseStatementSequence()) {
+                if (scanner.getSym().getType() == R_BRACE) {
+                    scanner.processToken();
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
