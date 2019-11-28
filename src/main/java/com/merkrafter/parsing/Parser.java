@@ -45,6 +45,11 @@ public class Parser {
     }
 
     boolean parseMethodDeclaration() {
+        if (parseMethodHead()) {
+            if (parseMethodBody()) {
+                return true;
+            }
+        }
         return false;
     }
 
