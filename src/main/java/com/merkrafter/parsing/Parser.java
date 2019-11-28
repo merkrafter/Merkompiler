@@ -197,6 +197,43 @@ public class Parser {
     }
 
     boolean parseIfStatement() {
+        if (scanner.getSym() instanceof KeywordToken
+            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.IF) {
+            scanner.processToken();
+            // condition:
+            if (scanner.getSym().getType() == L_PAREN) {
+                scanner.processToken();
+                if (parseExpression()) {
+                    if (scanner.getSym().getType() == R_PAREN) {
+                        scanner.processToken();
+                        // if-associated block:
+                        if (scanner.getSym().getType() == L_BRACE) {
+                            scanner.processToken();
+                            if (parseStatementSequence()) {
+                                if (scanner.getSym().getType() == R_BRACE) {
+                                    scanner.processToken();
+                                    if (scanner.getSym() instanceof KeywordToken
+                                        && ((KeywordToken) scanner.getSym()).getKeyword()
+                                           == Keyword.ELSE) {
+                                        scanner.processToken();
+                                        // else-associated block
+                                        if (scanner.getSym().getType() == L_BRACE) {
+                                            scanner.processToken();
+                                            if (parseStatementSequence()) {
+                                                if (scanner.getSym().getType() == R_BRACE) {
+                                                    scanner.processToken();
+                                                    return true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
