@@ -13,6 +13,30 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     /**
+     * The parser should accept the declaration of a simple public void method without parameters
+     * that only returns a constant number.
+     */
+    @ParameterizedTest
+    @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
+    void parseMethodDeclaration(final Keyword methodType) {
+        final Scanner scanner = new TestScanner(new Token[]{
+                // method head
+                new KeywordToken(Keyword.PUBLIC, null, 1, 1),
+                new KeywordToken(methodType, null, 1, 1),
+                new IdentToken("foo", null, 1, 1),
+                new Token(TokenType.L_PAREN, null, 1, 1),
+                new Token(TokenType.R_PAREN, null, 1, 1),
+                // method body
+                new Token(TokenType.L_BRACE, null, 1, 1),
+                new KeywordToken(Keyword.RETURN, null, 1, 1),
+                new Token(TokenType.NUMBER, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1),
+                new Token(TokenType.R_BRACE, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseMethodDeclaration());
+    }
+
+    /**
      * The parser should accept simple method heads without any formal parameters.
      */
     @ParameterizedTest
@@ -63,6 +87,21 @@ class ParserTest {
                 new KeywordToken(Keyword.INT, null, 1, 1), new IdentToken("a", null, 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseFpSection());
+    }
+
+    /**
+     * The parser should accept a method body with only one return statement.
+     */
+    @Test
+    void parseMethodBody() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.L_BRACE, null, 1, 1),
+                new KeywordToken(Keyword.RETURN, null, 1, 1),
+                new Token(TokenType.NUMBER, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1),
+                new Token(TokenType.R_BRACE, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseMethodBody());
     }
 
     /**
