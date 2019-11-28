@@ -1,7 +1,6 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
-import jdk.nashorn.internal.codegen.types.Type;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
