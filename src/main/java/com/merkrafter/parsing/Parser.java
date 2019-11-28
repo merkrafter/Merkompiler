@@ -49,6 +49,16 @@ public class Parser {
     }
 
     boolean parseClassBody() {
+        if (scanner.getSym().getType() == L_BRACE) {
+            scanner.processToken();
+            if (parseDeclarations()) {
+                if (scanner.getSym().getType() == R_BRACE) {
+                    scanner.processToken();
+                    return true;
+                }
+            }
+
+        }
         return false;
     }
 
