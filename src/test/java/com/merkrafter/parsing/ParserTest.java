@@ -13,6 +13,51 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     /**
+     * The parser should accept "class MyClass {int a;}" as a class.
+     */
+    @Test
+    void parseClass() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.CLASS, null, 1, 1),
+                new IdentToken("MyClass", null, 1, 1),
+                new Token(TokenType.L_BRACE, null, 1, 1),
+                new KeywordToken(Keyword.INT, null, 1, 1),
+                new IdentToken("a", null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1),
+                new Token(TokenType.R_BRACE, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseClass());
+    }
+
+    /**
+     * The parser should accept a single "{int a;}" as a class body.
+     */
+    @Test
+    void parseClassBody() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new Token(TokenType.L_BRACE, null, 1, 1),
+                new KeywordToken(Keyword.INT, null, 1, 1),
+                new IdentToken("a", null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1),
+                new Token(TokenType.R_BRACE, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseClassBody());
+    }
+
+    /**
+     * The parser should accept a single "int a;" as a declaration.
+     */
+    @Test
+    void parseDeclarations() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.INT, null, 1, 1),
+                new IdentToken("a", null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1)});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseDeclarations());
+    }
+
+    /**
      * The parser should accept the declaration of a simple public void method without parameters
      * that only returns a constant number.
      */
