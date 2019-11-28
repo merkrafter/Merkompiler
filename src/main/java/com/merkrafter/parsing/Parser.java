@@ -201,6 +201,29 @@ public class Parser {
     }
 
     boolean parseWhileStatement() {
+        if (scanner.getSym() instanceof KeywordToken
+            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.WHILE) {
+            scanner.processToken();
+            // condition:
+            if (scanner.getSym().getType() == L_PAREN) {
+                scanner.processToken();
+                if (parseExpression()) {
+                    if (scanner.getSym().getType() == R_PAREN) {
+                        scanner.processToken();
+                        // associated block:
+                        if (scanner.getSym().getType() == L_BRACE) {
+                            scanner.processToken();
+                            if (parseStatementSequence()) {
+                                if (scanner.getSym().getType() == R_BRACE) {
+                                    scanner.processToken();
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
