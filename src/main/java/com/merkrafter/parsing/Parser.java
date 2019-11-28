@@ -44,6 +44,10 @@ public class Parser {
         return false;
     }
 
+    boolean parseMethodDeclaration() {
+        return false;
+    }
+
     boolean parseMethodHead() {
         if (scanner.getSym() instanceof KeywordToken
             && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC) {
@@ -94,6 +98,10 @@ public class Parser {
         if (parseType()) {
             return parseIdentifier(); // already reads the next token
         }
+        return false;
+    }
+
+    boolean parseMethodBody() {
         return false;
     }
 
