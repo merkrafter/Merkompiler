@@ -44,6 +44,18 @@ public class Parser {
         return false;
     }
 
+    boolean parseClass() {
+        return false;
+    }
+
+    boolean parseClassBody() {
+        return false;
+    }
+
+    boolean parseDeclarations() {
+        return false;
+    }
+
     boolean parseMethodDeclaration() {
         if (parseMethodHead()) {
             if (parseMethodBody()) {
