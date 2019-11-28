@@ -42,15 +42,20 @@ public class Config {
 
     public static Config fromArgs(final String[] args) throws ArgumentParserException {
         // define the parser
-        final ArgumentParser parser =
-                ArgumentParsers.newFor("Merkompiler").build().defaultHelp(true)
-                               .description("Compiles JavaSST files");
-
-        parser.addArgument("INPUT").required(true).type(String.class)
+        final ArgumentParser parser = ArgumentParsers.newFor("Merkompiler")
+                                                     .build()
+                                                     .defaultHelp(true)
+                                                     .description("Compiles JavaSST files");
+        parser.addArgument("INPUT")
+              .required(true)
+              .type(String.class)
               .help("JavaSST source code file");
-        parser.addArgument("-v", "--verbose").action(Arguments.storeTrue())
+        parser.addArgument("-v", "--verbose")
+              .action(Arguments.storeTrue())
               .help("print more information (absolute paths instead of simple file names in error messages, for instance");
-        parser.addArgument("-o", "--output").type(String.class).metavar("OUTPUT")
+        parser.addArgument("-o", "--output")
+              .type(String.class)
+              .metavar("OUTPUT")
               .help("output target; default is stdout");
 
 
@@ -86,7 +91,10 @@ public class Config {
      */
     @Override
     public String toString() {
-        return String
-                .format("Config(INPUT=%s, OUTPUT=%s, verbose=%b)", inputFile, outputFile, verbose);
+        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b)",
+                             inputFile,
+                             outputFile,
+                             verbose);
+    }
     }
 }
