@@ -53,6 +53,33 @@ public class Parser {
     }
 
     boolean parseDeclarations() {
+        // final declaration
+        while (parseFinalDeclaration()) ;
+        // type declaration
+        while (parseLocalDeclaration()) ;
+        // method declaration
+        while (parseMethodDeclaration()) ;
+        return true;
+    }
+
+    private boolean parseFinalDeclaration() {
+        if (scanner.getSym() instanceof KeywordToken
+            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.FINAL) {
+            scanner.processToken();
+            if (parseType()) {
+                if (parseIdentifier()) {
+                    if (scanner.getSym().getType() == ASSIGN) {
+                        scanner.processToken();
+                        if (parseExpression()) {
+                            if (scanner.getSym().getType() == SEMICOLON) {
+                                scanner.processToken();
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
