@@ -345,7 +345,7 @@ public class Scanner {
                 }
                 break;
             default:
-                sym = new Token(TokenType.OTHER, filename, line, position);
+                sym = new OtherToken(Character.toString(ch), filename, line, position);
                 this.loadNextCharSuccessfully();
         }
     }
