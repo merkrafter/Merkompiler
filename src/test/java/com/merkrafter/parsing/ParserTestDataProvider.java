@@ -18,6 +18,50 @@ public class ParserTestDataProvider {
     //==============================================================
     // public methods
     //--------------------------------------------------------------
+
+    /**
+     * This method generates a stream of TokenWrappers that are valid assignments EXCEPT they're
+     * lacking the ending semicolon.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> assignmentsWithoutSemicolon() {
+        return Stream.of(
+                // non-parameterized TokenWrappers
+                Stream.of(
+                        // direct assignment of a number to an identifier
+                        // actual number value does not matter
+                        new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                          .add(tokenFrom(TokenType.ASSIGN))
+                                          .add(tokenFrom(TokenType.NUMBER)),
+
+                        // direct assignment of an identifier to an identifier
+                        new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                          .add(tokenFrom(TokenType.ASSIGN))
+                                          .add(tokenFrom(TokenType.IDENT))),
+                // parameterized TokenWrappers
+                Stream.of(TokenType.PLUS, TokenType.MINUS, TokenType.TIMES, TokenType.DIVIDE)
+                      .map(binOp -> new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(TokenType.ASSIGN))
+                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(binOp))
+                                                      .add(tokenFrom(TokenType.NUMBER))))
+                     // merge all the above (outer) streams
+                     .flatMap(i -> i);
+    }
+
+    /**
+     * This method returns the same TokenWrappers as
+     * the {@link #assignmentsWithoutSemicolon() assignmentsWithoutSemicolon} method does but with
+     * semicolons appended. It therefore returns only valid assignments.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> assignments() {
+        return assignmentsWithoutSemicolon().map(tokenWrapper -> tokenWrapper.add(tokenFrom(
+                TokenType.SEMICOLON)));
+    }
+
     /**
      * Creates a new Token from a TokenType by setting file name, line and position number to some
      * default values in order to make increase the readability of test cases.
