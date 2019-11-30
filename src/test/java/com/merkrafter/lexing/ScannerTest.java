@@ -40,6 +40,19 @@ class ScannerTest {
     }
 
     /**
+     * The scanner should be able to detect "other" tokens, i.e. special characters that are not
+     * part of the language.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"$", "\"", "@", "_", "!", "§", "%", "&", "|", "^", "\\", "?", "~", "#"})
+    void scanOtherTokens(final String string) {
+        final String programCode = string;
+        final Token[] expectedTokenList = {
+                new OtherToken(string, null, 1, 1), new Token(EOF, null, 1, string.length())};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
      * The scanner should be able to detect number arguments.
      */
     @ParameterizedTest
