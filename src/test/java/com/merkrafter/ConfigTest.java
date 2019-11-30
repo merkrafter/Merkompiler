@@ -162,4 +162,15 @@ class ConfigTest {
 
         assertEquals(expectedStage, actualConfig.getStage());
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"parsing", "PARSING", "pArsing", "pArSinG"})
+    void skipAfterParsing(final String spelling) throws ArgumentParserException {
+        final String[] args = fromString(String.format("--skip-after %s Test.java", spelling));
+        final Config actualConfig = Config.fromArgs(args);
+
+        final CompilerStage expectedStage = CompilerStage.PARSING;
+
+        assertEquals(expectedStage, actualConfig.getStage());
+    }
 }
