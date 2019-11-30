@@ -41,7 +41,7 @@ public class Parser {
      * Parses the tokens given by the underlying token iterator.
      */
     public boolean parse() {
-        return false;
+        return parseClass() && scanner.getSym().getType() == EOF;
     }
 
     boolean parseClass() {

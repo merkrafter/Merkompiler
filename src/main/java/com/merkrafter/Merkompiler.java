@@ -1,9 +1,11 @@
 package com.merkrafter;
 
+import com.merkrafter.config.CompilerStage;
 import com.merkrafter.config.Config;
 import com.merkrafter.config.ErrorCode;
 import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
+import com.merkrafter.parsing.Parser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
 import java.io.File;
@@ -58,9 +60,17 @@ public class Merkompiler {
             out = new PrintStream(config.getOutputFile());
         }
 
-        do {
-            scanner.processToken();
-            out.println(scanner.getSym());
-        } while (scanner.getSym().getType() != TokenType.EOF);
+        if (config.getStage() == CompilerStage.SCANNING) {
+            // only print the tokens if the processing should stop after scanning
+            do {
+                scanner.processToken();
+                out.println(scanner.getSym());
+            } while (scanner.getSym().getType() != TokenType.EOF);
+        } else if (config.getStage() == CompilerStage.PARSING) {
+            final Parser parser = new Parser(scanner);
+            if (!parser.parse()) {
+                System.err.println("Parsing error!");
+            }
+        }
     }
 }
