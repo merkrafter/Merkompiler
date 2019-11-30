@@ -44,7 +44,7 @@ class MerkompilerRunTest {
      * The output file for this experiment will be named <code>baseFileName</code>{@value OUTPUT_FILE_SUFFIX}
      * and is created as a temporary file by JUnit.
      *
-     * @param baseFileName if used to find the source file name and expected file name and create the output file
+     * @param baseFileName is used to find the source file name and expected file name and create the output file
      * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
      * @throws IOException if there is a read/write error in one of the files
      */
@@ -78,7 +78,7 @@ class MerkompilerRunTest {
      * This method resets System.out in order to test the output written to it.
      * If this method throws an exception, System.out might still be unavailable.
      *
-     * @param baseFileName if used to find the source file name and expected file name
+     * @param baseFileName is used to find the source file name and expected file name
      * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
      * @throws IOException if there is a read/write error in one of the files
      */
