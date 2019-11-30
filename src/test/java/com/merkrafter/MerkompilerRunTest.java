@@ -1,5 +1,6 @@
 package com.merkrafter;
 
+import com.merkrafter.config.CompilerStage;
 import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.jupiter.api.io.TempDir;
@@ -49,7 +50,7 @@ class MerkompilerRunTest {
      */
     @ParameterizedTest
     @ValueSource(strings = "EmptyClass")
-    void runWithOutputCreatesFile(final String baseFileName)
+    void scanWithOutputCreatesFile(final String baseFileName)
     throws ArgumentParserException, IOException {
         // java source file to read
         final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
@@ -58,7 +59,8 @@ class MerkompilerRunTest {
         // file where the program output is written to
         final File outputFile = tempDir.resolve(baseFileName + OUTPUT_FILE_SUFFIX).toFile();
 
-        final Config config = Config.fromArgs(String.format("%s --output %s",
+        final Config config = Config.fromArgs(String.format("--skip-after %s %s --output %s",
+                                                            CompilerStage.SCANNING.toString(),
                                                             inputFile.getAbsolutePath(),
                                                             outputFile.getAbsolutePath()));
         Merkompiler.run(config);
@@ -82,7 +84,7 @@ class MerkompilerRunTest {
      */
     @ParameterizedTest
     @ValueSource(strings = "EmptyClass")
-    void runWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
+    void scanWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
         final PrintStream originalOut = System.out;
         try { // will reset System.out in case of errors
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -95,7 +97,9 @@ class MerkompilerRunTest {
             System.setOut(new PrintStream(output));
 
             // run main program without specifying output
-            final Config config = Config.fromArgs(inputFile.getAbsolutePath());
+            final Config config = Config.fromArgs(String.format("--skip-after %s %s",
+                                                                CompilerStage.SCANNING.toString(),
+                                                                inputFile.getAbsolutePath()));
             Merkompiler.run(config);
 
             assertEquals(toString(expectedFile), output.toString().trim());

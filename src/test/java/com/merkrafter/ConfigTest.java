@@ -1,8 +1,11 @@
 package com.merkrafter;
 
+import com.merkrafter.config.CompilerStage;
 import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.merkrafter.config.Config.fromString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -149,4 +152,35 @@ class ConfigTest {
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"scanning", "SCANNING", "sCanning", "sCaNnInG"})
+    void skipAfterScanning(final String spelling) throws ArgumentParserException {
+        final String[] args = fromString(String.format("--skip-after %s Test.java", spelling));
+        final Config actualConfig = Config.fromArgs(args);
+
+        final CompilerStage expectedStage = CompilerStage.SCANNING;
+
+        assertEquals(expectedStage, actualConfig.getStage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"parsing", "PARSING", "pArsing", "pArSinG"})
+    void skipAfterParsing(final String spelling) throws ArgumentParserException {
+        final String[] args = fromString(String.format("--skip-after %s Test.java", spelling));
+        final Config actualConfig = Config.fromArgs(args);
+
+        final CompilerStage expectedStage = CompilerStage.PARSING;
+
+        assertEquals(expectedStage, actualConfig.getStage());
+    }
+
+    @Test
+    void defaultStage() throws ArgumentParserException {
+        final String[] args = fromString("Test.java");
+        final Config actualConfig = Config.fromArgs(args);
+
+        final CompilerStage expectedStage = CompilerStage.PARSING;
+
+        assertEquals(expectedStage, actualConfig.getStage());
+    }
 }
