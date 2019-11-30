@@ -125,7 +125,7 @@ class MerkompilerRunTest {
      * @throws IOException if there is a read/write error in the input file
      */
     @ParameterizedTest
-    @ValueSource(strings = "EmptyClass")
+    @ValueSource(strings = "SmokeClass")
     void parseWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
         final PrintStream originalOut = System.out;
         try { // will reset System.out in case of errors
