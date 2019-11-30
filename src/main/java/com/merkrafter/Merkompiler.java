@@ -68,7 +68,9 @@ public class Merkompiler {
             } while (scanner.getSym().getType() != TokenType.EOF);
         } else if (config.getStage() == CompilerStage.PARSING) {
             final Parser parser = new Parser(scanner);
-            out.println(parser.parse());
+            if (!parser.parse()) {
+                out.println("Parsing error!");
+            }
         }
     }
 }
