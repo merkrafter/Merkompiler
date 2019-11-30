@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
@@ -103,6 +104,45 @@ class MerkompilerRunTest {
             Merkompiler.run(config);
 
             assertEquals(toString(expectedFile), output.toString().trim());
+        } finally {
+            System.setOut(originalOut); // reset System.out even in case of errors
+        }
+    }
+
+    /**
+     * This test case runs the lexer and parser on the file(s) given by ValueSource.
+     * If there is no syntax error, the program should not write anything to stdout.
+     * This test assumes that there is <code>baseFileName</code>{@value INPUT_FILE_SUFFIX} present under
+     * <code>src/test/resources</code> in the project.
+     * The output for this experiment is not specified by a CLI argument, hence it tests writing to
+     * stdout.
+     * <p>
+     * This method resets System.out in order to test the output written to it.
+     * If this method throws an exception, System.out might still be unavailable.
+     *
+     * @param baseFileName is used to find the source file name
+     * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
+     * @throws IOException if there is a read/write error in the input file
+     */
+    @ParameterizedTest
+    @ValueSource(strings = "EmptyClass")
+    void parseWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
+        final PrintStream originalOut = System.out;
+        try { // will reset System.out in case of errors
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+            // java source file to read
+            final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
+            // set stdout to testable output stream
+            System.setOut(new PrintStream(output));
+
+            // run main program without specifying output
+            final Config config = Config.fromArgs(String.format("--skip-after %s %s",
+                                                                CompilerStage.PARSING.toString(),
+                                                                inputFile.getAbsolutePath()));
+            Merkompiler.run(config);
+
+            assertTrue(output.toString().trim().isEmpty());
         } finally {
             System.setOut(originalOut); // reset System.out even in case of errors
         }
