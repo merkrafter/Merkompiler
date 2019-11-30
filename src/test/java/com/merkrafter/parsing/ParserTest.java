@@ -285,6 +285,63 @@ class ParserTest {
     }
 
     /**
+     * The parser should accept a simple if-else construct as a statement, that is an "if" keyword,
+     * a comparison between an identifier and a number as the condition and blocks with single
+     * assignments for if and else.
+     */
+    @Test
+    void parseSimpleIfAsStatement() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.IF, null, 1, 1),
+                new Token(TokenType.L_PAREN, null, 1, 1),
+                new Token(TokenType.IDENT, null, 1, 1),
+                new Token(TokenType.EQUAL, null, 1, 1),
+                new Token(TokenType.NUMBER, null, 1, 1),
+                new Token(TokenType.R_PAREN, null, 1, 1),
+
+                new Token(TokenType.L_BRACE, null, 1, 1),
+                new Token(TokenType.IDENT, null, 1, 1),
+                new Token(TokenType.ASSIGN, null, 1, 1),
+                new Token(TokenType.NUMBER, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1),
+                new Token(TokenType.R_BRACE, null, 1, 1),
+
+                new KeywordToken(Keyword.ELSE, null, 1, 1),
+                new Token(TokenType.L_BRACE, null, 1, 1),
+                new Token(TokenType.IDENT, null, 1, 1),
+                new Token(TokenType.ASSIGN, null, 1, 1),
+                new Token(TokenType.NUMBER, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1),
+                new Token(TokenType.R_BRACE, null, 1, 1),});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatement());
+    }
+
+    /**
+     * The parser should accept a simple while loop as a statement, that is a "while" keyword, a
+     * comparison between an identifier and a number as the condition and a block that has only an
+     * assignment inside it.
+     */
+    @Test
+    void parseSimpleWhileAsStatement() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.WHILE, null, 1, 1),
+                new Token(TokenType.L_PAREN, null, 1, 1),
+                new Token(TokenType.IDENT, null, 1, 1),
+                new Token(TokenType.EQUAL, null, 1, 1),
+                new Token(TokenType.NUMBER, null, 1, 1),
+                new Token(TokenType.R_PAREN, null, 1, 1),
+                new Token(TokenType.L_BRACE, null, 1, 1),
+                new Token(TokenType.IDENT, null, 1, 1),
+                new Token(TokenType.ASSIGN, null, 1, 1),
+                new Token(TokenType.NUMBER, null, 1, 1),
+                new Token(TokenType.SEMICOLON, null, 1, 1),
+                new Token(TokenType.R_BRACE, null, 1, 1),});
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseStatement());
+    }
+
+    /**
      * The parser should accept a single return keyword as a statement.
      */
     @Test
