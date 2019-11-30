@@ -4,6 +4,7 @@ import com.merkrafter.lexing.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 
@@ -365,35 +366,29 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept an assignment of the result of a binary operation to a variable,
-     * as "a = a*5;".
+     * The parser should be able to parse assignments.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#assignments()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
-    void parseAssignmentWithBinOp(final TokenType binOp) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(binOp, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#assignments")
+    void parseAssignment(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseAssignment());
     }
 
     /**
-     * The parser should accept a direct assignment of a number to a variable ident, as "a = 5;".
+     * The parser should be able to detect syntactically wrong assignments.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#assignmentsWithoutSemicolon()}
      */
-    @Test
-    void parseDirectAssignmentOfNumber() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#assignmentsWithoutSemicolon")
+    void parseFaultyAssignment(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseAssignment());
+        assertFalse(parser.parseAssignment());
     }
 
     /**
