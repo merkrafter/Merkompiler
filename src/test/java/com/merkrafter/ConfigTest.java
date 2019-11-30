@@ -173,4 +173,14 @@ class ConfigTest {
 
         assertEquals(expectedStage, actualConfig.getStage());
     }
+
+    @Test
+    void defaultStage() throws ArgumentParserException {
+        final String[] args = fromString("Test.java");
+        final Config actualConfig = Config.fromArgs(args);
+
+        final CompilerStage expectedStage = CompilerStage.PARSING;
+
+        assertEquals(expectedStage, actualConfig.getStage());
+    }
 }
