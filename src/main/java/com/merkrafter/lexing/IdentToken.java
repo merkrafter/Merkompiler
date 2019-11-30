@@ -30,7 +30,7 @@ public class IdentToken extends Token {
     //==============================================================
 
     /**
-     * @return the keyword this token stands for
+     * @return the identifier this token stands for
      */
     String getIdent() {
         return ident;
@@ -57,7 +57,7 @@ public class IdentToken extends Token {
     }
 
     /**
-     * Creates a String representation of this KeywordToken in the following format:
+     * Creates a String representation of this IdentToken in the following format:
      * FILENAME(LINE,POSITION): TYPE(IDENT)
      *
      * @return a String representation of this IdentToken
