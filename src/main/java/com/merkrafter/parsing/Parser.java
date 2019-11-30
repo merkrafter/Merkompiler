@@ -205,6 +205,12 @@ public class Parser {
         if (parseStatementForAssignmentOrProcedureCall()) {
             return true;
         }
+        if (parseIfStatement()) {
+            return true;
+        }
+        if (parseWhileStatement()) {
+            return true;
+        }
         if (parseReturnStatement()) {
             return true;
         }
