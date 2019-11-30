@@ -27,4 +27,13 @@ public enum CompilerStage {
     public String toString() {
         return name().toLowerCase();
     }
+
+    /**
+     * Returns the latest stage this enum currently offers in terms of processing data.
+     *
+     * @return the latest available compiler stage
+     */
+    public static CompilerStage latest() {
+        return PARSING;
+    }
 }
