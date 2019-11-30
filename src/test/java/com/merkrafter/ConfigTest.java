@@ -151,7 +151,7 @@ class ConfigTest {
         final String[] args = fromString("Test.java");
         final Config actualConfig = Config.fromArgs(args);
 
-        final CompilerStage expectedStage = CompilerStage.PARSING;
+        final CompilerStage expectedStage = CompilerStage.latest();
 
         assertEquals(expectedStage, actualConfig.getStage());
     }
