@@ -32,11 +32,9 @@ class ConfigTest {
         final Config actualConfig = Config.fromArgs(args);
 
         final String expectedInputFilename = "Test.java";
-        final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -46,11 +44,9 @@ class ConfigTest {
         final Config actualConfig = Config.fromArgs(args);
 
         final String expectedInputFilename = "Test.java";
-        final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -60,11 +56,9 @@ class ConfigTest {
         final Config actualConfig = Config.fromArgs(args);
 
         final String expectedInputFilename = "Test.java";
-        final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -74,11 +68,9 @@ class ConfigTest {
         final Config actualConfig = Config.fromArgs(args);
 
         final String expectedInputFilename = "Test.java";
-        final String expectedOutputFilename = null;
         final boolean expectedVerbosity = true;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
@@ -89,11 +81,9 @@ class ConfigTest {
 
         final String expectedInputFilename = "Test.java";
         final String expectedOutputFilename = "OtherTest.class";
-        final boolean expectedVerbosity = false;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
         assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
-        assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
     @Test
@@ -103,11 +93,9 @@ class ConfigTest {
 
         final String expectedInputFilename = "Test.java";
         final String expectedOutputFilename = "OtherTest.class";
-        final boolean expectedVerbosity = false;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
         assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
-        assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
     @Test
@@ -117,11 +105,9 @@ class ConfigTest {
 
         final String expectedInputFilename = "Test.java";
         final String expectedOutputFilename = "OtherTest.class";
-        final boolean expectedVerbosity = false;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
         assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
-        assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
     @Test
@@ -131,11 +117,9 @@ class ConfigTest {
 
         final String expectedInputFilename = "Test.java";
         final String expectedOutputFilename = "OtherTest.class";
-        final boolean expectedVerbosity = false;
 
         assertEquals(expectedInputFilename, actualConfig.getInputFile());
         assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
-        assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
     @Test
