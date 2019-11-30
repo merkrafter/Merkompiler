@@ -72,6 +72,9 @@ public class Config {
               .type(String.class)
               .metavar("OUTPUT")
               .help("output target; default is stdout");
+        parser.addArgument("--skip-after")
+              .type(Arguments.caseInsensitiveEnumType(CompilerStage.class))
+              .help("only process the input file up to the given stage (including)");
 
 
         // parse the arguments
