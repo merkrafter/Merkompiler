@@ -2,6 +2,8 @@ package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 /****
@@ -54,5 +56,44 @@ public class ParserTestDataProvider {
      */
     static Token tokenFrom(final long number) {
         return new NumberToken(number, null, 1, 1);
+    }
+
+    /**
+     * This class serves as a wrapper around a list of tokens as directly passing around lists/arrays
+     * of tokens from the provider to the test methods does not work, as they're merged into one big
+     * stream of Tokens.
+     */
+    static class TokenWrapper {
+        private List<Token> tokenList;
+
+        TokenWrapper() {
+            tokenList = new LinkedList<>();
+        }
+
+        /**
+         * Adds the given token at the end of the token list and returns this TokenWrapper instance.
+         *
+         * @param token a token to append to this token wrapper
+         * @return itself in order to allow chaining
+         */
+        TokenWrapper add(final Token token) {
+            tokenList.add(token);
+            return this;
+        }
+
+        /**
+         * @return the stored tokens as an array
+         */
+        Token[] getTokens() {
+            return tokenList.toArray(new Token[0]);
+        }
+
+        /**
+         * @return the string representation of the underlying token list
+         */
+        @Override
+        public String toString() {
+            return tokenList.toString();
+        }
     }
 }
