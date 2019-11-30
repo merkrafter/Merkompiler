@@ -69,7 +69,7 @@ public class Merkompiler {
         } else if (config.getStage() == CompilerStage.PARSING) {
             final Parser parser = new Parser(scanner);
             if (!parser.parse()) {
-                out.println("Parsing error!");
+                System.err.println("Parsing error!");
             }
         }
     }
