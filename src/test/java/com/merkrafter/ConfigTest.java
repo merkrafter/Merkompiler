@@ -26,9 +26,12 @@ class ConfigTest {
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
-    @Test
-    void parseInputFileWithVerbosityShortFirst() throws ArgumentParserException {
-        final String[] args = fromString("-v Test.java");
+    @ParameterizedTest
+    // {short, long} x {before input file, after input file}
+    @ValueSource(strings = {
+            "-v Test.java", "--verbose Test.java", "Test.java -v", "Test.java --verbose"})
+    void parseInputFileWithVerbosity(final String string) throws ArgumentParserException {
+        final String[] args = fromString(string);
         final Config actualConfig = Config.fromArgs(args);
 
         final String expectedInputFilename = "Test.java";
@@ -38,81 +41,15 @@ class ConfigTest {
         assertEquals(expectedVerbosity, actualConfig.isVerbose());
     }
 
-    @Test
-    void parseInputFileWithVerbosityShortAfter() throws ArgumentParserException {
-        final String[] args = fromString("Test.java -v");
-        final Config actualConfig = Config.fromArgs(args);
-
-        final String expectedInputFilename = "Test.java";
-        final boolean expectedVerbosity = true;
-
-        assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedVerbosity, actualConfig.isVerbose());
-    }
-
-    @Test
-    void parseInputFileWithVerbosityLongFirst() throws ArgumentParserException {
-        final String[] args = fromString("--verbose Test.java");
-        final Config actualConfig = Config.fromArgs(args);
-
-        final String expectedInputFilename = "Test.java";
-        final boolean expectedVerbosity = true;
-
-        assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedVerbosity, actualConfig.isVerbose());
-    }
-
-    @Test
-    void parseInputFileWithVerbosityLongAfter() throws ArgumentParserException {
-        final String[] args = fromString("Test.java --verbose");
-        final Config actualConfig = Config.fromArgs(args);
-
-        final String expectedInputFilename = "Test.java";
-        final boolean expectedVerbosity = true;
-
-        assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedVerbosity, actualConfig.isVerbose());
-    }
-
-    @Test
-    void parseInputFileAndShortOutputFileFirst() throws ArgumentParserException {
-        final String[] args = fromString("-o OtherTest.class Test.java");
-        final Config actualConfig = Config.fromArgs(args);
-
-        final String expectedInputFilename = "Test.java";
-        final String expectedOutputFilename = "OtherTest.class";
-
-        assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
-    }
-
-    @Test
-    void parseInputFileAndShortOutputFileAfter() throws ArgumentParserException {
-        final String[] args = fromString("Test.java -o OtherTest.class");
-        final Config actualConfig = Config.fromArgs(args);
-
-        final String expectedInputFilename = "Test.java";
-        final String expectedOutputFilename = "OtherTest.class";
-
-        assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
-    }
-
-    @Test
-    void parseInputFileAndLongOutputFileFirst() throws ArgumentParserException {
-        final String[] args = fromString("--output OtherTest.class Test.java");
-        final Config actualConfig = Config.fromArgs(args);
-
-        final String expectedInputFilename = "Test.java";
-        final String expectedOutputFilename = "OtherTest.class";
-
-        assertEquals(expectedInputFilename, actualConfig.getInputFile());
-        assertEquals(expectedOutputFilename, actualConfig.getOutputFile());
-    }
-
-    @Test
-    void parseInputFileAndLongOutputFileAfter() throws ArgumentParserException {
-        final String[] args = fromString("Test.java --output OtherTest.class");
+    @ParameterizedTest
+    // {short, long} x {before input file, after input file}
+    @ValueSource(strings = {
+            "-o OtherTest.class Test.java",
+            "--output OtherTest.class Test.java",
+            "Test.java -o OtherTest.class",
+            "Test.java --output OtherTest.class"})
+    void parseInputFileAndOutputFile(final String string) throws ArgumentParserException {
+        final String[] args = fromString(string);
         final Config actualConfig = Config.fromArgs(args);
 
         final String expectedInputFilename = "Test.java";
