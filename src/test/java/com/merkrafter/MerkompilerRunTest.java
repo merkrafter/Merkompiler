@@ -14,8 +14,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
@@ -145,6 +144,44 @@ class MerkompilerRunTest {
             assertTrue(output.toString().trim().isEmpty());
         } finally {
             System.setOut(originalOut); // reset System.out even in case of errors
+        }
+    }
+
+    /**
+     * This test case runs the lexer and parser on the faulty file(s) given by ValueSource.
+     * Since there are syntax errors, the program should write some error message(s) to stderr.
+     * This test assumes that there is <code>baseFileName</code>{@value INPUT_FILE_SUFFIX} present
+     * under <code>src/test/resources</code> in the project.
+     * <p>
+     * This method resets System.err in order to test the output written to it.
+     * If this method throws an exception, System.err might still be unavailable.
+     *
+     * @param baseFileName is used to find the source file name
+     * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
+     * @throws IOException if there is a read/write error in the input file
+     */
+    @ParameterizedTest
+    @ValueSource(strings = "EmptyClass")
+    void parseFaultyFile(final String baseFileName) throws ArgumentParserException, IOException {
+        final PrintStream originalErr = System.err;
+        try { // will reset System.err in case of crashes
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+            // java source file to read
+            final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
+            // set stderr to testable output stream
+            System.setErr(new PrintStream(output));
+
+            // run main program without specifying output
+            final Config config = Config.fromArgs(String.format("--skip-after %s %s",
+                                                                CompilerStage.PARSING.toString(),
+                                                                inputFile.getAbsolutePath()));
+            Merkompiler.run(config);
+
+            // the compiler should output some message
+            assertFalse(output.toString().trim().isEmpty());
+        } finally {
+            System.setErr(originalErr); // reset System.err even in case of crashes
         }
     }
 
