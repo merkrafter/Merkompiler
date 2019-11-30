@@ -45,12 +45,27 @@ class ScannerTest {
     @ParameterizedTest
     // edge cases 0 and MAX_VALUE, one, two and three digit numbers
     @ValueSource(longs = {0, 1, 10, 123, Long.MAX_VALUE})
-    void scanNumber(final long number) {
+    void scanNormalNumbers(final long number) {
         final String programCode = Long.toString(number);
         final Token[] expectedTokenList = {
                 new NumberToken(number, null, 1, 1),
                 new Token(EOF, null, 1, Long.toString(number).length())};
         shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to detect special number arguments, i.e. with leading zeros.
+     */
+    @ParameterizedTest
+    // all values should be decimal 8's, because in JavaSST there are no octal numbers hence these
+    // value source numbers will cause an error when trying to evaluate them as octal.
+    @ValueSource(strings = {"08", "008"})
+    void scanSpecialNumbers(final String number) {
+        final long expectedNumber = 8;
+        final Token[] expectedTokenList = {
+                new NumberToken(expectedNumber, null, 1, 1),
+                new Token(EOF, null, 1, number.length())};
+        shouldScan(number, expectedTokenList);
     }
 
     /**
