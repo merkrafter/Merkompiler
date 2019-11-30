@@ -18,4 +18,13 @@ public enum CompilerStage {
      * Scan and parse the input and output whether this was successful.
      */
     PARSING;
+
+
+    /**
+     * @return the lowercase name of this enum item
+     */
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
 }
