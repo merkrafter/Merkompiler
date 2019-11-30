@@ -133,9 +133,11 @@ public class Scanner {
                 do {
                     num += ch;
                     if (!this.loadNextCharSuccessfully()) {
+                        setNumber(); // parse the num attribute to a NumberToken
                         return;
                     }
                 } while (ch >= '0' && ch <= '9');
+                setNumber(); // parse the num attribute to a NumberToke
                 break;
             case 'a':
             case 'b':
@@ -343,7 +345,7 @@ public class Scanner {
                 }
                 break;
             default:
-                sym = new Token(TokenType.OTHER, filename, line, position);
+                sym = new OtherToken(Character.toString(ch), filename, line, position);
                 this.loadNextCharSuccessfully();
         }
     }
@@ -408,6 +410,21 @@ public class Scanner {
         } catch (IllegalArgumentException ignored) {
             // id is not a keyword
             sym = new IdentToken(id, sym.getFilename(), sym.getLine(), sym.getPosition());
+        }
+    }
+
+    /**
+     * Tests whether num currently holds a number. If that's the case, <code>sym</code> is changed
+     * to a NumberToken. Else, a OTHER TokenType is emitted in order to indicate an error.
+     */
+    private void setNumber() {
+        try {
+            final long number = Long.parseLong(num);
+            // if this actually is a number:
+            sym = new NumberToken(number, sym.getFilename(), sym.getLine(), sym.getPosition());
+        } catch (NumberFormatException ignored) {
+            // id is not a number
+            sym = new Token(TokenType.OTHER, sym.getFilename(), sym.getLine(), sym.getPosition());
         }
     }
 
