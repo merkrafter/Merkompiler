@@ -116,9 +116,23 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithSpaces() {
         final String programCode = "int result = a + ( b - c ) * d / e;";
-        final TokenType[] expectedTokenList =
-                {KEYWORD, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
-                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                IDENT,
+                ASSIGN,
+                IDENT,
+                PLUS,
+                L_PAREN,
+                IDENT,
+                MINUS,
+                IDENT,
+                R_PAREN,
+                TIMES,
+                IDENT,
+                DIVIDE,
+                IDENT,
+                SEMICOLON,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -141,9 +155,23 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithoutWhitespace() {
         final String programCode = "int result=a+(b-c)*d/e;";
-        final TokenType[] expectedTokenList =
-                {KEYWORD, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
-                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                IDENT,
+                ASSIGN,
+                IDENT,
+                PLUS,
+                L_PAREN,
+                IDENT,
+                MINUS,
+                IDENT,
+                R_PAREN,
+                TIMES,
+                IDENT,
+                DIVIDE,
+                IDENT,
+                SEMICOLON,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -217,8 +245,7 @@ class ScannerTest {
      */
     @org.junit.jupiter.api.Test
     void scanAndIgnoreBlockCommentsMultiline() {
-        final String programCode =
-                "/*\nThis is a description of the method\n*/public void draw();";
+        final String programCode = "/*\nThis is a description of the method\n*/public void draw();";
         final TokenType[] expectedTokenList =
                 {KEYWORD, KEYWORD, IDENT, L_PAREN, R_PAREN, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
@@ -264,9 +291,19 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanMainFunction() {
         final String programCode = "public void main(String[] args) {}";
-        final TokenType[] expectedTokenList =
-                {KEYWORD, KEYWORD, IDENT, L_PAREN, IDENT, L_SQ_BRACKET, R_SQ_BRACKET, IDENT,
-                        R_PAREN, L_BRACE, R_BRACE, EOF};
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                KEYWORD,
+                IDENT,
+                L_PAREN,
+                IDENT,
+                L_SQ_BRACKET,
+                R_SQ_BRACKET,
+                IDENT,
+                R_PAREN,
+                L_BRACE,
+                R_BRACE,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -331,9 +368,19 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanMethodCallWithMultipleArguments() {
         final String programCode = "int sum = add(a,b,5)";
-        final TokenType[] expectedTokenList =
-                {KEYWORD, IDENT, ASSIGN, IDENT, L_PAREN, IDENT, COMMA, IDENT, COMMA, NUMBER, R_PAREN,
-                        EOF};
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                IDENT,
+                ASSIGN,
+                IDENT,
+                L_PAREN,
+                IDENT,
+                COMMA,
+                IDENT,
+                COMMA,
+                NUMBER,
+                R_PAREN,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
