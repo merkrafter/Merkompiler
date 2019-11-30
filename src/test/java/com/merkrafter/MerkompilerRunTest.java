@@ -49,7 +49,7 @@ class MerkompilerRunTest {
      * @throws IOException if there is a read/write error in one of the files
      */
     @ParameterizedTest
-    @ValueSource(strings = "EmptyClass")
+    @ValueSource(strings = {"EmptyClass", "SmokeClass"})
     void scanWithOutputCreatesFile(final String baseFileName)
     throws ArgumentParserException, IOException {
         // java source file to read
@@ -83,7 +83,7 @@ class MerkompilerRunTest {
      * @throws IOException if there is a read/write error in one of the files
      */
     @ParameterizedTest
-    @ValueSource(strings = "EmptyClass")
+    @ValueSource(strings = {"EmptyClass", "SmokeClass"})
     void scanWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
         final PrintStream originalOut = System.out;
         try { // will reset System.out in case of errors
