@@ -25,10 +25,14 @@ public class Config {
 
     private final boolean verbose;
 
-    private Config(final String inputFile, final String outputFile, boolean verbose) {
+    private final CompilerStage stage;
+
+    private Config(final String inputFile, final String outputFile, boolean verbose,
+                   final CompilerStage stage) {
         this.inputFile = inputFile;
         this.outputFile = outputFile;
         this.verbose = verbose;
+        this.stage = stage;
     }
 
     public String getInputFile() {
@@ -74,6 +78,8 @@ public class Config {
               .help("output target; default is stdout");
         parser.addArgument("--skip-after")
               .type(Arguments.caseInsensitiveEnumType(CompilerStage.class))
+              .dest("compilerStage")
+              .setDefault(CompilerStage.latest())
               .help("only process the input file up to the given stage (including)");
 
 
@@ -85,13 +91,16 @@ public class Config {
         String inputFileName = null;
         String outputFileName = null;
         boolean verbose = false;
+        CompilerStage stage = CompilerStage.latest();
 
         if (namespace != null) {
             inputFileName = namespace.getString("INPUT");
             outputFileName = namespace.getString("output");
             verbose = namespace.getBoolean("verbose");
+            stage = namespace.get("compilerStage");
         }
-        return new Config(inputFileName, outputFileName, verbose);
+
+        return new Config(inputFileName, outputFileName, verbose, stage);
     }
 
     /**
@@ -109,10 +118,11 @@ public class Config {
      */
     @Override
     public String toString() {
-        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b)",
+        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, stage=%s)",
                              inputFile,
                              outputFile,
-                             verbose);
+                             verbose,
+                             stage);
     }
 
     /**
