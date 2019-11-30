@@ -47,6 +47,10 @@ public class Config {
         return verbose;
     }
 
+    public CompilerStage getStage() {
+        return stage;
+    }
+
     public static Config fromArgs(final String args) throws ArgumentParserException {
         return fromArgs(fromString(args));
     }
