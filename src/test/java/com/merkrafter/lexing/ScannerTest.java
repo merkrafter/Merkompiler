@@ -3,6 +3,7 @@ package com.merkrafter.lexing;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,6 +37,20 @@ class ScannerTest {
     void setUp() {
         stringIterator = new StringIterator();
         scanner = new Scanner(stringIterator);
+    }
+
+    /**
+     * The scanner should be able to detect number arguments.
+     */
+    @ParameterizedTest
+    // edge cases 0 and MAX_VALUE, one, two and three digit numbers
+    @ValueSource(longs = {0, 1, 10, 123, Long.MAX_VALUE})
+    void scanNumber(final long number) {
+        final String programCode = Long.toString(number);
+        final Token[] expectedTokenList = {
+                new NumberToken(number, null, 1, 1),
+                new Token(EOF, null, 1, Long.toString(number).length())};
+        shouldScan(programCode, expectedTokenList);
     }
 
     /**
