@@ -44,6 +44,8 @@ class ConfigTest {
     @ParameterizedTest
     // {short, long} x {before input file, after input file}
     @ValueSource(strings = {
+            "-o=OtherTest.class Test.java",
+            "--output=OtherTest.class Test.java",
             "-o OtherTest.class Test.java",
             "--output OtherTest.class Test.java",
             "Test.java -o OtherTest.class",
@@ -60,8 +62,8 @@ class ConfigTest {
     }
 
     @Test
-    void parseInputFileAndOutputFileAndVerbosity() throws ArgumentParserException {
-        final String[] args = fromString("--verbose Test.java --output OtherTest.class");
+    void parseInputFileAndOutputFileWithVerbosity() throws ArgumentParserException {
+        final String[] args = fromString("-v -o OtherTest.class Test.java");
         final Config actualConfig = Config.fromArgs(args);
 
         final String expectedInputFilename = "Test.java";
