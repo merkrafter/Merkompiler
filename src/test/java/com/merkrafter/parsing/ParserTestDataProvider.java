@@ -63,6 +63,15 @@ public class ParserTestDataProvider {
     }
 
     /**
+     * This method generates a stream of TokenWrappers that are valid procedure calls.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> procedureCalls() {
+        return internProcedureCalls().map(tokenWrapper -> tokenWrapper.add(tokenFrom(TokenType.SEMICOLON)));
+    }
+
+    /**
      * This method generates a stream of TokenWrappers that are valid intern procedure calls.
      *
      * @return a stream of TokenWrappers that define the test data
