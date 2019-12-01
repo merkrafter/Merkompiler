@@ -8,6 +8,15 @@ import java.util.stream.Stream;
 
 /****
  * This class serves as a test data provider for ParserTest.
+ * All non-private methods of this class are static and return a stream
+ * of TokenWrappers (essentially lists of Tokens) that satisfy certain syntax criteria.
+ * <p>
+ * The methods are organized hierarchically which means that {@link #statements()} joins the tokens
+ * from {@link #assignments()}, {@link #returnStatements()} and some other, for instance.
+ * <p>
+ * This file also defines some static methods that allow the fast creation of
+ * tokens without the need to specify the filename, line and position numbers
+ * as they are not relevant for the syntax analysis tests.
  *
  * @version v0.2.0
  * @author merkrafter
@@ -21,6 +30,7 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid statements.
+     * They are a union of assignments, procedure calls, if, while and return statements.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -47,9 +57,10 @@ public class ParserTestDataProvider {
     }
 
     /**
+     * This method generates a stream of TokenWrappers that are valid assignments.
      * This method returns the same TokenWrappers as
-     * the {@link #assignmentsWithoutSemicolon() assignmentsWithoutSemicolon} method does but with
-     * semicolons appended. It therefore returns only valid assignments.
+     * the {@link #assignmentsWithoutSemicolon() assignmentsWithoutSemicolon} method does, but with
+     * semicolons appended.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -60,6 +71,8 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid procedure calls.
+     * This method returns the same TokenWrappers as the {@link #internProcedureCalls()}} method
+     * does, but with semicolons appended.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -69,6 +82,8 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid intern procedure calls.
+     * These include calls with empty argument lists, one and two element arguments lists, and
+     * expressions as arguments.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -112,6 +127,8 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid if constructs.
+     * In particular, the if and else bodies are single assignments, while the comparison is being
+     * made between an identifier and a number.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -151,6 +168,8 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid while loops.
+     * In particular, the body is a single assignment, while the comparison is being
+     * made between an identifier and a number.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -182,6 +201,8 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid return statements.
+     * These include a single return statement without return value as well as returning
+     * {@link #simpleExpressions()}.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -208,6 +229,8 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid simple expressions.
+     * These include pretty basic expressions as single identifiers and numbers, as well as more
+     * complex expressions that include multiple operators and procedure calls.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -299,6 +322,7 @@ public class ParserTestDataProvider {
 
     /**
      * This method generates a stream of TokenWrappers that are valid expressions.
+     * These include {@link #simpleExpressions()} as well as comparisons between those and idents.
      *
      * @return a stream of TokenWrappers that define the test data
      */
@@ -327,6 +351,10 @@ public class ParserTestDataProvider {
 
         ).flatMap(i -> i);
     }
+
+
+    // support methods
+    //--------------------------------------------------------------
 
     /**
      * Creates a new Token from a TokenType by setting file name, line and position number to some
@@ -367,6 +395,10 @@ public class ParserTestDataProvider {
     static Token tokenFrom(final long number) {
         return new NumberToken(number, null, 1, 1);
     }
+
+
+    // inner classes
+    //--------------------------------------------------------------
 
     /**
      * This class serves as a wrapper around a list of tokens as directly passing around lists/arrays
