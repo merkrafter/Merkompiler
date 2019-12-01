@@ -444,13 +444,14 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single return statement.
+     * The parser should be able to parse return statements.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#returnStatements()}
      */
-    @Test
-    void parseStandaloneReturnStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.RETURN, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1)});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#returnStatements")
+    void parseReturnStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseReturnStatement());
     }
