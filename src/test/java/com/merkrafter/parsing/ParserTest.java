@@ -392,16 +392,14 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a simple procedure call, as "parse();"
+     * The parser should be able to parse procedure calls.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#procedureCalls()}
      */
-    @Test
-    void parseProcedureCall() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.L_PAREN, "", 0, 0),
-                new IdentToken("a", "", 0, 0),
-                new Token(TokenType.R_PAREN, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#procedureCalls")
+    void parseProcedureCall(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseProcedureCall());
     }
