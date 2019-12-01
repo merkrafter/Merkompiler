@@ -406,6 +406,18 @@ class ParserTest {
         assertTrue(parser.parseProcedureCall());
     }
 
+    /**
+     * The parser should be able to parse intern procedure calls.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#internProcedureCalls()}
+     */
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#internProcedureCalls")
+    void parseInternProcedureCall(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseInternProcedureCall());
+    }
 
     /**
      * The parser should accept a simple if-else construct, that is an "if" keyword, a comparison

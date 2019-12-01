@@ -63,6 +63,50 @@ public class ParserTestDataProvider {
     }
 
     /**
+     * This method generates a stream of TokenWrappers that are valid intern procedure calls.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> internProcedureCalls() {
+        return Stream.of(
+                // a call of an intern procedure without arguments
+                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.L_PAREN))
+                                  .add(tokenFrom(TokenType.R_PAREN)),
+
+                // a call of an intern procedure with a single identifier as its argument
+                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.L_PAREN))
+                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.R_PAREN)),
+
+                // a call of an intern procedure with a single number as its argument
+                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.L_PAREN))
+                                  .add(tokenFrom(TokenType.NUMBER))
+                                  .add(tokenFrom(TokenType.R_PAREN)),
+
+                // a call of an intern procedure with two identifiers as arguments
+                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.L_PAREN))
+                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.COMMA))
+                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.R_PAREN)),
+
+                // a call of an intern procedure with an expression like a*b/2 as argument
+                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.L_PAREN))
+                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.PLUS))
+                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(TokenType.DIVIDE))
+                                  .add(tokenFrom(TokenType.NUMBER))
+                                  .add(tokenFrom(TokenType.R_PAREN)));
+    }
+
+
+    /**
      * Creates a new Token from a TokenType by setting file name, line and position number to some
      * default values in order to make increase the readability of test cases.
      *
