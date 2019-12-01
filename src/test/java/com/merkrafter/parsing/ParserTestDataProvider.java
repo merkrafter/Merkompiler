@@ -370,6 +370,18 @@ public class ParserTestDataProvider {
         }
 
         /**
+         * Adds all tokens of the given token wrapper at the end of this wrapper's token list and
+         * returns this TokenWrapper instance.
+         *
+         * @param tokenWrapper a TokenWrapper to append at the end of this wrapper
+         * @return itself in order to allow chaining
+         */
+        TokenWrapper add(final TokenWrapper tokenWrapper) {
+            tokenList.addAll(tokenWrapper.tokenList);
+            return this;
+        }
+
+        /**
          * @return the stored tokens as an array
          */
         Token[] getTokens() {
