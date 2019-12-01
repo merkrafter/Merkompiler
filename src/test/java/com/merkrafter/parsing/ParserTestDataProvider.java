@@ -204,6 +204,24 @@ public class ParserTestDataProvider {
                         // a single number
                         new TokenWrapper().add(tokenFrom(5)),
 
+                        // complex expression including intern procedure calls
+                        // 2*fib(n-1) + fib(n-2)
+                        new TokenWrapper().add(tokenFrom(2))
+                                          .add(tokenFrom(TokenType.TIMES))
+                                          .add(tokenFrom("fib"))
+                                          .add(tokenFrom(TokenType.L_PAREN))
+                                          .add(tokenFrom("n"))
+                                          .add(tokenFrom(TokenType.MINUS))
+                                          .add(tokenFrom(1))
+                                          .add(tokenFrom(TokenType.R_PAREN))
+                                          .add(tokenFrom(TokenType.PLUS))
+                                          .add(tokenFrom("fib"))
+                                          .add(tokenFrom(TokenType.L_PAREN))
+                                          .add(tokenFrom("n"))
+                                          .add(tokenFrom(TokenType.MINUS))
+                                          .add(tokenFrom(2))
+                                          .add(tokenFrom(TokenType.R_PAREN)),
+
                         // complex expression with multiplication, addition and subtraction
                         // " a*a + b*b - c*c
                         new TokenWrapper().add(tokenFrom("a"))
