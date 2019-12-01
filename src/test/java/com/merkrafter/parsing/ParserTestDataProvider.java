@@ -185,6 +185,79 @@ public class ParserTestDataProvider {
     }
 
     /**
+     * This method generates a stream of TokenWrappers that are valid simple expressions.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> simpleExpressions() {
+        return Stream.of(
+                /*
+                These TokenWrappers are independent from any operators
+                 */
+                Stream.of(
+                        // an identifier with a single letter
+                        new TokenWrapper().add(tokenFrom("a")),
+
+                        // an identifier with two letters
+                        new TokenWrapper().add(tokenFrom("ab")),
+
+                        // a single number
+                        new TokenWrapper().add(tokenFrom(5)),
+
+                        // complex expression with multiplication, addition and subtraction
+                        // " a*a + b*b - c*c
+                        new TokenWrapper().add(tokenFrom("a"))
+                                          .add(tokenFrom(TokenType.TIMES))
+                                          .add(tokenFrom("a"))
+                                          .add(tokenFrom(TokenType.PLUS))
+                                          .add(tokenFrom("b"))
+                                          .add(tokenFrom(TokenType.TIMES))
+                                          .add(tokenFrom("b"))
+                                          .add(tokenFrom(TokenType.MINUS))
+                                          .add(tokenFrom("c"))
+                                          .add(tokenFrom(TokenType.TIMES))
+                                          .add(tokenFrom("c"))),
+                /*
+                These TokenWrappers are multiplied by using the 4 elementary arithmetic operations
+                 */
+                Stream.of(TokenType.PLUS, TokenType.MINUS, TokenType.TIMES, TokenType.DIVIDE)
+                      .flatMap(operator -> Stream.of(
+                              // simple offset of an ident and a number against each other
+                              // with the ident being the first argument
+                              new TokenWrapper().add(tokenFrom("a"))
+                                                .add(tokenFrom(operator))
+                                                .add(tokenFrom(5)),
+
+                              // simple offset of two idents against each other
+                              new TokenWrapper().add(tokenFrom("a"))
+                                                .add(tokenFrom(operator))
+                                                .add(tokenFrom("b")),
+
+                              // simple offset of a number and an ident against each other
+                              // with the ident being the second argument
+                              new TokenWrapper().add(tokenFrom(3))
+                                                .add(tokenFrom(operator))
+                                                .add(tokenFrom("b")),
+
+                              // simple offset of two numbers against each other
+                              new TokenWrapper().add(tokenFrom(3))
+                                                .add(tokenFrom(operator))
+                                                .add(tokenFrom(5)),
+
+                              // chain of 4 idents and 3 operators
+                              new TokenWrapper().add(tokenFrom("a"))
+                                                .add(tokenFrom(operator))
+                                                .add(tokenFrom("b"))
+                                                .add(tokenFrom(operator))
+                                                .add(tokenFrom("c"))
+                                                .add(tokenFrom(operator))
+                                                .add(tokenFrom("d")))))
+
+                     // merge all the above (outer) streams
+                     .flatMap(i -> i);
+    }
+
+    /**
      * Creates a new Token from a TokenType by setting file name, line and position number to some
      * default values in order to make increase the readability of test cases.
      *
