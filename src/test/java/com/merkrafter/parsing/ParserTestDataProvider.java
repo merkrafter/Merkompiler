@@ -168,6 +168,32 @@ public class ParserTestDataProvider {
     }
 
     /**
+     * This method generates a stream of TokenWrappers that are valid return statements.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> returnStatements() {
+        return Stream.of(
+                /*
+                unparameterized data
+                 */
+                Stream.of(
+                        // return keyword without an value to return
+                        new TokenWrapper().add(tokenFrom(Keyword.RETURN))
+                                          .add(tokenFrom(TokenType.SEMICOLON))),
+                /*
+                parameterized data
+                 */
+                simpleExpressions().map(
+                        // return keyword with simple expressions as return values
+                        tokenWrapper -> new TokenWrapper().add(tokenFrom(Keyword.RETURN))
+                                                          .add(tokenWrapper)
+                                                          .add(tokenFrom(TokenType.SEMICOLON))))
+                     // merge all the above (outer) streams
+                     .flatMap(i -> i);
+    }
+
+    /**
      * This method generates a stream of TokenWrappers that are valid simple expressions.
      *
      * @return a stream of TokenWrappers that define the test data
