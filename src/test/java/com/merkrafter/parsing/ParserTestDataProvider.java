@@ -154,6 +154,37 @@ public class ParserTestDataProvider {
     }
 
     /**
+     * This method generates a stream of TokenWrappers that are valid while loops.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> whileLoops() {
+        return Stream.of(
+                // while loops with all comparison operators between an ident and a number
+                // the body is a simple assignment
+                Stream.of(TokenType.LOWER_EQUAL,
+                          TokenType.LOWER,
+                          TokenType.EQUAL,
+                          TokenType.GREATER,
+                          TokenType.GREATER_EQUAL)
+                      .map(cmpOp -> new TokenWrapper().add(tokenFrom(Keyword.WHILE))
+                                                      .add(tokenFrom(TokenType.L_PAREN))
+                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(cmpOp))
+                                                      .add(tokenFrom(TokenType.NUMBER))
+                                                      .add(tokenFrom(TokenType.R_PAREN))
+
+                                                      .add(tokenFrom(TokenType.L_BRACE))
+                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(TokenType.ASSIGN))
+                                                      .add(tokenFrom(TokenType.NUMBER))
+                                                      .add(tokenFrom(TokenType.SEMICOLON))
+                                                      .add(tokenFrom(TokenType.R_BRACE))))
+                     // merge all the above (outer) streams
+                     .flatMap(i -> i);
+    }
+
+    /**
      * Creates a new Token from a TokenType by setting file name, line and position number to some
      * default values in order to make increase the readability of test cases.
      *
