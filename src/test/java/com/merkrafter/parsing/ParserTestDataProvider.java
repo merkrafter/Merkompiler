@@ -20,6 +20,19 @@ public class ParserTestDataProvider {
     //--------------------------------------------------------------
 
     /**
+     * This method generates a stream of TokenWrappers that are valid statements.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> statements() {
+        return Stream.of(assignments(),
+                         procedureCalls(),
+                         ifConstructs(),
+                         whileLoops(),
+                         returnStatements()).flatMap(i -> i);
+    }
+
+    /**
      * This method generates a stream of TokenWrappers that are valid assignments EXCEPT they're
      * lacking the ending semicolon.
      *
