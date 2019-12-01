@@ -258,6 +258,37 @@ public class ParserTestDataProvider {
     }
 
     /**
+     * This method generates a stream of TokenWrappers that are valid expressions.
+     *
+     * @return a stream of TokenWrappers that define the test data
+     */
+    public static Stream<TokenWrapper> expressions() {
+        return Stream.of(
+                /*
+                Every simple expression is an expression as well
+                 */
+                simpleExpressions(),
+
+                /*
+                Comparisons of all simple expressions with an identifier
+                 */
+                Stream.of(TokenType.LOWER,
+                          TokenType.LOWER_EQUAL,
+                          TokenType.EQUAL,
+                          TokenType.GREATER_EQUAL,
+                          TokenType.GREATER).flatMap(
+
+                        cmpOp ->
+                                // simple expression first, then comparison operator, then ident
+                                simpleExpressions().map(
+
+                                        tokenWrapper -> tokenWrapper.add(tokenFrom(cmpOp))
+                                                                    .add(tokenFrom("a"))))
+
+        ).flatMap(i -> i);
+    }
+
+    /**
      * Creates a new Token from a TokenType by setting file name, line and position number to some
      * default values in order to make increase the readability of test cases.
      *
