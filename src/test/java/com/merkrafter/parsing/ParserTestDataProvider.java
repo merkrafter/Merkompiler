@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * @author merkrafter
  ***************************************************************/
 
-public class ParserTestDataProvider {
+class ParserTestDataProvider {
     // METHODS
     //==============================================================
     // public methods
@@ -34,7 +34,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> statements() {
+    static Stream<TokenWrapper> statements() {
         return Stream.of(assignments(),
                          procedureCalls(),
                          ifConstructs(),
@@ -48,7 +48,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> assignmentsWithoutSemicolon() {
+    static Stream<TokenWrapper> assignmentsWithoutSemicolon() {
         return simpleExpressions().map(
                 // add all simple expressions at the end of "a = "
                 expression -> new TokenWrapper().add(tokenFrom("a"))
@@ -64,7 +64,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> assignments() {
+    static Stream<TokenWrapper> assignments() {
         return assignmentsWithoutSemicolon().map(tokenWrapper -> tokenWrapper.add(tokenFrom(
                 TokenType.SEMICOLON)));
     }
@@ -76,7 +76,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> procedureCalls() {
+    static Stream<TokenWrapper> procedureCalls() {
         return internProcedureCalls().map(tokenWrapper -> tokenWrapper.add(tokenFrom(TokenType.SEMICOLON)));
     }
 
@@ -87,7 +87,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> internProcedureCalls() {
+    static Stream<TokenWrapper> internProcedureCalls() {
         return Stream.of(
                 // a call of an intern procedure without arguments
                 new TokenWrapper().add(tokenFrom(TokenType.IDENT))
@@ -132,7 +132,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> ifConstructs() {
+    static Stream<TokenWrapper> ifConstructs() {
         return Stream.of(
                 // if constructs with all comparison operators between an ident and a number
                 // the if and else bodies are simple assignments
@@ -173,7 +173,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> whileLoops() {
+    static Stream<TokenWrapper> whileLoops() {
         return Stream.of(
                 // while loops with all comparison operators between an ident and a number
                 // the body is a simple assignment
@@ -206,7 +206,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> returnStatements() {
+    static Stream<TokenWrapper> returnStatements() {
         return Stream.of(
                 /*
                 unparameterized data
@@ -234,7 +234,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> simpleExpressions() {
+    static Stream<TokenWrapper> simpleExpressions() {
         return Stream.of(
                 /*
                 These TokenWrappers are independent from any operators
@@ -326,7 +326,7 @@ public class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
-    public static Stream<TokenWrapper> expressions() {
+    static Stream<TokenWrapper> expressions() {
         return Stream.of(
                 /*
                 Every simple expression is an expression as well
