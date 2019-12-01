@@ -418,34 +418,14 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a simple if-else construct, that is an "if" keyword, a comparison
-     * between an identifier and a number as the condition and blocks with single assignments for
-     * if and else.
+     * The parser should be able to parse simple if constructs.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#ifConstructs()}
      */
-    @Test
-    void parseSimpleIfStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.IF, null, 1, 1),
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.EQUAL, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1),
-
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),
-
-                new KeywordToken(Keyword.ELSE, null, 1, 1),
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#ifConstructs")
+    void parseIfStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseIfStatement());
     }
