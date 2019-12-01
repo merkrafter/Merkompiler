@@ -478,16 +478,14 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single comparison between an ident and a number as an expression.
+     * The parser should be able to parse expressions.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#expressions()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {
-            "LOWER", "LOWER_EQUAL", "EQUAL", "GREATER_EQUAL", "GREATER"})
-    void parseSingleComparisonAsExpression(final TokenType comparisonType) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(comparisonType, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#expressions")
+    void parseExpression(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseExpression());
     }
