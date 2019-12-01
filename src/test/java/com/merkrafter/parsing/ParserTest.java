@@ -493,15 +493,14 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single addition/subtraction as a simple expression.
+     * The parser should be able to parse simple expressions.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#simpleExpressions()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS"})
-    void parseSimpleExpression(final TokenType tokenType) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(tokenType, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#simpleExpressions")
+    void parseSimpleExpression(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseSimpleExpression());
     }
