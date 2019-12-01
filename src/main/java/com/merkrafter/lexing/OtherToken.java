@@ -1,39 +1,39 @@
 package com.merkrafter.lexing;
 
 /****
- * This class serves as a token and stores the identifier found.
+ * This class serves as a token and stores a string that could not be recognized as another token.
  *
  * @version v0.2.0
  * @author merkrafter
  ***************************************************************/
-public class IdentToken extends Token {
+public class OtherToken extends Token {
     // ATTRIBUTES
     //==============================================================
     /**
-     * the identifier this token stands for
+     * the string that could not be recognized as another token
      */
-    private final String ident;
+    private final String string;
 
     // CONSTRUCTORS
     //==============================================================
 
     /****
-     * Creates a new IdentToken from an identifier and position data.
+     * Creates a new OtherToken from a string and position data.
      ***************************************************************/
-    public IdentToken(final String ident, final String filename, final long line,
+    public OtherToken(final String string, final String filename, final long line,
                       final int position) {
-        super(TokenType.IDENT, filename, line, position);
-        this.ident = ident;
+        super(TokenType.OTHER, filename, line, position);
+        this.string = string;
     }
 
     // GETTER
     //==============================================================
 
     /**
-     * @return the identifier this token stands for
+     * @return the string that could not be recognized as another token
      */
-    String getIdent() {
-        return ident;
+    String getString() {
+        return string;
     }
 
     // METHODS
@@ -42,10 +42,10 @@ public class IdentToken extends Token {
     //--------------------------------------------------------------
 
     /**
-     * Two IdentTokens are equal if both have the type IdentToken and their identifiers, line
+     * Two OtherTokens are equal if both have the type OtherToken and their strings, line
      * numbers, positions and filenames are equal.
      *
-     * @param obj ideally a IdentToken to compare this with
+     * @param obj ideally a OtherToken to compare this with
      * @return whether this is equal to obj
      */
     @Override
@@ -53,17 +53,17 @@ public class IdentToken extends Token {
         if (!super.equals(obj)) {
             return false;
         }
-        return obj instanceof IdentToken && ((IdentToken) obj).ident.equals(ident);
+        return obj instanceof OtherToken && ((OtherToken) obj).string.equals(string);
     }
 
     /**
-     * Creates a String representation of this IdentToken in the following format:
-     * FILENAME(LINE,POSITION): TYPE(IDENT)
+     * Creates a String representation of this OtherToken in the following format:
+     * FILENAME(LINE,POSITION): TYPE(STRING)
      *
-     * @return a String representation of this IdentToken
+     * @return a String representation of this OtherToken
      */
     @Override
     public String toString() {
-        return super.toString() + String.format("(%s)", ident);
+        return super.toString() + String.format("(%s)", string);
     }
 }

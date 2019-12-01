@@ -384,9 +384,9 @@ public class Parser {
                         return false;
                     }
                 }
-            } else {
-                return true; // it is okay if no expression comes here
             }
+            // it is okay if no expression comes here
+            // but it is still necessary to check for the right paren
         } else {
             return false;
         }
@@ -444,6 +444,10 @@ public class Parser {
 
     boolean parseFactor() {
         if (parseIdentifier()) {
+            // check whether this actually is a intern procedure call
+            if (parseActualParameters()) {
+                return true;
+            }
             return true;
         } else if (parseNumber()) {
             return true;
@@ -457,7 +461,7 @@ public class Parser {
             }
             return success; // whether the above parseExpression() was successful
         }
-        return parseInternProcedureCall();
+        return false;
     }
 
     /**

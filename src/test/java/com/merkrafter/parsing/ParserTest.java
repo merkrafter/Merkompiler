@@ -4,6 +4,7 @@ import com.merkrafter.lexing.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 
@@ -162,193 +163,27 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept an assignment and a return statement as a statement sequence.
-     */
-    @Test
-    void parseStatementSequence() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0),
-                new KeywordToken(Keyword.RETURN, "", 0, 0),
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatementSequence());
-    }
-
-    /**
-     * The parser should accept an assignment of the result of a binary operation to a variable
-     * as a statement sequence.
+     * The parser should be able to parse single statements as statement sequences.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#statements()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
-    void parseAssignmentWithBinOpAsStatementSequence(final TokenType binOp) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(binOp, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#statements")
+    void parseStatementSequence(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseStatementSequence());
     }
 
     /**
-     * The parser should accept a simple assignment of a number as a statement sequence.
-     */
-    @Test
-    void parseAssignmentAsStatementSequence() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatementSequence());
-    }
-
-    /**
-     * The parser should accept a simple procedure call as a statement sequence.
-     */
-    @Test
-    void parseProcedureCallAsStatementSequence() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.L_PAREN, "", 0, 0),
-                new IdentToken("a", "", 0, 0),
-                new Token(TokenType.R_PAREN, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatementSequence());
-    }
-
-    /**
-     * The parser should accept a single return keyword as a statement sequence.
-     */
-    @Test
-    void parseStandaloneReturnAsStatementSequence() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.RETURN, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1)});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatementSequence());
-    }
-
-    /**
-     * The parser should accept an assignment of the result of a binary operation to a variable
-     * as a statement.
+     * The parser should be able to parse statements.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#statements()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
-    void parseAssignmentWithBinOpAsStatement(final TokenType binOp) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(binOp, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatement());
-    }
-
-    /**
-     * The parser should accept a simple assignment of a number as a statement.
-     */
-    @Test
-    void parseAssignmentAsStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatement());
-    }
-
-    /**
-     * The parser should accept a simple procedure call as a statement.
-     */
-    @Test
-    void parseProcedureCallAsStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.L_PAREN, "", 0, 0),
-                new IdentToken("a", "", 0, 0),
-                new Token(TokenType.R_PAREN, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatement());
-    }
-
-    /**
-     * The parser should accept a simple if-else construct as a statement, that is an "if" keyword,
-     * a comparison between an identifier and a number as the condition and blocks with single
-     * assignments for if and else.
-     */
-    @Test
-    void parseSimpleIfAsStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.IF, null, 1, 1),
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.EQUAL, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1),
-
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),
-
-                new KeywordToken(Keyword.ELSE, null, 1, 1),
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatement());
-    }
-
-    /**
-     * The parser should accept a simple while loop as a statement, that is a "while" keyword, a
-     * comparison between an identifier and a number as the condition and a block that has only an
-     * assignment inside it.
-     */
-    @Test
-    void parseSimpleWhileAsStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.WHILE, null, 1, 1),
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.EQUAL, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1),
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),});
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseStatement());
-    }
-
-    /**
-     * The parser should accept a single return keyword as a statement.
-     */
-    @Test
-    void parseStandaloneReturnAsStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.RETURN, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#statements")
+    void parseStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseStatement());
     }
@@ -365,118 +200,92 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept an assignment of the result of a binary operation to a variable,
-     * as "a = a*5;".
+     * The parser should be able to parse assignments.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#assignments()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
-    void parseAssignmentWithBinOp(final TokenType binOp) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(binOp, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#assignments")
+    void parseAssignment(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseAssignment());
     }
 
     /**
-     * The parser should accept a direct assignment of a number to a variable ident, as "a = 5;".
+     * The parser should be able to detect syntactically wrong assignments.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#assignmentsWithoutSemicolon()}
      */
-    @Test
-    void parseDirectAssignmentOfNumber() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.ASSIGN, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#assignmentsWithoutSemicolon")
+    void parseFaultyAssignment(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseAssignment());
+        assertFalse(parser.parseAssignment());
     }
 
     /**
-     * The parser should accept a simple procedure call, as "parse();"
+     * The parser should be able to parse procedure calls.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#procedureCalls()}
      */
-    @Test
-    void parseProcedureCall() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(TokenType.L_PAREN, "", 0, 0),
-                new IdentToken("a", "", 0, 0),
-                new Token(TokenType.R_PAREN, "", 0, 0),
-                new Token(TokenType.SEMICOLON, "", 0, 0)});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#procedureCalls")
+    void parseProcedureCall(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseProcedureCall());
     }
 
+    /**
+     * The parser should be able to parse intern procedure calls.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#internProcedureCalls()}
+     */
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#internProcedureCalls")
+    void parseInternProcedureCall(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
+        final Parser parser = new Parser(scanner);
+        assertTrue(parser.parseInternProcedureCall());
+    }
 
     /**
-     * The parser should accept a simple if-else construct, that is an "if" keyword, a comparison
-     * between an identifier and a number as the condition and blocks with single assignments for
-     * if and else.
+     * The parser should be able to parse simple if constructs.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#ifConstructs()}
      */
-    @Test
-    void parseSimpleIfStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.IF, null, 1, 1),
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.EQUAL, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1),
-
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),
-
-                new KeywordToken(Keyword.ELSE, null, 1, 1),
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#ifConstructs")
+    void parseIfStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseIfStatement());
     }
 
     /**
-     * The parser should accept a simple while loop, that is a "while" keyword, a comparison
-     * between an identifier and a number as the condition and a block that has only an assignment
-     * inside it.
+     * The parser should be able to parse simple while loops.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#whileLoops()}
      */
-    @Test
-    void parseSimpleWhileStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.WHILE, null, 1, 1),
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.EQUAL, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1),
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new Token(TokenType.IDENT, null, 1, 1),
-                new Token(TokenType.ASSIGN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1),});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#whileLoops")
+    void parseWhileStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseWhileStatement());
     }
 
     /**
-     * The parser should accept a single return statement.
+     * The parser should be able to parse return statements.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#returnStatements()}
      */
-    @Test
-    void parseStandaloneReturnStatement() {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.RETURN, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1)});
+    @ParameterizedTest
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#returnStatements")
+    void parseReturnStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseReturnStatement());
     }
@@ -504,30 +313,27 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single comparison between an ident and a number as an expression.
+     * The parser should be able to parse expressions.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#expressions()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {
-            "LOWER", "LOWER_EQUAL", "EQUAL", "GREATER_EQUAL", "GREATER"})
-    void parseSingleComparisonAsExpression(final TokenType comparisonType) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(comparisonType, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#expressions")
+    void parseExpression(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseExpression());
     }
 
     /**
-     * The parser should accept a single addition/subtraction as a simple expression.
+     * The parser should be able to parse simple expressions.
+     *
+     * @param inputTokens token lists provided by {@link ParserTestDataProvider#simpleExpressions()}
      */
     @ParameterizedTest
-    @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS"})
-    void parseSimpleExpression(final TokenType tokenType) {
-        final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.IDENT, "", 0, 0),
-                new Token(tokenType, "", 0, 0),
-                new Token(TokenType.NUMBER, "", 0, 0)});
+    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#simpleExpressions")
+    void parseSimpleExpression(final ParserTestDataProvider.TokenWrapper inputTokens) {
+        final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseSimpleExpression());
     }
