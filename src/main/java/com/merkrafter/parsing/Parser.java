@@ -384,9 +384,9 @@ public class Parser {
                         return false;
                     }
                 }
-            } else {
-                return true; // it is okay if no expression comes here
             }
+            // it is okay if no expression comes here
+            // but it is still necessary to check for the right paren
         } else {
             return false;
         }
