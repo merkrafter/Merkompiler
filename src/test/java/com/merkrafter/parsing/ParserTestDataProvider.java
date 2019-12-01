@@ -26,28 +26,11 @@ public class ParserTestDataProvider {
      * @return a stream of TokenWrappers that define the test data
      */
     public static Stream<TokenWrapper> assignmentsWithoutSemicolon() {
-        return Stream.of(
-                // non-parameterized TokenWrappers
-                Stream.of(
-                        // direct assignment of a number to an identifier
-                        // actual number value does not matter
-                        new TokenWrapper().add(tokenFrom(TokenType.IDENT))
-                                          .add(tokenFrom(TokenType.ASSIGN))
-                                          .add(tokenFrom(TokenType.NUMBER)),
-
-                        // direct assignment of an identifier to an identifier
-                        new TokenWrapper().add(tokenFrom(TokenType.IDENT))
-                                          .add(tokenFrom(TokenType.ASSIGN))
-                                          .add(tokenFrom(TokenType.IDENT))),
-                // parameterized TokenWrappers
-                Stream.of(TokenType.PLUS, TokenType.MINUS, TokenType.TIMES, TokenType.DIVIDE)
-                      .map(binOp -> new TokenWrapper().add(tokenFrom(TokenType.IDENT))
-                                                      .add(tokenFrom(TokenType.ASSIGN))
-                                                      .add(tokenFrom(TokenType.IDENT))
-                                                      .add(tokenFrom(binOp))
-                                                      .add(tokenFrom(TokenType.NUMBER))))
-                     // merge all the above (outer) streams
-                     .flatMap(i -> i);
+        return simpleExpressions().map(
+                // add all simple expressions at the end of "a = "
+                expression -> new TokenWrapper().add(tokenFrom("a"))
+                                                .add(tokenFrom(TokenType.ASSIGN))
+                                                .add(expression));
     }
 
     /**
