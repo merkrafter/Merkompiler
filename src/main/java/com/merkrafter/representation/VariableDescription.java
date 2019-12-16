@@ -1,5 +1,7 @@
 package com.merkrafter.representation;
 
+import java.util.Objects;
+
 /****
  * This class stores data about a variable in a JavaSST program. A variable has a name, type and a
  * value. It can also have a flag set that indicates whether it can be changed.
@@ -61,6 +63,16 @@ public class VariableDescription extends ObjectDescription {
      * @return whether this operation was successful
      */
     boolean setValue(final Object value) {
+        if (!constant) {
+            if (type == Type.INT) {
+                if (value instanceof Integer) {
+                    this.value = value;
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
         return false;
     }
 
@@ -80,6 +92,13 @@ public class VariableDescription extends ObjectDescription {
      */
     @Override
     public boolean equals(final Object other) {
-        return false;
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        final VariableDescription that = (VariableDescription) other;
+        return Objects.equals(getName(), that.getName()) && getType() == that.getType();
     }
 }
