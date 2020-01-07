@@ -1,6 +1,9 @@
 package com.merkrafter.lexing;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,6 +37,61 @@ class ScannerTest {
     void setUp() {
         stringIterator = new StringIterator();
         scanner = new Scanner(stringIterator);
+    }
+
+    /**
+     * The scanner should be able to detect "other" tokens, i.e. special characters that are not
+     * part of the language.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"$", "\"", "@", "_", "!", "§", "%", "&", "|", "^", "\\", "?", "~", "#"})
+    void scanOtherTokens(final String string) {
+        final String programCode = string;
+        final Token[] expectedTokenList = {
+                new OtherToken(string, null, 1, 1), new Token(EOF, null, 1, string.length())};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to detect number arguments.
+     */
+    @ParameterizedTest
+    // edge cases 0 and MAX_VALUE, one, two and three digit numbers
+    @ValueSource(longs = {0, 1, 10, 123, Long.MAX_VALUE})
+    void scanNormalNumbers(final long number) {
+        final String programCode = Long.toString(number);
+        final Token[] expectedTokenList = {
+                new NumberToken(number, null, 1, 1),
+                new Token(EOF, null, 1, Long.toString(number).length())};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to detect special number arguments, i.e. with leading zeros.
+     */
+    @ParameterizedTest
+    // all values should be decimal 8's, because in JavaSST there are no octal numbers hence these
+    // value source numbers will cause an error when trying to evaluate them as octal.
+    @ValueSource(strings = {"08", "008"})
+    void scanSpecialNumbers(final String number) {
+        final long expectedNumber = 8;
+        final Token[] expectedTokenList = {
+                new NumberToken(expectedNumber, null, 1, 1),
+                new Token(EOF, null, 1, number.length())};
+        shouldScan(number, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to detect keyword arguments.
+     */
+    @ParameterizedTest
+    @EnumSource(Keyword.class)
+    void scanKeyword(final Keyword keyword) {
+        final String programCode = keyword.name().toLowerCase();
+        final Token[] expectedTokenList = {
+                new KeywordToken(keyword, null, 1, 1),
+                new Token(EOF, null, 1, keyword.name().length())};
+        shouldScan(programCode, expectedTokenList);
     }
 
     /**
@@ -86,9 +144,23 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithSpaces() {
         final String programCode = "int result = a + ( b - c ) * d / e;";
-        final TokenType[] expectedTokenList =
-                {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
-                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                IDENT,
+                ASSIGN,
+                IDENT,
+                PLUS,
+                L_PAREN,
+                IDENT,
+                MINUS,
+                IDENT,
+                R_PAREN,
+                TIMES,
+                IDENT,
+                DIVIDE,
+                IDENT,
+                SEMICOLON,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -99,7 +171,7 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanSimpleAssignmentWithWhitespace() {
         final String programCode = "int\n\t  a  \n=\n5\t\t\t  ;";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {KEYWORD, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -111,9 +183,23 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAssignmentWithoutWhitespace() {
         final String programCode = "int result=a+(b-c)*d/e;";
-        final TokenType[] expectedTokenList =
-                {IDENT, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN, TIMES,
-                        IDENT, DIVIDE, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                IDENT,
+                ASSIGN,
+                IDENT,
+                PLUS,
+                L_PAREN,
+                IDENT,
+                MINUS,
+                IDENT,
+                R_PAREN,
+                TIMES,
+                IDENT,
+                DIVIDE,
+                IDENT,
+                SEMICOLON,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -124,7 +210,7 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAndIgnoreStandaloneLineComments() {
         final String programCode = " //in mph\nint velocity;";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {KEYWORD, IDENT, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -136,7 +222,7 @@ class ScannerTest {
     void scanAndIgnoreAppendedLineComments() {
         final String programCode = "int velocity; //in mph\nint acceleration;";
         final TokenType[] expectedTokenList =
-                {IDENT, IDENT, SEMICOLON, IDENT, IDENT, SEMICOLON, EOF};
+                {KEYWORD, IDENT, SEMICOLON, KEYWORD, IDENT, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -187,10 +273,9 @@ class ScannerTest {
      */
     @org.junit.jupiter.api.Test
     void scanAndIgnoreBlockCommentsMultiline() {
-        final String programCode =
-                "/*\nThis is a description of the method\n*/public abstract void draw();";
+        final String programCode = "/*\nThis is a description of the method\n*/public void draw();";
         final TokenType[] expectedTokenList =
-                {IDENT, IDENT, IDENT, IDENT, L_PAREN, R_PAREN, SEMICOLON, EOF};
+                {KEYWORD, KEYWORD, IDENT, L_PAREN, R_PAREN, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -201,7 +286,7 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAndIgnoreBlockCommentsInline() {
         final String programCode = "int a /*a really important variable*/ = 5;";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {KEYWORD, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -212,7 +297,7 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanAndIgnoreBlockCommentsAtEndOfLine() {
         final String programCode = "int a = 5;/*a really important variable*/";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
+        final TokenType[] expectedTokenList = {KEYWORD, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -233,10 +318,20 @@ class ScannerTest {
      */
     @org.junit.jupiter.api.Test
     void scanMainFunction() {
-        final String programCode = "public static void main(String[] args) {}";
-        final TokenType[] expectedTokenList =
-                {IDENT, IDENT, IDENT, IDENT, L_PAREN, IDENT, L_SQ_BRACKET, R_SQ_BRACKET, IDENT,
-                        R_PAREN, L_BRACE, R_BRACE, EOF};
+        final String programCode = "public void main(String[] args) {}";
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                KEYWORD,
+                IDENT,
+                L_PAREN,
+                IDENT,
+                L_SQ_BRACKET,
+                R_SQ_BRACKET,
+                IDENT,
+                R_PAREN,
+                L_BRACE,
+                R_BRACE,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -279,7 +374,41 @@ class ScannerTest {
     @org.junit.jupiter.api.Test
     void scanEmptyClass() {
         final String programCode = "public class Test{}";
-        final TokenType[] expectedTokenList = {IDENT, IDENT, IDENT, L_BRACE, R_BRACE, EOF};
+        final TokenType[] expectedTokenList = {KEYWORD, KEYWORD, IDENT, L_BRACE, R_BRACE, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to tokenize a method call with two comma separated arguments.
+     */
+    @org.junit.jupiter.api.Test
+    void scanMethodCallWithTwoArguments() {
+        final String programCode = "int sum = add(a,b)";
+        final TokenType[] expectedTokenList =
+                {KEYWORD, IDENT, ASSIGN, IDENT, L_PAREN, IDENT, COMMA, IDENT, R_PAREN, EOF};
+        shouldScan(programCode, expectedTokenList);
+    }
+
+    /**
+     * The scanner should be able to tokenize a method call with three comma separated arguments.
+     * Two of them are identifiers and the third is a number constant.
+     */
+    @org.junit.jupiter.api.Test
+    void scanMethodCallWithMultipleArguments() {
+        final String programCode = "int sum = add(a,b,5)";
+        final TokenType[] expectedTokenList = {
+                KEYWORD,
+                IDENT,
+                ASSIGN,
+                IDENT,
+                L_PAREN,
+                IDENT,
+                COMMA,
+                IDENT,
+                COMMA,
+                NUMBER,
+                R_PAREN,
+                EOF};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -320,6 +449,20 @@ class ScannerTest {
     private void shouldScan(final String programCode, final TokenType[] expectedTokenList) {
         stringIterator.setString(programCode);
         final List<TokenType> actualTokenList = getTokenTypeList(scanner);
+        assertArrayEquals(expectedTokenList, actualTokenList.toArray(), actualTokenList.toString());
+    }
+
+    /**
+     * Conveniently wraps the assertions of equal tokens between expected and the ones emitted by a scanner.
+     * It therefore sets the programCode as an input to this class's stringIterator and reads from
+     * its scanner. Both must be initialized before this method can be called safely.
+     *
+     * @param programCode the string to tokenize by this class's scanner
+     * @param expectedTokenList an array with all expected tokens in the right order
+     */
+    private void shouldScan(final String programCode, final Token[] expectedTokenList) {
+        stringIterator.setString(programCode);
+        final List<Token> actualTokenList = getTokenList(scanner);
         assertArrayEquals(expectedTokenList, actualTokenList.toArray(), actualTokenList.toString());
     }
 

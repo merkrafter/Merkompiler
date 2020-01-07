@@ -133,9 +133,11 @@ public class Scanner {
                 do {
                     num += ch;
                     if (!this.loadNextCharSuccessfully()) {
+                        setNumber(); // parse the num attribute to a NumberToken
                         return;
                     }
                 } while (ch >= '0' && ch <= '9');
+                setNumber(); // parse the num attribute to a NumberToke
                 break;
             case 'a':
             case 'b':
@@ -189,14 +191,19 @@ public class Scanner {
             case 'X':
             case 'Y':
             case 'Z':
+                // will be replaced in `setIdentOrKeyword` in a few lines, but this token is needed
+                // in order to store the starting position of this token
                 sym = new Token(TokenType.IDENT, filename, line, position);
                 id = "";
                 do {
                     id += ch;
                     if (!this.loadNextCharSuccessfully()) {
+                        setIdentOrKeyword();
                         return;
                     }
-                } while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9');
+                } while (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z'
+                         || ch >= '0' && ch <= '9');
+                setIdentOrKeyword();
                 break;
             case '(':
                 sym = new Token(TokenType.L_PAREN, filename, line, position);
@@ -325,6 +332,12 @@ public class Scanner {
                     charBuffer = Optional.of(ch);
                 }
                 break;
+            case ',':
+                sym = new Token(TokenType.COMMA, filename, line, position);
+                if (!this.loadNextCharSuccessfully()) {
+                    return;
+                }
+                break;
             case ';':
                 sym = new Token(TokenType.SEMICOLON, filename, line, position);
                 if (!this.loadNextCharSuccessfully()) {
@@ -332,7 +345,7 @@ public class Scanner {
                 }
                 break;
             default:
-                sym = new Token(TokenType.OTHER, filename, line, position);
+                sym = new OtherToken(Character.toString(ch), filename, line, position);
                 this.loadNextCharSuccessfully();
         }
     }
@@ -384,4 +397,35 @@ public class Scanner {
         line++;
         position = 0;
     }
+
+    /**
+     * Tests whether id currently holds a keyword. If that's the case, <code>sym</code> is changed
+     * accordingly.
+     */
+    private void setIdentOrKeyword() {
+        try {
+            final Keyword keyword = Keyword.valueOf(id.toUpperCase());
+            // if this actually is a keyword:
+            sym = new KeywordToken(keyword, sym.getFilename(), sym.getLine(), sym.getPosition());
+        } catch (IllegalArgumentException ignored) {
+            // id is not a keyword
+            sym = new IdentToken(id, sym.getFilename(), sym.getLine(), sym.getPosition());
+        }
+    }
+
+    /**
+     * Tests whether num currently holds a number. If that's the case, <code>sym</code> is changed
+     * to a NumberToken. Else, a OTHER TokenType is emitted in order to indicate an error.
+     */
+    private void setNumber() {
+        try {
+            final long number = Long.parseLong(num);
+            // if this actually is a number:
+            sym = new NumberToken(number, sym.getFilename(), sym.getLine(), sym.getPosition());
+        } catch (NumberFormatException ignored) {
+            // id is not a number
+            sym = new Token(TokenType.OTHER, sym.getFilename(), sym.getLine(), sym.getPosition());
+        }
+    }
+
 }

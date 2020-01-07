@@ -1,5 +1,6 @@
 package com.merkrafter;
 
+import com.merkrafter.config.CompilerStage;
 import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.jupiter.api.io.TempDir;
@@ -13,7 +14,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
@@ -43,13 +44,13 @@ class MerkompilerRunTest {
      * The output file for this experiment will be named <code>baseFileName</code>{@value OUTPUT_FILE_SUFFIX}
      * and is created as a temporary file by JUnit.
      *
-     * @param baseFileName if used to find the source file name and expected file name and create the output file
+     * @param baseFileName is used to find the source file name and expected file name and create the output file
      * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
      * @throws IOException if there is a read/write error in one of the files
      */
     @ParameterizedTest
-    @ValueSource(strings = "EmptyClass")
-    void runWithOutputCreatesFile(final String baseFileName)
+    @ValueSource(strings = {"EmptyClass", "SmokeClass"})
+    void scanWithOutputCreatesFile(final String baseFileName)
     throws ArgumentParserException, IOException {
         // java source file to read
         final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
@@ -58,7 +59,8 @@ class MerkompilerRunTest {
         // file where the program output is written to
         final File outputFile = tempDir.resolve(baseFileName + OUTPUT_FILE_SUFFIX).toFile();
 
-        final Config config = Config.fromArgs(String.format("%s --output %s",
+        final Config config = Config.fromArgs(String.format("--skip-after %s %s --output %s",
+                                                            CompilerStage.SCANNING.toString(),
                                                             inputFile.getAbsolutePath(),
                                                             outputFile.getAbsolutePath()));
         Merkompiler.run(config);
@@ -76,13 +78,13 @@ class MerkompilerRunTest {
      * This method resets System.out in order to test the output written to it.
      * If this method throws an exception, System.out might still be unavailable.
      *
-     * @param baseFileName if used to find the source file name and expected file name
+     * @param baseFileName is used to find the source file name and expected file name
      * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
      * @throws IOException if there is a read/write error in one of the files
      */
     @ParameterizedTest
-    @ValueSource(strings = "EmptyClass")
-    void runWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
+    @ValueSource(strings = {"EmptyClass", "SmokeClass"})
+    void scanWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
         final PrintStream originalOut = System.out;
         try { // will reset System.out in case of errors
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -95,12 +97,89 @@ class MerkompilerRunTest {
             System.setOut(new PrintStream(output));
 
             // run main program without specifying output
-            final Config config = Config.fromArgs(inputFile.getAbsolutePath());
+            final Config config = Config.fromArgs(String.format("--skip-after %s %s",
+                                                                CompilerStage.SCANNING.toString(),
+                                                                inputFile.getAbsolutePath()));
             Merkompiler.run(config);
 
             assertEquals(toString(expectedFile), output.toString().trim());
         } finally {
             System.setOut(originalOut); // reset System.out even in case of errors
+        }
+    }
+
+    /**
+     * This test case runs the lexer and parser on the file(s) given by ValueSource.
+     * If there is no syntax error, the program should not write anything to stderr.
+     * This test assumes that there is <code>baseFileName</code>{@value INPUT_FILE_SUFFIX} present under
+     * <code>src/test/resources</code> in the project.
+     * <p>
+     * This method resets System.err in order to test the output written to it.
+     * If this method throws an exception, System.err might still be unavailable.
+     *
+     * @param baseFileName is used to find the source file name
+     * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
+     * @throws IOException if there is a read/write error in the input file
+     */
+    @ParameterizedTest
+    @ValueSource(strings = "SmokeClass")
+    void parseCorrectClass(final String baseFileName) throws ArgumentParserException, IOException {
+        final PrintStream originalErr = System.err;
+        try { // will reset System.err in case of crashes
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+            // java source file to read
+            final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
+            // set stderr to testable output stream
+            System.setErr(new PrintStream(output));
+
+            // run main program without specifying output
+            final Config config = Config.fromArgs(String.format("--skip-after %s %s",
+                                                                CompilerStage.PARSING.toString(),
+                                                                inputFile.getAbsolutePath()));
+            Merkompiler.run(config);
+
+            assertTrue(output.toString().trim().isEmpty());
+        } finally {
+            System.setErr(originalErr); // reset System.err even in case of crashes
+        }
+    }
+
+    /**
+     * This test case runs the lexer and parser on the faulty file(s) given by ValueSource.
+     * Since there are syntax errors, the program should write some error message(s) to stderr.
+     * This test assumes that there is <code>baseFileName</code>{@value INPUT_FILE_SUFFIX} present
+     * under <code>src/test/resources</code> in the project.
+     * <p>
+     * This method resets System.err in order to test the output written to it.
+     * If this method throws an exception, System.err might still be unavailable.
+     *
+     * @param baseFileName is used to find the source file name
+     * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
+     * @throws IOException if there is a read/write error in the input file
+     */
+    @ParameterizedTest
+    @ValueSource(strings = "EmptyClass")
+    void parseFaultyFile(final String baseFileName) throws ArgumentParserException, IOException {
+        final PrintStream originalErr = System.err;
+        try { // will reset System.err in case of crashes
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+            // java source file to read
+            final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
+            // set stderr to testable output stream
+            System.setErr(new PrintStream(output));
+
+            // run main program without specifying output
+            final Config config = Config.fromArgs(String.format("--skip-after %s %s",
+                                                                CompilerStage.PARSING.toString(),
+                                                                inputFile.getAbsolutePath()));
+            Merkompiler.run(config);
+
+            // the compiler should output some message
+            assertFalse(output.toString().trim().isEmpty());
+        } finally {
+            System.setErr(originalErr); // reset System.err even in case of crashes
         }
     }
 
