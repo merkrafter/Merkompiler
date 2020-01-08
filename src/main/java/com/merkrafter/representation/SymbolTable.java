@@ -66,6 +66,11 @@ public class SymbolTable {
      * @return an ObjectDescription with the given prototype or null if there is no such object
      */
     public ObjectDescription find(final ObjectDescription prototype) {
+        for (final ObjectDescription storedObjDesc: descriptions) {
+            if (storedObjDesc.equals(prototype)) {
+                return storedObjDesc;
+            }
+        }
         return null;
     }
 }
