@@ -61,6 +61,7 @@ public class SymbolTable {
     /**
      * Searches this SymbolTable for an ObjectDescription with the given prototype and returns it.
      * If no such ObjectDescription is inside this SymbolTable, null is returned.
+     * If this symbol table has an enclosing table, it is searched as well.
      *
      * @param prototype an ObjectDescription that should be equal to the searched ObjectDescription
      * @return an ObjectDescription with the given prototype or null if there is no such object
@@ -71,6 +72,10 @@ public class SymbolTable {
                 return storedObjDesc;
             }
         }
-        return null;
+        if (enclosingSymbolTable == null) {
+            return null;
+        } else {
+            return enclosingSymbolTable.find(prototype);
+        }
     }
 }
