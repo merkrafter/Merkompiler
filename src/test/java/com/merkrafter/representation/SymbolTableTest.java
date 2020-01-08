@@ -57,7 +57,7 @@ class SymbolTableTest {
         final int initialValue = 5;
         final int newValue = 8;
         final VariableDescription varDesc =
-                new VariableDescription("a", Type.INT, initialValue, true);
+                new VariableDescription("a", Type.INT, initialValue, false);
         symbolTable.insert(varDesc);
         varDesc.setValue(newValue);
         final ObjectDescription objDesc = symbolTable.find(varDesc);
