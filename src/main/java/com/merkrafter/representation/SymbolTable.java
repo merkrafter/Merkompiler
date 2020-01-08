@@ -48,7 +48,14 @@ public class SymbolTable {
      * @return whether the insertion was successful
      */
     public boolean insert(final ObjectDescription objectDescription) {
-        return false;
+        for (final ObjectDescription storedObjDesc: descriptions) {
+            if (storedObjDesc.equals(objectDescription)) {
+                return false;
+            }
+        }
+        // add this element to the end of the description list
+        descriptions.add(objectDescription);
+        return true;
     }
 
     /**
