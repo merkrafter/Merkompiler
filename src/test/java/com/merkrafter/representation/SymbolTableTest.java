@@ -90,4 +90,17 @@ class SymbolTableTest {
         assertNull(objDesc);
     }
 
+    /**
+     * Searching for a variable in an enclosing symbol table (that is, an inner block, for instance
+     * for a variable that was defined in the inner symbol table (that is, an outer block) should
+     * return that desired variable description.
+     */
+    @Test
+    void findVariableDescriptionInEnclosingTable() {
+        final VariableDescription varDesc = new VariableDescription("a", Type.INT, 5, true);
+        symbolTable.insert(varDesc);
+        final SymbolTable innerSymbolTable = new SymbolTable(symbolTable);
+        final ObjectDescription objDesc = innerSymbolTable.find(varDesc);
+        assertSame(objDesc, varDesc);
+    }
 }
