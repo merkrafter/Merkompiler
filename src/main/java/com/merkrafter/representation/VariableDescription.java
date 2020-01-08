@@ -36,7 +36,7 @@ public class VariableDescription extends ObjectDescription {
 
     // GETTER
     //==============================================================
-    Type getType() {
+    public Type getType() {
         return type;
     }
 
