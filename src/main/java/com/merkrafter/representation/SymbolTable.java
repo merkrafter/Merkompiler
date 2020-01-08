@@ -61,19 +61,4 @@ public class SymbolTable {
     public ObjectDescription find(final ObjectDescription prototype) {
         return null;
     }
-
-    /**
-     * Starts a new scope which is used to structure the ObjectDescriptions.
-     */
-    public void beginScope() {
-    }
-
-    /**
-     * Ends the current scope which means that no new ObjectDescriptions can be added to it anymore
-     * and returns whether this was successful. The operation can fail if no scope was opened
-     * before.
-     */
-    public boolean endScope() {
-        return false;
-    }
 }
