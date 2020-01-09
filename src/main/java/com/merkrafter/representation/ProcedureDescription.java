@@ -63,4 +63,51 @@ public class ProcedureDescription extends ObjectDescription {
     public Type getReturnType() {
         return returnType;
     }
+
+    // METHODS
+    //==============================================================
+    // public methods
+    //--------------------------------------------------------------
+
+    /**
+     * Returns whether this ProcedureDescription is equal to o.
+     * For this to happen, o must be a ProcedureDescription as well. Also, both must have the same
+     * name and their parameter lists must have the same types in the same order.
+     * This behavior comes from a caller's view where only the name and parameters of certain types
+     * are given.
+     *
+     * @param o ideally an other ProcedureDescription object
+     * @return whether this is equal to o
+     */
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final ProcedureDescription that = (ProcedureDescription) o;
+        final int numParams = getParamList().size();
+        if (numParams != that.getParamList().size()) {
+            return false;
+        }
+
+        /* check for each position in the parameter lists whether both contain variable
+         * descriptions and whether their types match
+         */
+        for (int i = 0; i < numParams; i++) {
+            final ObjectDescription thisParam = getParamList().get(i);
+            final ObjectDescription thatParam = that.getParamList().get(i);
+            if (thisParam instanceof VariableDescription && thatParam instanceof VariableDescription
+                && (((VariableDescription) thisParam).getType() != ((VariableDescription) thatParam)
+                    .getType())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
