@@ -3,6 +3,7 @@ package com.merkrafter.parsing;
 import com.merkrafter.lexing.Keyword;
 import com.merkrafter.lexing.KeywordToken;
 import com.merkrafter.lexing.Scanner;
+import com.merkrafter.representation.SymbolTable;
 
 import static com.merkrafter.lexing.TokenType.*;
 
@@ -21,6 +22,12 @@ public class Parser {
      */
     private final Scanner scanner;
 
+    /**
+     * The base symbol table that encloses all others.
+     */
+    private final SymbolTable symbolTable;
+
+
     // CONSTRUCTORS
     //==============================================================
 
@@ -30,6 +37,7 @@ public class Parser {
     public Parser(final Scanner scanner) {
         this.scanner = scanner;
         this.scanner.processToken();
+        symbolTable = new SymbolTable(null);
     }
 
     // METHODS
