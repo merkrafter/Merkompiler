@@ -198,7 +198,7 @@ class ParserTest {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.INT, null, 1, 1)});
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseType());
+        assertNotNull(parser.parseType());
     }
 
     /**

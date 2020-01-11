@@ -95,7 +95,7 @@ public class Parser {
         if (scanner.getSym() instanceof KeywordToken
             && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.FINAL) {
             scanner.processToken();
-            if (parseType()) {
+            if (parseType() != null) {
                 if (parseIdentifier() != null) {
                     if (scanner.getSym().getType() == ASSIGN) {
                         scanner.processToken();
@@ -168,7 +168,7 @@ public class Parser {
     }
 
     boolean parseFpSection() {
-        if (parseType()) {
+        if (parseType() != null) {
             return parseIdentifier() != null; // already reads the next token
         }
         return false;
@@ -189,7 +189,7 @@ public class Parser {
     }
 
     boolean parseLocalDeclaration() {
-        if (parseType()) {
+        if (parseType() != null) {
             if (parseIdentifier() != null) {
                 if (scanner.getSym().getType() == SEMICOLON) {
                     scanner.processToken();
@@ -241,15 +241,18 @@ public class Parser {
     }
 
     /**
-     * @return whether the current symbol is a KeywordToken and represents an "int"
+     * Checks whether the next token is a Keyword token that represents an integer and returns the
+     * type if this is the case. If the token is not a Keyword token, null is returned.
+     *
+     * @return the type of a KeywordToken
      */
-    boolean parseType() {
-        if (scanner.getSym() instanceof KeywordToken
-            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.INT) {
+    Type parseType() {
+        final Token sym = scanner.getSym();
+        if (sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.INT) {
             scanner.processToken();
-            return true;
+            return Type.INT;
         }
-        return false;
+        return null;
     }
 
     boolean parseAssignment() {
@@ -522,5 +525,4 @@ public class Parser {
             return null;
         }
     }
-
 }
