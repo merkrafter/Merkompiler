@@ -1,6 +1,8 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
+import com.merkrafter.representation.ast.ConstantNode;
+import com.merkrafter.representation.ast.ErrorNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -446,9 +448,10 @@ class ParserTest {
      */
     @Test
     void parseNumber() {
-        final Scanner scanner = new TestScanner(new Token[]{new Token(TokenType.NUMBER, "", 0, 0)});
+        final long number = 5;
+        final Scanner scanner = new TestScanner(new Token[]{new NumberToken(number, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseNumber());
+        assertTrue(parser.parseNumber() instanceof ConstantNode);
     }
 
     /**
@@ -459,7 +462,7 @@ class ParserTest {
     void tryParseNoNumber(final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{new Token(tokenType, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseNumber());
+        assertTrue(parser.parseNumber() instanceof ErrorNode);
     }
 
     /**

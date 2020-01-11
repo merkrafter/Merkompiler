@@ -1,9 +1,11 @@
 package com.merkrafter.parsing;
 
-import com.merkrafter.lexing.Keyword;
-import com.merkrafter.lexing.KeywordToken;
-import com.merkrafter.lexing.Scanner;
+import com.merkrafter.lexing.*;
 import com.merkrafter.representation.SymbolTable;
+import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ast.ASTBaseNode;
+import com.merkrafter.representation.ast.ConstantNode;
+import com.merkrafter.representation.ast.ErrorNode;
 
 import static com.merkrafter.lexing.TokenType.*;
 
@@ -457,7 +459,7 @@ public class Parser {
                 return true;
             }
             return true;
-        } else if (parseNumber()) {
+        } else if (!(parseNumber() instanceof ErrorNode)) {
             return true;
         } else if (scanner.getSym().getType() == L_PAREN) {
             scanner.processToken();
@@ -477,14 +479,27 @@ public class Parser {
      *
      * @return whether a single NUMBER token comes next
      */
-    boolean parseNumber() {
-        if (scanner.getSym().getType() == NUMBER) {
+    ASTBaseNode parseNumber() {
+        final Token sym = scanner.getSym();
+        if (sym.getType() == NUMBER) {
+            ConstantNode<Long> node;
+            if (sym instanceof NumberToken) {
+                node = new ConstantNode<>(Type.INT, ((NumberToken) sym).getNumber());
+            } else {
+                node = new ConstantNode<>(Type.INT, scanner.getNum());
+            }
             scanner.processToken();
-            return true;
+            return node;
         } else {
-            return false;
+            return new ErrorNode(String.format(
+                    "Expected number literal in %s at (%d, %d) but found %s instead",
+                    sym.getFilename(),
+                    sym.getLine(),
+                    sym.getPosition(),
+                    sym.getType().toString()));
         }
     }
+
 
     /**
      * Checks the underlying token iterator for a single identifier.

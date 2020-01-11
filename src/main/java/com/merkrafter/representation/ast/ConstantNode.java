@@ -50,7 +50,7 @@ public class ConstantNode<T> extends ASTBaseNode {
      *
      * @return value stored by this constant node
      */
-    T getValue() {
+    public T getValue() {
         return value;
     }
 
