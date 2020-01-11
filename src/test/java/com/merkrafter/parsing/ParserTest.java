@@ -472,7 +472,7 @@ class ParserTest {
     void parseIdentifier() {
         final Scanner scanner = new TestScanner(new Token[]{new Token(TokenType.IDENT, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseIdentifier());
+        assertNotNull(parser.parseIdentifier());
     }
 
     /**
@@ -483,7 +483,7 @@ class ParserTest {
     void tryParseNoIdentifier(final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{new Token(tokenType, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseIdentifier());
+        assertNull(parser.parseIdentifier());
     }
 
     /**

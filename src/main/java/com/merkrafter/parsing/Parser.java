@@ -58,7 +58,7 @@ public class Parser {
         if (scanner.getSym() instanceof KeywordToken
             && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.CLASS) {
             scanner.processToken();
-            if (parseIdentifier()) {
+            if (parseIdentifier() != null) {
                 if (parseClassBody()) {
                     return true;
                 }
@@ -96,7 +96,7 @@ public class Parser {
             && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.FINAL) {
             scanner.processToken();
             if (parseType()) {
-                if (parseIdentifier()) {
+                if (parseIdentifier() != null) {
                     if (scanner.getSym().getType() == ASSIGN) {
                         scanner.processToken();
                         if (parseExpression()) {
@@ -126,7 +126,7 @@ public class Parser {
             && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC) {
             scanner.processToken();
             if (parseMethodType()) {
-                if (parseIdentifier()) {
+                if (parseIdentifier() != null) {
                     return parseFormalParameters();
                 }
             }
@@ -169,7 +169,7 @@ public class Parser {
 
     boolean parseFpSection() {
         if (parseType()) {
-            return parseIdentifier(); // already reads the next token
+            return parseIdentifier() != null; // already reads the next token
         }
         return false;
     }
@@ -190,7 +190,7 @@ public class Parser {
 
     boolean parseLocalDeclaration() {
         if (parseType()) {
-            if (parseIdentifier()) {
+            if (parseIdentifier() != null) {
                 if (scanner.getSym().getType() == SEMICOLON) {
                     scanner.processToken();
                     return true;
@@ -228,7 +228,7 @@ public class Parser {
     }
 
     private boolean parseStatementForAssignmentOrProcedureCall() {
-        if (parseIdentifier()) {
+        if (parseIdentifier() != null) {
             if (parseAssignmentWithoutIdent()) {
                 return true;
             } else if (parseActualParameters() && scanner.getSym().getType() == SEMICOLON) {
@@ -253,7 +253,7 @@ public class Parser {
     }
 
     boolean parseAssignment() {
-        if (parseIdentifier()) {
+        if (parseIdentifier() != null) {
             return parseAssignmentWithoutIdent();
         }
         return false;
@@ -287,7 +287,7 @@ public class Parser {
     }
 
     boolean parseInternProcedureCall() {
-        if (parseIdentifier()) {
+        if (parseIdentifier() != null) {
             return parseActualParameters();
         }
         return false;
@@ -453,7 +453,7 @@ public class Parser {
     }
 
     boolean parseFactor() {
-        if (parseIdentifier()) {
+        if (parseIdentifier() != null) {
             // check whether this actually is a intern procedure call
             if (parseActualParameters()) {
                 return true;
@@ -502,16 +502,24 @@ public class Parser {
 
 
     /**
-     * Checks the underlying token iterator for a single identifier.
+     * Checks whether the next token is an IDENT token and returns the identifier if this is the
+     * case. If the token is not an IDENT token, null is returned.
      *
-     * @return whether a single IDENT token comes next
+     * @return an identifier of a single IDENT token that comes next
      */
-    boolean parseIdentifier() {
-        if (scanner.getSym().getType() == IDENT) {
+    String parseIdentifier() {
+        final Token sym = scanner.getSym();
+        if (sym.getType() == IDENT) {
+            String identifier;
+            if (sym instanceof IdentToken) {
+                identifier = ((IdentToken) sym).getIdent();
+            } else {
+                identifier = scanner.getId();
+            }
             scanner.processToken();
-            return true;
+            return identifier;
         } else {
-            return false;
+            return null;
         }
     }
 
