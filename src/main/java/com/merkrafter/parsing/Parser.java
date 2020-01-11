@@ -3,6 +3,7 @@ package com.merkrafter.parsing;
 import com.merkrafter.lexing.*;
 import com.merkrafter.representation.SymbolTable;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.VariableDescription;
 import com.merkrafter.representation.ast.ASTBaseNode;
 import com.merkrafter.representation.ast.ConstantNode;
 import com.merkrafter.representation.ast.ErrorNode;
@@ -188,16 +189,35 @@ public class Parser {
         return false;
     }
 
+    /**
+     * Tries to parse a local declaration and returns whether the next 3 tokens match the
+     * grammar: local_declaration = type ident ";".
+     * <p>
+     * If this succeeds, the variable is pushed into the symbol table.
+     *
+     * @return whether the next tokens represent a local declaration
+     */
     boolean parseLocalDeclaration() {
-        if (parseType() != null) {
-            if (parseIdentifier() != null) {
-                if (scanner.getSym().getType() == SEMICOLON) {
-                    scanner.processToken();
-                    return true;
-                }
-            }
+        final Type type = parseType();
+        if (type == null) {
+            return false;
         }
-        return false;
+        final String identifier = parseIdentifier();
+        if (identifier == null) {
+            return false;
+        }
+        if (scanner.getSym().getType() != SEMICOLON) { // no need to store this in a variable
+            return false;
+        }
+
+        // FIXME this line assumes that only int values exist and therefore sets the value to 0
+        // if more types come into play, a map of default values should be maintained somewhere
+        final VariableDescription var = new VariableDescription(identifier, type, 0, false);
+        // TODO detect multi-declarations as a part of the semantics analysis
+        symbolTable.insert(var);
+
+        scanner.processToken();
+        return true;
     }
 
     boolean parseStatementSequence() {
