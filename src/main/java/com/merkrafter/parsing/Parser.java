@@ -1,10 +1,7 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
-import com.merkrafter.representation.ProcedureDescription;
-import com.merkrafter.representation.SymbolTable;
-import com.merkrafter.representation.Type;
-import com.merkrafter.representation.VariableDescription;
+import com.merkrafter.representation.*;
 import com.merkrafter.representation.ast.*;
 
 import java.util.LinkedList;
@@ -409,28 +406,37 @@ public class Parser {
         return false;
     }
 
+    /**
+     * Tries to parse actual parameters and returns whether the next tokens match the
+     * grammar: actual_parameters = "(" [expression {"," expression}] ")".
+     *
+     * @return whether the next tokens represent actual parameters
+     */
     boolean parseActualParameters() {
-        if (scanner.getSym().getType() == L_PAREN) {
-            scanner.processToken();
-            if (parseExpression()) {
-                while (scanner.getSym().getType() == COMMA) {
-                    scanner.processToken();
-                    if (!parseExpression()) {
-                        return false;
-                    }
+        if (scanner.getSym().getType() != L_PAREN) {
+            return false;
+        }
+        scanner.processToken();
+        // ASTBaseNode node = parseExpression();
+        if (parseExpression()) {
+            // final List<ASTBaseNode> paramList = new LinkedList<>();
+            // paramList.add(node);
+            while (scanner.getSym().getType() == COMMA) {
+                scanner.processToken();
+                // node = parseExpression();
+                if (!parseExpression()) {
+                    return false;
                 }
+                // else {paramList.add(node);}
             }
-            // it is okay if no expression comes here
-            // but it is still necessary to check for the right paren
-        } else {
+        }
+        // it is okay if no expression comes here
+        // but it is still necessary to check for the right paren
+        if (scanner.getSym().getType() != R_PAREN) {
             return false;
         }
-        if (scanner.getSym().getType() == R_PAREN) {
-            scanner.processToken();
-            return true;
-        } else {
-            return false;
-        }
+        scanner.processToken();
+        return true;
     }
 
     /**
