@@ -451,11 +451,23 @@ public class Parser {
         }
     }
 
+    /**
+     * Tries to parse a simple expression and returns whether the next tokens match the
+     * grammar: simple_expression = term {("+" | "-"  ) term}.
+     *
+     * @return whether the next tokens represent a simple expression
+     */
     boolean parseSimpleExpression() {
         boolean success = parseTerm();
+        // ASTBaseNode node = parseTerm();
         while (success) {
-            if (scanner.getSym().getType() == PLUS || scanner.getSym().getType() == MINUS) {
+            if (scanner.getSym().getType() == PLUS) {
                 scanner.processToken();
+                // node = new BinaryOperationNode(node, BinaryOperationNodeType.PLUS, parseTerm());
+                success = parseTerm();
+            } else if (scanner.getSym().getType() == MINUS) {
+                scanner.processToken();
+                // node = new BinaryOperationNode(node, BinaryOperationNodeType.MINUS, parseTerm());
                 success = parseTerm();
             } else {
                 break;
