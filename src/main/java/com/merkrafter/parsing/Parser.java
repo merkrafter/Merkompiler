@@ -464,11 +464,23 @@ public class Parser {
         return success;
     }
 
+    /**
+     * Tries to parse a term and returns whether the next tokens match the
+     * grammar: term = factor {("*" | "/" ) factor}.
+     *
+     * @return whether the next tokens represent a term
+     */
     boolean parseTerm() {
+        // ASTBaseNode node = parseFactor();
         boolean success = parseFactor();
         while (success) {
-            if (scanner.getSym().getType() == TIMES || scanner.getSym().getType() == DIVIDE) {
+            if (scanner.getSym().getType() == TIMES) {
                 scanner.processToken();
+                // node = new BinaryOperationNode(node, BinaryOperationNodeType.TIMES, parseFactor());
+                success = parseFactor();
+            } else if (scanner.getSym().getType() == DIVIDE) {
+                scanner.processToken();
+                // node = new BinaryOperationNode(node, BinaryOperationNodeType.DIVIDE, parseFactor());
                 success = parseFactor();
             } else {
                 break;
