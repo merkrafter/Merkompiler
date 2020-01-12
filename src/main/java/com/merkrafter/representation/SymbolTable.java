@@ -48,7 +48,7 @@ public class SymbolTable {
      * @return whether the insertion was successful
      */
     public boolean insert(final ObjectDescription objectDescription) {
-        for (final ObjectDescription storedObjDesc: descriptions) {
+        for (final ObjectDescription storedObjDesc : descriptions) {
             if (storedObjDesc.equals(objectDescription)) {
                 return false;
             }
@@ -67,7 +67,7 @@ public class SymbolTable {
      * @return an ObjectDescription with the given prototype or null if there is no such object
      */
     public ObjectDescription find(final ObjectDescription prototype) {
-        for (final ObjectDescription storedObjDesc: descriptions) {
+        for (final ObjectDescription storedObjDesc : descriptions) {
             if (storedObjDesc.equals(prototype)) {
                 return storedObjDesc;
             }
@@ -77,5 +77,31 @@ public class SymbolTable {
         } else {
             return enclosingSymbolTable.find(prototype);
         }
+    }
+
+    /**
+     * Searches this SymbolTable for an ObjectDescription with the given prototype and returns it.
+     * If no such ObjectDescription is inside this SymbolTable, null is returned.
+     * If this symbol table has an enclosing table, it is searched as well.
+     *
+     * @param name the name of the ObjectDescription to find
+     * @param signature if a procedure is searched, then the signature can be passed here; otherwise set it to null
+     * @return an ObjectDescription with the given prototype or null if there is no such object
+     */
+    public ObjectDescription find(final String name, final Type... signature) {
+        ObjectDescription prototype;
+        if (signature == null) { // if signature.length == 0 it is a parameterless procedure
+            // this is a variable; only name is really relevant
+            prototype = new VariableDescription(name, Type.VOID, 0, false);
+        } else {
+            // this is a procedure; only name and list of parameter types are relevant
+            final List<ObjectDescription> paramList = new LinkedList<>();
+            for (final Type type : signature) {
+                // for the parameters only the types are relevant
+                paramList.add(new VariableDescription("", type, 0, false));
+            }
+            prototype = new ProcedureDescription(Type.VOID, name, paramList, null);
+        }
+        return find(prototype);
     }
 }
