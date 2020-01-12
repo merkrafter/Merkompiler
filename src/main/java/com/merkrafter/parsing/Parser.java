@@ -433,15 +433,35 @@ public class Parser {
         }
     }
 
+    /**
+     * Tries to parse an expression and returns whether the next tokens match the
+     * grammar: expression = simple_expression [("==" | "<" | "<=" | ">" | ">=") simple_expression].
+     *
+     * @return whether the next tokens represent an expression
+     */
     boolean parseExpression() {
+        // ASTBaseNode node = parseSimpleExpression();
         if (parseSimpleExpression()) {
             switch (scanner.getSym().getType()) {
                 case EQUAL:
+                    // scanner.processToken();
+                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
+                    // break;
                 case LOWER:
+                    // scanner.processToken();
+                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
+                    // break;
                 case LOWER_EQUAL:
+                    // scanner.processToken();
+                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
+                    // break;
                 case GREATER:
+                    // scanner.processToken();
+                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
+                    // break;
                 case GREATER_EQUAL:
                     scanner.processToken();
+                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
                     return parseSimpleExpression();
                 default:
                     return true;
