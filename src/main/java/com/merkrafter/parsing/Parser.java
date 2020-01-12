@@ -1,9 +1,13 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
-import com.merkrafter.representation.*;
+import com.merkrafter.representation.ProcedureDescription;
+import com.merkrafter.representation.SymbolTable;
+import com.merkrafter.representation.Type;
+import com.merkrafter.representation.VariableDescription;
 import com.merkrafter.representation.ast.*;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,25 +95,48 @@ public class Parser {
         return true;
     }
 
+    /**
+     * Tries to parse a final declaration and returns whether the next tokens match the
+     * grammar: final_declaration = final type ident "=" expression ";".
+     * <p>
+     * If this succeeds, the variable is pushed into the symbol table.
+     *
+     * @return whether the next tokens represent a final declaration
+     */
+    // this method is final because it is not an official rule of the grammar but only a helper
     private boolean parseFinalDeclaration() {
-        if (scanner.getSym() instanceof KeywordToken
-            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.FINAL) {
-            scanner.processToken();
-            if (parseType() != null) {
-                if (parseIdentifier() != null) {
-                    if (scanner.getSym().getType() == ASSIGN) {
-                        scanner.processToken();
-                        if (parseExpression()) {
-                            if (scanner.getSym().getType() == SEMICOLON) {
-                                scanner.processToken();
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
+        final Token sym = scanner.getSym();
+        if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.FINAL)) {
+            return false;
         }
-        return false;
+        scanner.processToken();
+
+        final Type type = parseType();
+        if (type == null) {
+            return false;
+        }
+        final String identifier = parseIdentifier();
+        if (identifier == null) {
+            return false;
+        }
+        if (scanner.getSym().getType() != ASSIGN) {
+            return false;
+        }
+        scanner.processToken();
+        if (parseExpression() == null) {
+            return false;
+        }
+        if (scanner.getSym().getType() != SEMICOLON) {
+            return false;
+        }
+
+        // TODO evaluate the expression to set the value correctly
+        final VariableDescription var = new VariableDescription(identifier, type, null, true);
+        // TODO check whether this is successful
+        symbolTable.insert(var);
+
+        scanner.processToken();
+        return true;
     }
 
     boolean parseMethodDeclaration() {
@@ -250,7 +277,7 @@ public class Parser {
         if (parseIdentifier() != null) {
             if (parseAssignmentWithoutIdent()) {
                 return true;
-            } else if (parseActualParameters() && scanner.getSym().getType() == SEMICOLON) {
+            } else if (parseActualParameters() != null && scanner.getSym().getType() == SEMICOLON) {
                 // this actually is a procedure call
                 scanner.processToken();
                 return true;
@@ -292,7 +319,8 @@ public class Parser {
     private boolean parseAssignmentWithoutIdent() {
         if (scanner.getSym().getType() == ASSIGN) {
             scanner.processToken();
-            if (parseExpression() && scanner.getSym().getType() == SEMICOLON) {
+            if (!(parseExpression() instanceof ErrorNode)
+                && scanner.getSym().getType() == SEMICOLON) {
                 scanner.processToken();
                 return true;
             }
@@ -310,7 +338,7 @@ public class Parser {
 
     boolean parseInternProcedureCall() {
         if (parseIdentifier() != null) {
-            return parseActualParameters();
+            return parseActualParameters() != null;
         }
         return false;
     }
@@ -322,7 +350,7 @@ public class Parser {
             // condition:
             if (scanner.getSym().getType() == L_PAREN) {
                 scanner.processToken();
-                if (parseExpression()) {
+                if (!(parseExpression() instanceof ErrorNode)) {
                     if (scanner.getSym().getType() == R_PAREN) {
                         scanner.processToken();
                         // if-associated block:
@@ -363,7 +391,7 @@ public class Parser {
             // condition:
             if (scanner.getSym().getType() == L_PAREN) {
                 scanner.processToken();
-                if (parseExpression()) {
+                if (!(parseExpression() instanceof ErrorNode)) {
                     if (scanner.getSym().getType() == R_PAREN) {
                         scanner.processToken();
                         // associated block:
@@ -392,7 +420,7 @@ public class Parser {
                 // there is no simple expression in between
                 scanner.processToken();
                 return true;
-            } else if (parseSimpleExpression()) {
+            } else if (!(parseSimpleExpression() instanceof ErrorNode)) {
                 if (scanner.getSym().getType() == SEMICOLON) {
                     scanner.processToken();
                     return true;
@@ -407,173 +435,203 @@ public class Parser {
     }
 
     /**
-     * Tries to parse actual parameters and returns whether the next tokens match the
+     * Tries to parse actual parameters according to the
      * grammar: actual_parameters = "(" [expression {"," expression}] ")".
+     * It then returns the list of trees that represent the expressions used as parameters.
+     * Returns null if a syntax error occurs.
      *
-     * @return whether the next tokens represent actual parameters
+     * @return list of actual parameters
      */
-    boolean parseActualParameters() {
+    List<ASTBaseNode> parseActualParameters() {
         if (scanner.getSym().getType() != L_PAREN) {
-            return false;
+            return null; // TODO return an error node later on
         }
         scanner.processToken();
-        // ASTBaseNode node = parseExpression();
-        if (parseExpression()) {
-            // final List<ASTBaseNode> paramList = new LinkedList<>();
-            // paramList.add(node);
+
+        final List<ASTBaseNode> paramList = new LinkedList<>();
+
+        ASTBaseNode node = parseExpression();
+        // it is okay if no expression comes here
+        // but it is still necessary to check for the right paren afterwards
+        if (node != null && !(node instanceof ErrorNode)) {
+            paramList.add(node);
+
             while (scanner.getSym().getType() == COMMA) {
                 scanner.processToken();
-                // node = parseExpression();
-                if (!parseExpression()) {
-                    return false;
+
+                node = parseExpression();
+                if (node == null || node instanceof ErrorNode) {
+                    return null; // TODO return the error node
                 }
-                // else {paramList.add(node);}
+                paramList.add(node);
+
             }
         }
-        // it is okay if no expression comes here
-        // but it is still necessary to check for the right paren
+
         if (scanner.getSym().getType() != R_PAREN) {
-            return false;
+            return null; // TODO return an error node later on
         }
         scanner.processToken();
-        return true;
+        return paramList;
     }
 
     /**
-     * Tries to parse an expression and returns whether the next tokens match the
+     * Tries to parse an expression according to the
      * grammar: expression = simple_expression [("==" | "<" | "<=" | ">" | ">=") simple_expression].
+     * This method then returns the subtree representing this expression.
      *
-     * @return whether the next tokens represent an expression
+     * @return syntax tree for this expression
      */
-    boolean parseExpression() {
-        // ASTBaseNode node = parseSimpleExpression();
-        if (parseSimpleExpression()) {
-            switch (scanner.getSym().getType()) {
-                case EQUAL:
-                    // scanner.processToken();
-                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
-                    // break;
-                case LOWER:
-                    // scanner.processToken();
-                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
-                    // break;
-                case LOWER_EQUAL:
-                    // scanner.processToken();
-                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
-                    // break;
-                case GREATER:
-                    // scanner.processToken();
-                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
-                    // break;
-                case GREATER_EQUAL:
-                    scanner.processToken();
-                    // node = new BinaryOperationNode(node, BinaryOperationNodeType.EQUAL, parseSimpleExpression());
-                    return parseSimpleExpression();
-                default:
-                    return true;
-            }
-        } else {
-            return false;
+    ASTBaseNode parseExpression() {
+        ASTBaseNode node = parseSimpleExpression();
+        if (node == null) { // TODO check whether this case can happen; better avoid it
+            return null;
         }
+        final Token sym = scanner.getSym();
+        switch (sym.getType()) {
+            case EQUAL:
+                scanner.processToken();
+                node = new BinaryOperationNode(node,
+                                               BinaryOperationNodeType.EQUAL,
+                                               parseSimpleExpression());
+                break;
+            case LOWER:
+                scanner.processToken();
+                node = new BinaryOperationNode(node,
+                                               BinaryOperationNodeType.LOWER,
+                                               parseSimpleExpression());
+                break;
+            case LOWER_EQUAL:
+                scanner.processToken();
+                node = new BinaryOperationNode(node,
+                                               BinaryOperationNodeType.LOWER_EQUAL,
+                                               parseSimpleExpression());
+                break;
+            case GREATER:
+                scanner.processToken();
+                node = new BinaryOperationNode(node,
+                                               BinaryOperationNodeType.GREATER,
+                                               parseSimpleExpression());
+                break;
+            case GREATER_EQUAL:
+                scanner.processToken();
+                node = new BinaryOperationNode(node,
+                                               BinaryOperationNodeType.GREATER_EQUAL,
+                                               parseSimpleExpression());
+                break;
+        }
+
+        return node;
     }
 
     /**
-     * Tries to parse a simple expression and returns whether the next tokens match the
+     * Tries to parse a simple expression according to the
      * grammar: simple_expression = term {("+" | "-"  ) term}.
+     * This method then returns the subtree representing this simple expression
      *
-     * @return whether the next tokens represent a simple expression
+     * @return syntax tree for this simple expression
      */
-    boolean parseSimpleExpression() {
-        boolean success = parseTerm();
-        // ASTBaseNode node = parseTerm();
-        while (success) {
-            if (scanner.getSym().getType() == PLUS) {
+    ASTBaseNode parseSimpleExpression() {
+        ASTBaseNode node = parseTerm();
+        while (node != null && !(node instanceof ErrorNode)) {
+            final Token sym = scanner.getSym();
+            if (sym.getType() == PLUS) {
                 scanner.processToken();
-                // node = new BinaryOperationNode(node, BinaryOperationNodeType.PLUS, parseTerm());
-                success = parseTerm();
-            } else if (scanner.getSym().getType() == MINUS) {
+                node = new BinaryOperationNode(node, BinaryOperationNodeType.PLUS, parseTerm());
+            } else if (sym.getType() == MINUS) {
                 scanner.processToken();
-                // node = new BinaryOperationNode(node, BinaryOperationNodeType.MINUS, parseTerm());
-                success = parseTerm();
+                node = new BinaryOperationNode(node, BinaryOperationNodeType.MINUS, parseTerm());
             } else {
+                // this means that at least one term could be found which is valid for this grammar
                 break;
             }
         }
-        return success;
+        return node;
     }
 
     /**
-     * Tries to parse a term and returns whether the next tokens match the
+     * Tries to parse a term according to the
      * grammar: term = factor {("*" | "/" ) factor}.
+     * This method then returns the AST for this term.
      *
-     * @return whether the next tokens represent a term
+     * @return syntax tree for this term
      */
-    boolean parseTerm() {
-        // ASTBaseNode node = parseFactor();
-        boolean success = parseFactor();
-        while (success) {
-            if (scanner.getSym().getType() == TIMES) {
+    ASTBaseNode parseTerm() {
+        ASTBaseNode node = parseFactor();
+        while (node != null && !(node instanceof ErrorNode)) {
+            final Token sym = scanner.getSym();
+            if (sym.getType() == TIMES) {
                 scanner.processToken();
-                // node = new BinaryOperationNode(node, BinaryOperationNodeType.TIMES, parseFactor());
-                success = parseFactor();
-            } else if (scanner.getSym().getType() == DIVIDE) {
+                node = new BinaryOperationNode(node, BinaryOperationNodeType.TIMES, parseFactor());
+            } else if (sym.getType() == DIVIDE) {
                 scanner.processToken();
-                // node = new BinaryOperationNode(node, BinaryOperationNodeType.DIVIDE, parseFactor());
-                success = parseFactor();
+                node = new BinaryOperationNode(node, BinaryOperationNodeType.DIVIDE, parseFactor());
             } else {
+                // at least one factor was found which is valid for this grammar
                 break;
             }
         }
-        return success;
+        return node;
     }
 
     /**
-     * Tries to parse a factor and returns whether the next tokens match the
+     * Tries to parse a factor according to the
      * grammar: factor = ident | intern_procedure_call | number | "(" expression ")".
+     * This method then returns the syntax tree for this factor.
      *
-     * @return whether the next tokens represent a factor
+     * @return syntax tree for this factor
      */
-    boolean parseFactor() {
-        ASTBaseNode returnedNode;
+    ASTBaseNode parseFactor() {
         final String identifier = parseIdentifier();
         if (identifier != null) {
-            // TODO pass these parameters to the procedure description below
-            if (parseActualParameters()) {
-                // this actually is a intern procedure call
+            final List<ASTBaseNode> parameters = parseActualParameters();
+
+            /*
+             * Parse intern procedure call
+             */
+            if (parameters != null) {
+                final Type[] typesArray = new Type[parameters.size()];
+                // FIXME throws NPE if the one of the parameters is a variable that was not declared
+                Arrays.setAll(typesArray, i -> parameters.get(i).getReturnedType());
                 final ProcedureDescription procedure =
-                        new ProcedureDescription(Type.INT, identifier, new LinkedList<>(), null);
+                        (ProcedureDescription) symbolTable.find(identifier, typesArray);
                 // TODO check whether a procedure was found
-                returnedNode =
-                        new ProcedureCallNode((ProcedureDescription) symbolTable.find(procedure));
-                return true;
+                // TODO assign parameters to procedure
+                return new ProcedureCallNode((ProcedureDescription) symbolTable.find(procedure));
             }
-            // this actually is a variable access
-            final VariableDescription protoVar =
-                    new VariableDescription(identifier, Type.INT, 0, false);
+
+            /*
+             * Parse a variable access
+             */
+            final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
+
             // TODO check whether a variable was found
-            final VariableDescription var = (VariableDescription) symbolTable.find(protoVar);
-            returnedNode = new VariableAccessNode(var);
-            return true;
+            return new VariableAccessNode(var);
         }
-        final ASTBaseNode node = parseNumber();
+
+        /*
+         * Parse a number
+         */
+        ASTBaseNode node = parseNumber();
         if (!(node instanceof ErrorNode)) {
-            // return node;
-            return true;
+            return node;
         }
+
+        /*
+         * Parse an expression
+         */
         if (scanner.getSym().getType() != L_PAREN) {
-            // return new ErrorNode("Expected '(' but found " + scanner.getSym().getType().toString());
-            return false;
+            return new ErrorNode("Expected '(' but found " + scanner.getSym().getType());
         }
         scanner.processToken();
 
-        final boolean success = parseExpression();
+        node = parseExpression();
         if (scanner.getSym().getType() != R_PAREN) {
-            // return new ErrorNode("Expected ')' but found " + scanner.getSym().getType().toString());
-            return false;
+            return new ErrorNode("Expected ')' but found " + scanner.getSym().getType());
         }
         scanner.processToken();
 
-        return success; // whether the above parseExpression() was successful
+        return node; // whether the above parseExpression() was successful
     }
 
     /**
@@ -610,6 +668,8 @@ public class Parser {
      * @return an identifier of a single IDENT token that comes next
      */
     String parseIdentifier() {
+        // this method does not return a Node yet as it does not know enough context
+        // this could be a declaration, a variable or a procedure, for instance
         final Token sym = scanner.getSym();
         if (sym.getType() == IDENT) {
             String identifier;
