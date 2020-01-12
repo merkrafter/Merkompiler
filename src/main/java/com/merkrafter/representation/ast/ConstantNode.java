@@ -41,7 +41,7 @@ public class ConstantNode<T> extends ASTBaseNode {
      * @return the return type of this node
      */
     @Override
-    Type getReturnedType() {
+    public Type getReturnedType() {
         return type;
     }
 

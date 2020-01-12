@@ -36,7 +36,7 @@ public class IfNode extends ASTBaseNode {
      * @return Type.VOID
      */
     @Override
-    Type getReturnedType() {
+    public Type getReturnedType() {
         return Type.VOID;
     }
 }

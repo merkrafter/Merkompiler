@@ -37,7 +37,7 @@ public abstract class ASTBaseNode {
      *
      * @return the return type of this node
      */
-    abstract Type getReturnedType();
+    public abstract Type getReturnedType();
 
     /**
      * Next sequential instruction in the represented program.

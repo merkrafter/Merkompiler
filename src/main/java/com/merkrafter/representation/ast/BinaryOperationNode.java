@@ -43,7 +43,7 @@ public class BinaryOperationNode extends ASTBaseNode {
      * @return the return type of this node
      */
     @Override
-    Type getReturnedType() {
+    public Type getReturnedType() {
         // TODO regularly check this method
         /* since javac can not see that a switch statement covers all enum items the return BOOLEAN
            at the bottom in necessary */
