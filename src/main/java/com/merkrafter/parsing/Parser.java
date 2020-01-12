@@ -1,12 +1,14 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
+import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.SymbolTable;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
-import com.merkrafter.representation.ast.ASTBaseNode;
-import com.merkrafter.representation.ast.ConstantNode;
-import com.merkrafter.representation.ast.ErrorNode;
+import com.merkrafter.representation.ast.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.merkrafter.lexing.TokenType.*;
 
@@ -475,26 +477,53 @@ public class Parser {
         return success;
     }
 
+    /**
+     * Tries to parse a factor and returns whether the next tokens match the
+     * grammar: factor = ident | intern_procedure_call | number | "(" expression ")".
+     *
+     * @return whether the next tokens represent a factor
+     */
     boolean parseFactor() {
-        if (parseIdentifier() != null) {
-            // check whether this actually is a intern procedure call
+        ASTBaseNode returnedNode;
+        final String identifier = parseIdentifier();
+        if (identifier != null) {
+            // TODO pass these parameters to the procedure description below
             if (parseActualParameters()) {
+                // this actually is a intern procedure call
+                final ProcedureDescription procedure =
+                        new ProcedureDescription(Type.INT, identifier, new LinkedList<>(), null);
+                // TODO check whether a procedure was found
+                returnedNode =
+                        new ProcedureCallNode((ProcedureDescription) symbolTable.find(procedure));
                 return true;
             }
+            // this actually is a variable access
+            final VariableDescription protoVar =
+                    new VariableDescription(identifier, Type.INT, 0, false);
+            // TODO check whether a variable was found
+            final VariableDescription var = (VariableDescription) symbolTable.find(protoVar);
+            returnedNode = new VariableAccessNode(var);
             return true;
-        } else if (!(parseNumber() instanceof ErrorNode)) {
-            return true;
-        } else if (scanner.getSym().getType() == L_PAREN) {
-            scanner.processToken();
-            final boolean success = parseExpression();
-            if (scanner.getSym().getType() == R_PAREN) {
-                scanner.processToken();
-            } else {
-                return false;
-            }
-            return success; // whether the above parseExpression() was successful
         }
-        return false;
+        final ASTBaseNode node = parseNumber();
+        if (!(node instanceof ErrorNode)) {
+            // return node;
+            return true;
+        }
+        if (scanner.getSym().getType() != L_PAREN) {
+            // return new ErrorNode("Expected '(' but found " + scanner.getSym().getType().toString());
+            return false;
+        }
+        scanner.processToken();
+
+        final boolean success = parseExpression();
+        if (scanner.getSym().getType() != R_PAREN) {
+            // return new ErrorNode("Expected ')' but found " + scanner.getSym().getType().toString());
+            return false;
+        }
+        scanner.processToken();
+
+        return success; // whether the above parseExpression() was successful
     }
 
     /**
