@@ -14,14 +14,18 @@ public class ProcedureCallNode extends ASTBaseNode {
     //==============================================================
     private final ProcedureDescription procedure;
 
+    private final ParameterListNode args;
+
     // CONSTRUCTORS
     //==============================================================
 
     /****
-     * Creates a new node that represents a procedure call.
+     * Creates a new node that represents a procedure call with the
+     * given arguments.
      ***************************************************************/
-    public ProcedureCallNode(final ProcedureDescription procedure) {
+    public ProcedureCallNode(final ProcedureDescription procedure, final ParameterListNode args) {
         this.procedure = procedure;
+        this.args = args;
     }
 
     // GETTER
@@ -36,4 +40,12 @@ public class ProcedureCallNode extends ASTBaseNode {
     public Type getReturnedType() {
         return procedure.getReturnType();
     }
+
+    /**
+     * @return the arguments of this procedure call
+     */
+    ParameterListNode getArgs() {
+        return args;
+    }
+
 }
