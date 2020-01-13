@@ -442,7 +442,7 @@ public class Parser {
      *
      * @return list of actual parameters
      */
-    List<ASTBaseNode> parseActualParameters() {
+    ParameterListNode parseActualParameters() {
         if (scanner.getSym().getType() != L_PAREN) {
             return null; // TODO return an error node later on
         }
@@ -472,7 +472,7 @@ public class Parser {
             return null; // TODO return an error node later on
         }
         scanner.processToken();
-        return paramList;
+        return new ParameterListNode(paramList);
     }
 
     /**
@@ -584,20 +584,21 @@ public class Parser {
     ASTBaseNode parseFactor() {
         final String identifier = parseIdentifier();
         if (identifier != null) {
-            final List<ASTBaseNode> parameters = parseActualParameters();
+            final ParameterListNode parameters = parseActualParameters();
 
             /*
              * Parse intern procedure call
              */
             if (parameters != null) {
-                final Type[] typesArray = new Type[parameters.size()];
+                final Type[] typesArray = new Type[parameters.getParameters().size()];
                 // FIXME throws NPE if the one of the parameters is a variable that was not declared
-                Arrays.setAll(typesArray, i -> parameters.get(i).getReturnedType());
+                Arrays.setAll(typesArray, i -> parameters.getParameters().get(i).getReturnedType());
                 final ProcedureDescription procedure =
                         (ProcedureDescription) symbolTable.find(identifier, typesArray);
                 // TODO check whether a procedure was found
                 // TODO assign parameters to procedure
-                return new ProcedureCallNode((ProcedureDescription) symbolTable.find(procedure));
+                return new ProcedureCallNode((ProcedureDescription) symbolTable.find(procedure),
+                                             parameters);
             }
 
             /*

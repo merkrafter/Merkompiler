@@ -1,16 +1,15 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
-import com.merkrafter.representation.ast.ASTBaseNode;
 import com.merkrafter.representation.ast.ConstantNode;
 import com.merkrafter.representation.ast.ErrorNode;
+import com.merkrafter.representation.ast.ParameterListNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -313,9 +312,9 @@ class ParserTest {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.L_PAREN, "", 0, 0), new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        final List<ASTBaseNode> parameters = parser.parseActualParameters();
+        final ParameterListNode parameters = parser.parseActualParameters();
         assertNotNull(parameters);
-        assertTrue(parameters.isEmpty());
+        assertTrue(parameters.getParameters().isEmpty());
     }
 
     /**
