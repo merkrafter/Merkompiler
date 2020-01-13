@@ -54,7 +54,7 @@ public abstract class ASTBaseNode {
      *
      * @param next the node that represents the instruction after this node's
      */
-    void setNext(final ASTBaseNode next) {
+    public void setNext(final ASTBaseNode next) {
         this.next = next;
     }
 }
