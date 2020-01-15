@@ -41,9 +41,16 @@ public class Parser {
      * Creates a new Parser based on a scanner that provides tokens.
      ***************************************************************/
     public Parser(final Scanner scanner) {
+        this(scanner, null);
+    }
+
+    /**
+     * Creates a new Parser with a set of global variables. Can be used for testing purposes.
+     */
+    Parser (final Scanner scanner, final SymbolTable globalVariables) {
         this.scanner = scanner;
         this.scanner.processToken();
-        symbolTable = new SymbolTable(null);
+        symbolTable = new SymbolTable(globalVariables);
     }
 
     // METHODS
