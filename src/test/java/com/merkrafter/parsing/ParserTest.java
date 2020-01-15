@@ -15,17 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ParserTest {
 
+    public static final String CLASS_IDENT = "TestClass";
+    public static final String VAR_IDENT = "testVar";
+    public static final String PROC_IDENT = "testMethod";
+
     /**
-     * The parser should accept "class MyClass {int a;}" as a class.
+     * The parser should accept "class {@value #CLASS_IDENT} {int {@value #VAR_IDENT};}" as a class.
      */
     @Test
     void parseClass() {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.CLASS, null, 1, 1),
-                new IdentToken("MyClass", null, 1, 1),
+                new IdentToken(CLASS_IDENT, null, 1, 1),
                 new Token(TokenType.L_BRACE, null, 1, 1),
                 new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken("a", null, 1, 1),
+                new IdentToken(VAR_IDENT, null, 1, 1),
                 new Token(TokenType.SEMICOLON, null, 1, 1),
                 new Token(TokenType.R_BRACE, null, 1, 1)});
         final Parser parser = new Parser(scanner);
@@ -33,14 +37,14 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single "{int a;}" as a class body.
+     * The parser should accept a single "{int {@value #VAR_IDENT};}" as a class body.
      */
     @Test
     void parseClassBody() {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.L_BRACE, null, 1, 1),
                 new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken("a", null, 1, 1),
+                new IdentToken(VAR_IDENT, null, 1, 1),
                 new Token(TokenType.SEMICOLON, null, 1, 1),
                 new Token(TokenType.R_BRACE, null, 1, 1)});
         final Parser parser = new Parser(scanner);
@@ -48,13 +52,13 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single "int a;" as a declaration.
+     * The parser should accept a single "int {@value #VAR_IDENT}" as a declaration.
      */
     @Test
     void parseDeclarations() {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken("a", null, 1, 1),
+                new IdentToken(VAR_IDENT, null, 1, 1),
                 new Token(TokenType.SEMICOLON, null, 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseDeclarations());
@@ -71,7 +75,7 @@ class ParserTest {
                 // method head
                 new KeywordToken(Keyword.PUBLIC, null, 1, 1),
                 new KeywordToken(methodType, null, 1, 1),
-                new IdentToken("foo", null, 1, 1),
+                new IdentToken(PROC_IDENT, null, 1, 1),
                 new Token(TokenType.L_PAREN, null, 1, 1),
                 new Token(TokenType.R_PAREN, null, 1, 1),
                 // method body
@@ -93,7 +97,7 @@ class ParserTest {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.PUBLIC, null, 1, 1),
                 new KeywordToken(methodType, null, 1, 1),
-                new IdentToken("foo", null, 1, 1),
+                new IdentToken(PROC_IDENT, null, 1, 1),
                 new Token(TokenType.L_PAREN, null, 1, 1),
                 new Token(TokenType.R_PAREN, null, 1, 1)});
         final Parser parser = new Parser(scanner);
@@ -113,26 +117,26 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single "(int a)" as formal parameters.
+     * The parser should accept a single "(int {@value #VAR_IDENT}" as formal parameters.
      */
     @Test
     void parseFormalParameters() {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.L_PAREN, null, 1, 1),
                 new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken("a", null, 1, 1),
+                new IdentToken(VAR_IDENT, null, 1, 1),
                 new Token(TokenType.R_PAREN, null, 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseFormalParameters());
     }
 
     /**
-     * The parser should accept a single "int a" as a fp_section.
+     * The parser should accept a single "int {@value #VAR_IDENT} as a fp_section.
      */
     @Test
     void parseFpSection() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.INT, null, 1, 1), new IdentToken("a", null, 1, 1)});
+                new KeywordToken(Keyword.INT, null, 1, 1), new IdentToken(VAR_IDENT, null, 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseFpSection());
     }
@@ -153,13 +157,13 @@ class ParserTest {
     }
 
     /**
-     * The parser should accept a single "int a;" as a local declaration.
+     * The parser should accept a single "int {@value #VAR_IDENT}" as a local declaration.
      */
     @Test
     void parseLocalDeclaration() {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken("a", null, 1, 1),
+                new IdentToken(VAR_IDENT, null, 1, 1),
                 new Token(TokenType.SEMICOLON, null, 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseLocalDeclaration());
