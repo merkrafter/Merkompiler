@@ -187,24 +187,42 @@ public class Parser {
         }
     }
 
-    boolean parseFormalParameters() {
-        if (scanner.getSym().getType() == L_PAREN) {
-            scanner.processToken();
-            if (parseFpSection() != null) {
-                while (scanner.getSym().getType() == COMMA) {
-                    scanner.processToken();
-                    if (parseFpSection() == null) {
-                        return false;
-                    }
-                }
-            }
-            if (scanner.getSym().getType() == R_PAREN) {
-                scanner.processToken();
-                return true;
-            }
-
+    /**
+     * Tries to parse formal parameters.
+     *
+     * @return list of variable descriptions found or null if an error occurred
+     */
+    List<VariableDescription> parseFormalParameters() {
+        Token sym = scanner.getSym();
+        if (sym.getType() != L_PAREN) {
+            return null;
         }
-        return false;
+        scanner.processToken();
+
+        final List<VariableDescription> formalParameters = new LinkedList<>();
+        VariableDescription var = parseFpSection();
+        // having no variableDescription is okay, but the closing paren must still be validated
+        if (var != null) {
+            formalParameters.add(var);
+            while (scanner.getSym().getType() == COMMA) {
+                scanner.processToken();
+
+                var = parseFpSection();
+                if (var == null) {
+                    // after a comma, var must not be null
+                    return null;
+                }
+                formalParameters.add(var);
+            }
+        }
+
+        sym = scanner.getSym();
+        if (sym.getType() != R_PAREN) {
+            return null;
+        }
+        scanner.processToken();
+
+        return formalParameters;
     }
 
     /**
