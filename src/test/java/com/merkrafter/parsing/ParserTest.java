@@ -101,7 +101,7 @@ class ParserTest {
                 new Token(TokenType.L_PAREN, null, 1, 1),
                 new Token(TokenType.R_PAREN, null, 1, 1)});
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseMethodHead());
+        assertNotNull(parser.parseMethodHead());
     }
 
     /**

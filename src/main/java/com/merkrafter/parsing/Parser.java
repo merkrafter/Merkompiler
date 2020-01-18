@@ -144,7 +144,7 @@ public class Parser {
     }
 
     boolean parseMethodDeclaration() {
-        if (parseMethodHead()) {
+        if (parseMethodHead() != null) {
             if (parseMethodBody()) {
                 return true;
             }
@@ -152,17 +152,31 @@ public class Parser {
         return false;
     }
 
-    boolean parseMethodHead() {
-        if (scanner.getSym() instanceof KeywordToken
-            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC) {
-            scanner.processToken();
-            if (parseMethodType() != null) {
-                if (parseIdentifier() != null) {
-                    return parseFormalParameters();
-                }
-            }
+    /**
+     * Tries to parse a method head.
+     *
+     * @return procedureDescription or null if an error occurred
+     */
+    ProcedureDescription parseMethodHead() {
+        final Token sym = scanner.getSym();
+        if (!(sym instanceof KeywordToken
+              && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC)) {
+            return null;
         }
-        return false;
+        scanner.processToken();
+
+        final Type type = parseMethodType();
+        if (type == null) {
+            return null;
+        }
+
+        final String identifier = parseIdentifier();
+        if (identifier == null) {
+            return null;
+        }
+
+        final List<VariableDescription> formalParameters = parseFormalParameters();
+        return new ActualProcedureDescription(type, identifier, formalParameters, symbolTable);
     }
 
     /**
