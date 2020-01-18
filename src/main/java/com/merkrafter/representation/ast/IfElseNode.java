@@ -39,4 +39,26 @@ public class IfElseNode extends ASTBaseNode {
     public Type getReturnedType() {
         return Type.VOID;
     }
+
+    /**
+     * An IfElseNode has a semantics error if the child nodes are null or have an error themselves.
+     *
+     * @return whether the tree represented by this node has a semantics error somewhere
+     */
+    @Override
+    public boolean hasSemanticsError() {
+        return ifNode == null || child == null || ifNode.hasSemanticsError()
+               || child.hasSemanticsError();
+    }
+
+    /**
+     * An IfElseNode has a syntax error if the child nodes are null or have an error themselves.
+     *
+     * @return whether the tree represented by this node has a syntax error somewhere
+     */
+    @Override
+    public boolean hasSyntaxError() {
+        return ifNode == null || child == null || ifNode.hasSyntaxError()
+               || child.hasSyntaxError();
+    }
 }

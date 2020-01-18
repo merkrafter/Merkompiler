@@ -44,4 +44,24 @@ public class ErrorNode extends ASTBaseNode {
     public Type getReturnedType() {
         return Type.VOID;
     }
+
+    /**
+     * An ErrorNode is always counted as an error.
+     *
+     * @return true
+     */
+    @Override
+    public boolean hasSemanticsError() {
+        return true;
+    }
+
+    /**
+     * An ErrorNode is always counted as an error.
+     *
+     * @return true
+     */
+    @Override
+    public boolean hasSyntaxError() {
+        return true;
+    }
 }

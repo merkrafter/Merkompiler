@@ -77,4 +77,24 @@ public class ConstantNode<T> extends ASTBaseNode {
         final ConstantNode<?> that = (ConstantNode<?>) o;
         return type == that.type && Objects.equals(getValue(), that.getValue());
     }
+
+    /**
+     * A ConstantNode can not have a semantics error.
+     *
+     * @return false
+     */
+    @Override
+    public boolean hasSemanticsError() {
+        return false;
+    }
+
+    /**
+     * A ConstantNode can not have a syntax error.
+     *
+     * @return false
+     */
+    @Override
+    public boolean hasSyntaxError() {
+        return false;
+    }
 }

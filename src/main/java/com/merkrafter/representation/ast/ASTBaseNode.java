@@ -57,4 +57,15 @@ public abstract class ASTBaseNode {
     public void setNext(final ASTBaseNode next) {
         this.next = next;
     }
+
+    /**
+     * @return whether the tree represented by this node has a semantics error somewhere
+     */
+    public abstract boolean hasSemanticsError();
+
+    /**
+     * @return whether the tree represented by this node has a syntax error somewhere
+     */
+    public abstract boolean hasSyntaxError();
+
 }

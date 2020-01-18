@@ -44,4 +44,24 @@ public class ParameterListNode extends ASTBaseNode {
     public List<ASTBaseNode> getParameters() {
         return parameters;
     }
+
+    /**
+     * A ParameterListNode can have an error if the underlying parameter list is null.
+     *
+     * @return whether a semantics error occurred
+     */
+    @Override
+    public boolean hasSemanticsError() {
+        return parameters == null;
+    }
+
+    /**
+     * A ParameterListNode can have an error if the underlying parameter list is null.
+     *
+     * @return whether a syntax error occurred
+     */
+    @Override
+    public boolean hasSyntaxError() {
+        return parameters == null;
+    }
 }

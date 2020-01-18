@@ -36,4 +36,25 @@ public class VariableAccessNode extends ASTBaseNode {
     public Type getReturnedType() {
         return variableDescription.getType();
     }
+
+    /**
+     * A VariableAccessNode has a semantics error if the underlying VariableDescription is null.
+     *
+     * @return whether the tree represented by this node has a semantics error somewhere
+     */
+    @Override
+    public boolean hasSemanticsError() {
+        return variableDescription == null;
+    }
+
+    /**
+     * A VariableAccessNode can not have any syntax errors.
+     *
+     * @return false
+     */
+    @Override
+    public boolean hasSyntaxError() {
+        return false;
+    }
+
 }

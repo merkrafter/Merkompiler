@@ -39,4 +39,28 @@ public class AssignmentNode extends ASTBaseNode {
     public Type getReturnedType() {
         return Type.VOID;
     }
+
+    /**
+     * An AssignmentNode has a semantics error if the variable or expression is null or has an error
+     * itself.
+     *
+     * @return whether the tree represented by this node has a semantics error somewhere
+     */
+    @Override
+    public boolean hasSemanticsError() {
+        return variable == null || value == null || variable.hasSemanticsError()
+               || value.hasSemanticsError();
+    }
+
+    /**
+     * An AssignmentNode has a syntax error if the variable or expression is null or has an error
+     * itself.
+     *
+     * @return whether the tree represented by this node has a syntax error somewhere
+     */
+    @Override
+    public boolean hasSyntaxError() {
+        return variable == null || value == null || variable.hasSyntaxError()
+               || value.hasSyntaxError();
+    }
 }

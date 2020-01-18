@@ -48,4 +48,23 @@ public class ProcedureCallNode extends ASTBaseNode {
         return args;
     }
 
+    /**
+     * A ProcedureCallNode has a semantics error if the underlying ProcedureDescription is null.
+     *
+     * @return whether the tree represented by this node has a semantics error somewhere
+     */
+    @Override
+    public boolean hasSemanticsError() {
+        return procedure == null;
+    }
+
+    /**
+     * A ProcedureCallNode has a syntax error if the underlying ProcedureDescription is null.
+     *
+     * @return whether the tree represented by this node has a syntax error somewhere
+     */
+    @Override
+    public boolean hasSyntaxError() {
+        return procedure == null;
+    }
 }
