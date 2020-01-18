@@ -259,18 +259,33 @@ public class Parser {
         return new VariableDescription(identifier, type, 0, false);
     }
 
+    /**
+     * Tries to parse a method body.
+     *
+     * @return whether this operation was successful
+     */
     boolean parseMethodBody() {
-        if (scanner.getSym().getType() == L_BRACE) {
-            scanner.processToken();
-            while (parseLocalDeclaration()) ; // only iterate through them for now
-            if (!(parseStatementSequence() instanceof ErrorNode)) {
-                if (scanner.getSym().getType() == R_BRACE) {
-                    scanner.processToken();
-                    return true;
-                }
-            }
+        Token sym = scanner.getSym();
+        if (sym.getType() != L_BRACE) {
+            return false;
         }
-        return false;
+        scanner.processToken();
+
+        // only iterate through them; they're stored in the symbolTable
+        while (parseLocalDeclaration()) ;
+
+        final ASTBaseNode statements = parseStatementSequence();
+        if (statements instanceof ErrorNode) {
+            return false; // TODO propagate this error so that the message is not lost
+        }
+
+        sym = scanner.getSym();
+        if (sym.getType() != R_BRACE) {
+            return false;
+        }
+        scanner.processToken();
+
+        return true;
     }
 
     /**
