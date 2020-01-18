@@ -156,7 +156,7 @@ public class Parser {
         if (scanner.getSym() instanceof KeywordToken
             && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC) {
             scanner.processToken();
-            if (parseMethodType()) {
+            if (parseMethodType() != null) {
                 if (parseIdentifier() != null) {
                     return parseFormalParameters();
                 }
@@ -165,17 +165,26 @@ public class Parser {
         return false;
     }
 
-    boolean parseMethodType() {
-        // expecting a keyword
-        if (scanner.getSym() instanceof KeywordToken && (
-                // check whether this is "void"
-                ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.VOID
-                //check whether this is "int"
-                || ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.INT)) {
-            scanner.processToken();
-            return true;
+    /**
+     * Tries to parse a method type. Methods in JavaSST can only return INT or VOID.
+     *
+     * @return type of a method or null if no applicable type was found
+     */
+    Type parseMethodType() {
+        final Token sym = scanner.getSym();
+        if (!(sym instanceof KeywordToken)) {
+            return null;
         }
-        return false;
+        scanner.processToken();
+
+        switch (((KeywordToken) sym).getKeyword()) {
+            case VOID:
+                return Type.VOID;
+            case INT:
+                return Type.INT;
+            default:
+                return null;
+        }
     }
 
     boolean parseFormalParameters() {
@@ -239,6 +248,7 @@ public class Parser {
         if (scanner.getSym().getType() != SEMICOLON) { // no need to store this in a variable
             return false;
         }
+        scanner.processToken();
 
         // FIXME this line assumes that only int values exist and therefore sets the value to 0
         // if more types come into play, a map of default values should be maintained somewhere
@@ -246,7 +256,6 @@ public class Parser {
         // TODO detect multi-declarations as a part of the semantics analysis
         symbolTable.insert(var);
 
-        scanner.processToken();
         return true;
     }
 
