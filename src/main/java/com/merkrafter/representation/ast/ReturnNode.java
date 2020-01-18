@@ -17,6 +17,13 @@ public class ReturnNode extends ASTBaseNode {
     //==============================================================
 
     /****
+     * Creates a new return node without an expression.
+     ***************************************************************/
+    public ReturnNode() {
+        this(null);
+    }
+
+    /****
      * Creates a new return node with the given expression as its value.
      ***************************************************************/
     public ReturnNode(final ASTBaseNode expression) {
@@ -25,8 +32,15 @@ public class ReturnNode extends ASTBaseNode {
 
     // GETTER
     //==============================================================
+
+    /**
+     * @return the type of the expression or VOID if this return does not have an expression
+     */
     @Override
     public Type getReturnedType() {
+        if (expression == null) {
+            return Type.VOID;
+        }
         return expression.getReturnedType();
     }
 
