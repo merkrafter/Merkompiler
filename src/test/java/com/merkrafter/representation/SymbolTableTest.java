@@ -114,12 +114,12 @@ class SymbolTableTest {
     void dontInsertProcedureDescriptionWithDifferentParameterNames() {
         // definition of the actual procedure's parameter list
         final VariableDescription param1 = new VariableDescription("a", Type.INT, 5, true);
-        final LinkedList<ObjectDescription> paramList1 = new LinkedList<>();
+        final LinkedList<VariableDescription> paramList1 = new LinkedList<>();
         paramList1.add(param1);
 
         // definition of the prototype param list; note the different name
         final VariableDescription param2 = new VariableDescription("b", Type.INT, 5, true);
-        final LinkedList<ObjectDescription> paramList2 = new LinkedList<>();
+        final LinkedList<VariableDescription> paramList2 = new LinkedList<>();
         paramList2.add(param2);
 
         final ObjectDescription proc1 =
@@ -166,7 +166,7 @@ class SymbolTableTest {
     void dontFindProcedureDescriptionWithDifferentParameterList() {
         // definition of the actual procedure's parameter list
         final VariableDescription param = new VariableDescription("a", Type.INT, 5, true);
-        final LinkedList<ObjectDescription> paramList = new LinkedList<>();
+        final LinkedList<VariableDescription> paramList = new LinkedList<>();
         paramList.add(param);
 
         final ObjectDescription procDesc =
@@ -186,12 +186,12 @@ class SymbolTableTest {
     void findProcedureDescriptionWithDifferentParameterNames() {
         // definition of the actual procedure's parameter list
         final VariableDescription param = new VariableDescription("a", Type.INT, 5, true);
-        final LinkedList<ObjectDescription> paramList = new LinkedList<>();
+        final LinkedList<VariableDescription> paramList = new LinkedList<>();
         paramList.add(param);
 
         // definition of the prototype param list; note the different name
         final VariableDescription protoParam = new VariableDescription("b", Type.INT, 5, true);
-        final LinkedList<ObjectDescription> protoParamList = new LinkedList<>();
+        final LinkedList<VariableDescription> protoParamList = new LinkedList<>();
         protoParamList.add(protoParam);
 
         final ObjectDescription procDesc =
@@ -213,12 +213,12 @@ class SymbolTableTest {
         // definition of the actual procedure's parameter list
         final VariableDescription param1 = new VariableDescription("a", Type.INT, 5, true);
         final VariableDescription param2 = new VariableDescription("b", Type.BOOLEAN, true, true);
-        final LinkedList<ObjectDescription> paramList = new LinkedList<>();
+        final LinkedList<VariableDescription> paramList = new LinkedList<>();
         paramList.add(param1);
         paramList.add(param2);
 
         // definition of the prototype param list; note the inverted order
-        final LinkedList<ObjectDescription> protoParamList = new LinkedList<>();
+        final LinkedList<VariableDescription> protoParamList = new LinkedList<>();
         protoParamList.add(param2);
         protoParamList.add(param1);
 

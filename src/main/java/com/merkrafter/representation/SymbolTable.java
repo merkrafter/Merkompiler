@@ -95,7 +95,7 @@ public class SymbolTable {
             prototype = new VariableDescription(name, Type.VOID, 0, false);
         } else {
             // this is a procedure; only name and list of parameter types are relevant
-            final List<ObjectDescription> paramList = new LinkedList<>();
+            final List<VariableDescription> paramList = new LinkedList<>();
             for (final Type type : signature) {
                 // for the parameters only the types are relevant
                 paramList.add(new VariableDescription("", type, 0, false));

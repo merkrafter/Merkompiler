@@ -12,7 +12,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     // ATTRIBUTES
     //==============================================================
     private final Type returnType;
-    private final List<ObjectDescription> paramList;
+    private final List<VariableDescription> paramList;
     private final SymbolTable symbols;
 
 
@@ -21,12 +21,11 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
 
     /****
      * Creates a new ProcedureDescription with a return type, a parameter list and an outer scope.
-     * This constructor does not validate whether the paramList only contains parameters (and no
-     * ProcedureDescriptions, for instance) or whether the enclosingSymbolTable does only contain
+     * This constructor does not validate whether the enclosingSymbolTable does only contain
      * valid objects.
      ***************************************************************/
     public ActualProcedureDescription(final Type returnType, final String name,
-                                      final List<ObjectDescription> paramList,
+                                      final List<VariableDescription> paramList,
                                       final SymbolTable enclosingSymbolTable) {
         super(name);
         this.returnType = returnType;
@@ -53,7 +52,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
      * @return a list of all parameters of this procedure
      */
     @Override
-    public List<ObjectDescription> getParamList() {
+    public List<VariableDescription> getParamList() {
         return paramList;
     }
 

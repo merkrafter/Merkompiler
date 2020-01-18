@@ -11,7 +11,7 @@ import java.util.List;
 public interface ProcedureDescription {
     SymbolTable getSymbols();
 
-    List<ObjectDescription> getParamList();
+    List<VariableDescription> getParamList();
 
     Type getReturnType();
 
