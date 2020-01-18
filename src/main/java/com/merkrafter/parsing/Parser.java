@@ -1,10 +1,7 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
-import com.merkrafter.representation.ProcedureDescription;
-import com.merkrafter.representation.SymbolTable;
-import com.merkrafter.representation.Type;
-import com.merkrafter.representation.VariableDescription;
+import com.merkrafter.representation.*;
 import com.merkrafter.representation.ast.*;
 
 import java.util.Arrays;
@@ -47,7 +44,7 @@ public class Parser {
     /**
      * Creates a new Parser with a set of global variables. Can be used for testing purposes.
      */
-    Parser (final Scanner scanner, final SymbolTable globalVariables) {
+    Parser(final Scanner scanner, final SymbolTable globalVariables) {
         this.scanner = scanner;
         this.scanner.processToken();
         symbolTable = new SymbolTable(globalVariables);
@@ -212,7 +209,7 @@ public class Parser {
         if (scanner.getSym().getType() == L_BRACE) {
             scanner.processToken();
             while (parseLocalDeclaration()) ; // only iterate through them for now
-            if (parseStatementSequence()) {
+            if (!(parseStatementSequence() instanceof ErrorNode)) {
                 if (scanner.getSym().getType() == R_BRACE) {
                     scanner.processToken();
                     return true;
@@ -253,44 +250,88 @@ public class Parser {
         return true;
     }
 
-    boolean parseStatementSequence() {
-        if (parseStatement()) {
-            while (parseStatement()) ; // just read all statements for now; creating AST follows
-            return true;
+    ASTBaseNode parseStatementSequence() {
+        final ASTBaseNode headNode = parseStatement();
+        if (headNode instanceof ErrorNode) {
+            return headNode;
         }
-        return false;
+        ASTBaseNode last = headNode;
+        ASTBaseNode current = parseStatement();
+        while (!(current instanceof ErrorNode)) {
+            last.setNext(current);
+            last = current;
+            current = parseStatement();
+        }
+        return headNode;
     }
 
-    boolean parseStatement() {
+    /**
+     * Tries to parse a statement according to the
+     * grammar: statement = assignment | procedure_call | if_statement | while_statement | return_statement.
+     * It then returns a node that represents this statement.
+     * Returns an error node if a syntax error occurs.
+     *
+     * @return ASTBaseNode representing this statement or ErrorNode
+     */
+    ASTBaseNode parseStatement() {
         // factoring of
         // statement = ident '=' expression ';' | ident actual_parameters ';'
         //             ^ assignment               ^ procedure call
-        if (parseStatementForAssignmentOrProcedureCall()) {
-            return true;
+        ASTBaseNode node = parseStatementForAssignmentOrProcedureCall();
+        if (!(node instanceof ErrorNode)) {
+            return node;
         }
-        if (parseIfStatement()) {
-            return true;
+        node = parseIfStatement();
+        if (!(node instanceof ErrorNode)) {
+            return node;
         }
-        if (parseWhileStatement()) {
-            return true;
+        node = parseWhileStatement();
+        if (!(node instanceof ErrorNode)) {
+            return node;
         }
-        if (parseReturnStatement()) {
-            return true;
+        node = parseReturnStatement();
+        if (!(node instanceof ErrorNode)) {
+            return node;
         }
-        return false;
+        return new ErrorNode("Expected statement but found " + scanner.getSym().getType());
     }
 
-    private boolean parseStatementForAssignmentOrProcedureCall() {
-        if (parseIdentifier() != null) {
-            if (parseAssignmentWithoutIdent()) {
-                return true;
-            } else if (parseActualParameters() != null && scanner.getSym().getType() == SEMICOLON) {
-                // this actually is a procedure call
-                scanner.processToken();
-                return true;
-            }
+    /**
+     * This method is a helper for differentiating between assignments or procedure calls.
+     * It is needed because both start with an IDENT token.
+     *
+     * @return AssignmentNode, ProcedureCallNode, or ErrorNode
+     */
+    private ASTBaseNode parseStatementForAssignmentOrProcedureCall() {
+        final String identifier = parseIdentifier();
+        if (identifier == null) {
+            // both an assignment and a procedure call need an identifier first
+            return new ErrorNode("Expected an identifier");
         }
-        return false;
+
+        // try parsing an assignment
+        final ASTBaseNode expression = parseAssignmentWithoutIdent();
+        if (!(expression instanceof ErrorNode)) {
+            final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
+            final VariableAccessNode varNode = new VariableAccessNode(var);
+            return new AssignmentNode(varNode, expression);
+        }
+
+        // begin parsing a procedure call
+        final ParameterListNode parameters = parseActualParameters();
+        if (parameters == null) {
+            return new ErrorNode("Expected a parameter list");
+        }
+        final Token sym = scanner.getSym();
+        if (sym.getType() != SEMICOLON) {
+            return new ErrorNode("Expected ';' but found " + sym.getType());
+        }
+        // this actually is a procedure call
+        scanner.processToken();
+
+        return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier,
+                                                                   parameters,
+                                                                   symbolTable), parameters);
     }
 
     /**
@@ -308,11 +349,21 @@ public class Parser {
         return null;
     }
 
-    boolean parseAssignment() {
-        if (parseIdentifier() != null) {
-            return parseAssignmentWithoutIdent();
+    /**
+     * Tries to parse an assignment statement according to the
+     * grammar: assignment = ident "=" expression ";".
+     * It then returns an AssignmentNode that represents this assignment statement.
+     * Returns an error node if a syntax error occurs.
+     *
+     * @return AssignmentNode representing this assignment statement or ErrorNode
+     */
+    ASTBaseNode parseAssignment() {
+        final String identifier = parseIdentifier();
+        if (identifier == null) {
+            return new ErrorNode("");
         }
-        return false;
+        final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
+        return new AssignmentNode(new VariableAccessNode(var), parseAssignmentWithoutIdent());
     }
 
     /**
@@ -321,18 +372,26 @@ public class Parser {
      * It is needed to distinguish assignments and intern procedure calls who both start with
      * an IDENT.
      *
-     * @return whether tokens after an ident match the grammar of assignments
+     * @return the expression that will be assigned to a variable
      */
-    private boolean parseAssignmentWithoutIdent() {
-        if (scanner.getSym().getType() == ASSIGN) {
-            scanner.processToken();
-            if (!(parseExpression() instanceof ErrorNode)
-                && scanner.getSym().getType() == SEMICOLON) {
-                scanner.processToken();
-                return true;
-            }
+    private ASTBaseNode parseAssignmentWithoutIdent() {
+        Token sym = scanner.getSym();
+        if (sym.getType() != ASSIGN) {
+            return new ErrorNode("Expected '=' but found " + sym.getType());
         }
-        return false;
+        scanner.processToken();
+
+        final ASTBaseNode expression = parseExpression();
+        if (expression instanceof ErrorNode) {
+            return expression;
+        }
+        sym = scanner.getSym();
+        if (sym.getType() != SEMICOLON) {
+            return new ErrorNode("Expected ';' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        return expression;
     }
 
     boolean parseProcedureCall() {
@@ -350,95 +409,169 @@ public class Parser {
         return false;
     }
 
-    boolean parseIfStatement() {
-        if (scanner.getSym() instanceof KeywordToken
-            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.IF) {
-            scanner.processToken();
-            // condition:
-            if (scanner.getSym().getType() == L_PAREN) {
-                scanner.processToken();
-                if (!(parseExpression() instanceof ErrorNode)) {
-                    if (scanner.getSym().getType() == R_PAREN) {
-                        scanner.processToken();
-                        // if-associated block:
-                        if (scanner.getSym().getType() == L_BRACE) {
-                            scanner.processToken();
-                            if (parseStatementSequence()) {
-                                if (scanner.getSym().getType() == R_BRACE) {
-                                    scanner.processToken();
-                                    if (scanner.getSym() instanceof KeywordToken
-                                        && ((KeywordToken) scanner.getSym()).getKeyword()
-                                           == Keyword.ELSE) {
-                                        scanner.processToken();
-                                        // else-associated block
-                                        if (scanner.getSym().getType() == L_BRACE) {
-                                            scanner.processToken();
-                                            if (parseStatementSequence()) {
-                                                if (scanner.getSym().getType() == R_BRACE) {
-                                                    scanner.processToken();
-                                                    return true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    /**
+     * Tries to parse an if statement according to the
+     * grammar: if_statement  = "if" "(" expression ")" "{" statement_sequence "}" "else" "{"statement_sequence "}".
+     * It then returns an IfElseNode that represents this if statement.
+     * Returns an error node if a syntax error occurs.
+     *
+     * @return IfElseNode representing this if statement or ErrorNode
+     */
+    ASTBaseNode parseIfStatement() {
+        // if keyword
+        Token sym = scanner.getSym();
+        if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.IF)) {
+            return new ErrorNode("Expected if keyword but found " + sym.getType());
         }
-        return false;
+        scanner.processToken();
+
+        sym = scanner.getSym();
+        if (sym.getType() != L_PAREN) {
+            return new ErrorNode("Expected '(' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        // condition
+        final ASTBaseNode condition = parseExpression();
+        if (condition instanceof ErrorNode) {
+            return condition;
+        }
+        if (scanner.getSym().getType() != R_PAREN) {
+            return new ErrorNode("Expected ')' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        // if-associated block:
+        if (scanner.getSym().getType() != L_BRACE) {
+            return new ErrorNode("Expected '{' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        final ASTBaseNode ifBranch = parseStatementSequence();
+        if (ifBranch instanceof ErrorNode) {
+            return new ErrorNode("Expected statement(s), but found " + scanner.getSym().getType());
+            //return ifBranch;
+        }
+        if (scanner.getSym().getType() != R_BRACE) {
+            return new ErrorNode("Expected '}' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        sym = scanner.getSym();
+        if (!(sym instanceof KeywordToken
+              && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.ELSE)) {
+            return new ErrorNode("Expected else keyword but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        // else-associated block
+        if (scanner.getSym().getType() != L_BRACE) {
+            return new ErrorNode("Expected '{' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        final ASTBaseNode elseBranch = parseStatementSequence();
+        if (elseBranch instanceof ErrorNode) {
+            return new ErrorNode("Expected statement(s), but found " + scanner.getSym().getType());
+            //return elseBranch;
+        }
+        if (scanner.getSym().getType() != R_BRACE) {
+            return new ErrorNode("Expected '}' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        final IfNode ifNode = new IfNode(condition, ifBranch);
+        return new IfElseNode(ifNode, elseBranch);
     }
 
-    boolean parseWhileStatement() {
-        if (scanner.getSym() instanceof KeywordToken
-            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.WHILE) {
-            scanner.processToken();
-            // condition:
-            if (scanner.getSym().getType() == L_PAREN) {
-                scanner.processToken();
-                if (!(parseExpression() instanceof ErrorNode)) {
-                    if (scanner.getSym().getType() == R_PAREN) {
-                        scanner.processToken();
-                        // associated block:
-                        if (scanner.getSym().getType() == L_BRACE) {
-                            scanner.processToken();
-                            if (parseStatementSequence()) {
-                                if (scanner.getSym().getType() == R_BRACE) {
-                                    scanner.processToken();
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    /**
+     * Tries to parse a while statement according to the
+     * grammar: while_statement = "while" "(" expression ")" "{" statement_sequence "}".
+     * It then returns a WhileNode that represents this while statement.
+     * Returns an error node if a syntax error occurs.
+     *
+     * @return WhileNode representing this while statement or ErrorNode
+     */
+    ASTBaseNode parseWhileStatement() {
+        Token sym = scanner.getSym();
+
+        // while keyword
+        if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.WHILE)) {
+            return new ErrorNode("Expected while keyword but found " + sym.getType());
         }
-        return false;
+        scanner.processToken();
+
+        sym = scanner.getSym();
+        if (sym.getType() != L_PAREN) {
+            return new ErrorNode("Expected '(' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        // condition
+        final ASTBaseNode condition = parseExpression();
+        if (condition instanceof ErrorNode) {
+            return condition;
+        }
+        sym = scanner.getSym();
+        if (sym.getType() != R_PAREN) {
+            return new ErrorNode("Expected ')' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        sym = scanner.getSym();
+        if (sym.getType() != L_BRACE) {
+            return new ErrorNode("Expected '{' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        // associated block
+        final ASTBaseNode statements = parseStatementSequence();
+        if (statements instanceof ErrorNode) {
+            return new ErrorNode("Expected statement(s), but found " + scanner.getSym().getType());
+        }
+        if (scanner.getSym().getType() != R_BRACE) {
+            return new ErrorNode("Expected '}' but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        return new WhileNode(condition, statements);
     }
 
-    boolean parseReturnStatement() {
-        if (scanner.getSym() instanceof KeywordToken
-            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.RETURN) {
-
-            scanner.processToken();
-            if (scanner.getSym().getType() == SEMICOLON) {
-                // there is no simple expression in between
-                scanner.processToken();
-                return true;
-            } else if (!(parseSimpleExpression() instanceof ErrorNode)) {
-                if (scanner.getSym().getType() == SEMICOLON) {
-                    scanner.processToken();
-                    return true;
-                } else {
-                    return false;
-                }
-            } else { // neither a semicolon nor a simple expression
-                return false;
-            }
+    /**
+     * Tries to parse a return statement according to the
+     * grammar: return_statement = "return" [ simple_expression ] ";".
+     * It then returns a ReturnNode.
+     * Returns an error node if a syntax error occurs.
+     *
+     * @return ReturnNode representing this return statement or ErrorNode
+     */
+    ASTBaseNode parseReturnStatement() {
+        Token sym = scanner.getSym();
+        if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.RETURN)) {
+            return new ErrorNode("Expected return keyword but found " + sym.getType());
         }
-        return false;
+        scanner.processToken();
+
+        // TODO is this extra if branch even needed?
+        if (scanner.getSym().getType() == SEMICOLON) {
+            // there is no simple expression in between
+            scanner.processToken();
+            return new ReturnNode();
+        }
+
+        final ASTBaseNode expression = parseSimpleExpression();
+        if (expression instanceof ErrorNode) {
+            return expression;
+        }
+
+        // before doing something with the expression the terminal semicolon must be validated
+        sym = scanner.getSym();
+        if (sym.getType() != SEMICOLON) {
+            return new ErrorNode("Expected semicolon but found " + sym.getType());
+        }
+        scanner.processToken();
+
+        return new ReturnNode(expression);
     }
 
     /**
@@ -597,14 +730,11 @@ public class Parser {
              * Parse intern procedure call
              */
             if (parameters != null) {
-                final Type[] typesArray = new Type[parameters.getParameters().size()];
-                // FIXME throws NPE if the one of the parameters is a variable that was not declared
-                Arrays.setAll(typesArray, i -> parameters.getParameters().get(i).getReturnedType());
-                final ProcedureDescription procedure =
-                        (ProcedureDescription) symbolTable.find(identifier, typesArray);
-                // TODO check whether a procedure was found
-                // TODO assign parameters to procedure
-                return new ProcedureCallNode((ProcedureDescription) symbolTable.find(procedure),
+                // Finds the procedure lazily after the whole file was parsed.
+                // This avoids evaluating the tree `parameters` multiple times and directly here.
+                return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier,
+                                                                           parameters,
+                                                                           symbolTable),
                                              parameters);
             }
 
@@ -613,7 +743,8 @@ public class Parser {
              */
             final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
 
-            // TODO check whether a variable was found
+            // no need to check whether a variable was found since the variable access node will
+            // communicate an error by itself when its hasSemanticsError() method is called
             return new VariableAccessNode(var);
         }
 

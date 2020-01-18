@@ -1,6 +1,7 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
+import com.merkrafter.representation.ast.ASTBaseNode;
 import com.merkrafter.representation.ast.ConstantNode;
 import com.merkrafter.representation.ast.ParameterListNode;
 import org.junit.jupiter.api.Test;
@@ -191,7 +192,8 @@ class ParserTest {
     void parseStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseStatement().hasSyntaxError());
+        final ASTBaseNode node = parser.parseStatement();
+        assertFalse(node.hasSyntaxError());
     }
 
     /**
@@ -267,7 +269,8 @@ class ParserTest {
     void parseIfStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseIfStatement().hasSyntaxError());
+        final ASTBaseNode node = parser.parseIfStatement();
+        assertFalse(node.hasSyntaxError());
     }
 
     /**
@@ -420,7 +423,8 @@ class ParserTest {
                 new Token(TokenType.IDENT, "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        final ASTBaseNode node = parser.parseFactor();
+        assertFalse(node.hasSyntaxError());
     }
 
     /**
@@ -525,6 +529,20 @@ class ParserTest {
             } else {
                 return tokens[index];
             }
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < tokens.length; i++) {
+                if (i == index) {
+                    sb.append(String.format("[%s], ", tokens[i]));
+                } else {
+                    sb.append(String.format("%s, ", tokens[i]));
+
+                }
+            }
+            return sb.toString();
         }
     }
 }
