@@ -28,7 +28,7 @@ public class Parser {
     /**
      * The base symbol table that encloses all others.
      */
-    private final SymbolTable symbolTable;
+    private SymbolTable symbolTable;
 
 
     // CONSTRUCTORS
@@ -143,13 +143,34 @@ public class Parser {
         return true;
     }
 
+    /**
+     * Tries to parse a method declaration. In case of success, the method is stored in the symbol
+     * table as well as all variables that are declared in that method.
+     *
+     * @return whether the method could be parsed completely and was stored in the symbol table
+     */
     boolean parseMethodDeclaration() {
-        if (parseMethodHead() != null) {
-            if (parseMethodBody()) {
-                return true;
-            }
+        // get procedure prototype
+        final ProcedureDescription procedureDescription = parseMethodHead();
+        if (procedureDescription == null) {
+            return false;
         }
-        return false;
+
+        // set a new scope of the symbol table
+        final SymbolTable prevSymbolTable = symbolTable;
+        symbolTable = procedureDescription.getSymbols();
+
+        final boolean success = parseMethodBody();
+
+        // set the symbol table back to the previous scope
+        symbolTable = prevSymbolTable;
+
+        if (!success) {
+            return false;
+        }
+
+        // returns whether the operation was successful
+        return symbolTable.insert((ObjectDescription) procedureDescription);
     }
 
     /**
