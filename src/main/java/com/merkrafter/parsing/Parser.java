@@ -190,10 +190,10 @@ public class Parser {
     boolean parseFormalParameters() {
         if (scanner.getSym().getType() == L_PAREN) {
             scanner.processToken();
-            if (parseFpSection()) {
+            if (parseFpSection() != null) {
                 while (scanner.getSym().getType() == COMMA) {
                     scanner.processToken();
-                    if (!parseFpSection()) {
+                    if (parseFpSection() == null) {
                         return false;
                     }
                 }
@@ -207,11 +207,24 @@ public class Parser {
         return false;
     }
 
-    boolean parseFpSection() {
-        if (parseType() != null) {
-            return parseIdentifier() != null; // already reads the next token
+    /**
+     * Tries to parse an fp_section.
+     *
+     * @return a variable description for the formal parameter or null if an error occurs
+     */
+    VariableDescription parseFpSection() {
+        final Type type = parseType();
+        if (type == null) {
+            return null;
         }
-        return false;
+
+        final String identifier = parseIdentifier();
+        if (identifier == null) {
+            return null;
+        }
+
+        // assumes that variables can only be integers
+        return new VariableDescription(identifier, type, 0, false);
     }
 
     boolean parseMethodBody() {
