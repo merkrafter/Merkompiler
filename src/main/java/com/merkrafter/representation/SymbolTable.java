@@ -100,7 +100,7 @@ public class SymbolTable {
                 // for the parameters only the types are relevant
                 paramList.add(new VariableDescription("", type, 0, false));
             }
-            prototype = new ProcedureDescription(Type.VOID, name, paramList, null);
+            prototype = new ActualProcedureDescription(Type.VOID, name, paramList, null);
         }
         return find(prototype);
     }
