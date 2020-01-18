@@ -122,9 +122,9 @@ class SymbolTableTest {
         final LinkedList<ObjectDescription> paramList2 = new LinkedList<>();
         paramList2.add(param2);
 
-        final ProcedureDescription proc1 =
+        final ObjectDescription proc1 =
                 new ActualProcedureDescription(Type.INT, "main", paramList1, null);
-        final ProcedureDescription proc2 =
+        final ObjectDescription proc2 =
                 new ActualProcedureDescription(Type.INT, "main", paramList2, null);
 
         symbolTable.insert(proc1);
@@ -137,7 +137,7 @@ class SymbolTableTest {
      */
     @Test
     void findInsertedProcedureDescription() {
-        final ProcedureDescription procDesc =
+        final ObjectDescription procDesc =
                 new ActualProcedureDescription(Type.INT, "main", new LinkedList<>(), null);
         symbolTable.insert(procDesc);
         final ObjectDescription objDesc = symbolTable.find(procDesc);
@@ -153,8 +153,8 @@ class SymbolTableTest {
     void findProcedureDescriptionInItsOwnSymbolTable() {
         final ProcedureDescription procDesc =
                 new ActualProcedureDescription(Type.INT, "main", new LinkedList<>(), symbolTable);
-        symbolTable.insert(procDesc);
-        final ObjectDescription objDesc = procDesc.getSymbols().find(procDesc);
+        symbolTable.insert((ObjectDescription) procDesc);
+        final ObjectDescription objDesc = procDesc.getSymbols().find((ObjectDescription) procDesc);
         assertEquals(objDesc, procDesc);
     }
 
@@ -169,9 +169,9 @@ class SymbolTableTest {
         final LinkedList<ObjectDescription> paramList = new LinkedList<>();
         paramList.add(param);
 
-        final ProcedureDescription procDesc =
+        final ObjectDescription procDesc =
                 new ActualProcedureDescription(Type.INT, "main", paramList, null);
-        final ProcedureDescription prototype =
+        final ObjectDescription prototype =
                 new ActualProcedureDescription(Type.INT, "main", new LinkedList<>(), null);
         symbolTable.insert(procDesc);
         final ObjectDescription objDesc = symbolTable.find(prototype);
@@ -194,9 +194,9 @@ class SymbolTableTest {
         final LinkedList<ObjectDescription> protoParamList = new LinkedList<>();
         protoParamList.add(protoParam);
 
-        final ProcedureDescription procDesc =
+        final ObjectDescription procDesc =
                 new ActualProcedureDescription(Type.INT, "main", paramList, null);
-        final ProcedureDescription prototype =
+        final ObjectDescription prototype =
                 new ActualProcedureDescription(Type.INT, "main", protoParamList, null);
 
         symbolTable.insert(procDesc);
@@ -222,9 +222,9 @@ class SymbolTableTest {
         protoParamList.add(param2);
         protoParamList.add(param1);
 
-        final ProcedureDescription procDesc =
+        final ObjectDescription procDesc =
                 new ActualProcedureDescription(Type.INT, "main", paramList, null);
-        final ProcedureDescription prototype =
+        final ObjectDescription prototype =
                 new ActualProcedureDescription(Type.INT, "main", protoParamList, null);
 
         symbolTable.insert(procDesc);
@@ -238,9 +238,9 @@ class SymbolTableTest {
      */
     @Test
     void dontFindProcedureDescriptionWithDifferentName() {
-        final ProcedureDescription procDesc =
+        final ObjectDescription procDesc =
                 new ActualProcedureDescription(Type.INT, "main", new LinkedList<>(), null);
-        final ProcedureDescription prototype =
+        final ObjectDescription prototype =
                 new ActualProcedureDescription(Type.INT, "niam", new LinkedList<>(), null);
         symbolTable.insert(procDesc);
         final ObjectDescription objDesc = symbolTable.find(prototype);
@@ -253,9 +253,9 @@ class SymbolTableTest {
      */
     @Test
     void findProcedureDescriptionWithDifferentReturnType() {
-        final ProcedureDescription procDesc =
+        final ObjectDescription procDesc =
                 new ActualProcedureDescription(Type.INT, "main", new LinkedList<>(), null);
-        final ProcedureDescription prototype =
+        final ObjectDescription prototype =
                 new ActualProcedureDescription(Type.VOID, "main", new LinkedList<>(), null);
         symbolTable.insert(procDesc);
         final ObjectDescription objDesc = symbolTable.find(prototype);
@@ -274,9 +274,9 @@ class SymbolTableTest {
         procDesc.getSymbols().insert(varDes);
 
         // the search prototype does not need to match the symbol table
-        final ProcedureDescription prototype =
+        final ObjectDescription prototype =
                 new ActualProcedureDescription(Type.INT, "main", new LinkedList<>(), null);
-        symbolTable.insert(procDesc);
+        symbolTable.insert((ObjectDescription) procDesc);
         final ObjectDescription objDesc = symbolTable.find(prototype);
         assertEquals(objDesc, procDesc);
     }
@@ -290,7 +290,7 @@ class SymbolTableTest {
         final String name = "a";
         final Type type = Type.INT;
         final VariableDescription varDesc = new VariableDescription(name, type, 5, true);
-        final ProcedureDescription prototype =
+        final ObjectDescription prototype =
                 new ActualProcedureDescription(type, name, new LinkedList<>(), null);
         symbolTable.insert(varDesc);
         final ObjectDescription objDesc = symbolTable.find(prototype);
