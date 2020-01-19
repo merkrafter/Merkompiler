@@ -2,6 +2,7 @@ package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
 import com.merkrafter.representation.ast.ASTBaseNode;
+import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ConstantNode;
 import com.merkrafter.representation.ast.ParameterListNode;
 import org.junit.jupiter.api.Test;
@@ -192,7 +193,7 @@ class ParserTest {
     void parseStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
-        final ASTBaseNode node = parser.parseStatement();
+        final AbstractSyntaxTree node = parser.parseStatement();
         assertFalse(node.hasSyntaxError());
     }
 
@@ -269,7 +270,7 @@ class ParserTest {
     void parseIfStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
-        final ASTBaseNode node = parser.parseIfStatement();
+        final AbstractSyntaxTree node = parser.parseIfStatement();
         assertFalse(node.hasSyntaxError());
     }
 
@@ -423,7 +424,7 @@ class ParserTest {
                 new Token(TokenType.IDENT, "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        final ASTBaseNode node = parser.parseFactor();
+        final AbstractSyntaxTree node = parser.parseFactor();
         assertFalse(node.hasSyntaxError());
     }
 

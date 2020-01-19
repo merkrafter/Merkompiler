@@ -14,7 +14,7 @@ import java.util.List;
 public class ParameterListNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
-    private final List<ASTBaseNode> parameters;
+    private final List<AbstractSyntaxTree> parameters;
 
     // CONSTRUCTORS
     //==============================================================
@@ -22,7 +22,7 @@ public class ParameterListNode extends ASTBaseNode {
     /****
      * Creates a new ParameterListNode.
      ***************************************************************/
-    public ParameterListNode(final List<ASTBaseNode> parameters) {
+    public ParameterListNode(final List<AbstractSyntaxTree> parameters) {
         this.parameters = parameters;
     }
 
@@ -42,7 +42,7 @@ public class ParameterListNode extends ASTBaseNode {
     /**
      * @return a list of expressions
      */
-    public List<ASTBaseNode> getParameters() {
+    public List<AbstractSyntaxTree> getParameters() {
         return parameters;
     }
 

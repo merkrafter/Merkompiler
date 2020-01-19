@@ -13,8 +13,8 @@ import java.util.List;
 public class IfNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
-    private final ASTBaseNode condition;
-    private final ASTBaseNode child;
+    private final AbstractSyntaxTree condition;
+    private final AbstractSyntaxTree child;
 
     // CONSTRUCTORS
     //==============================================================
@@ -24,7 +24,7 @@ public class IfNode extends ASTBaseNode {
      * condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfNode(final ASTBaseNode condition, final ASTBaseNode child) {
+    public IfNode(final AbstractSyntaxTree condition, final AbstractSyntaxTree child) {
         this.condition = condition;
         this.child = child;
     }

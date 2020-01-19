@@ -14,7 +14,7 @@ public class IfElseNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
     private final IfNode ifNode;
-    private final ASTBaseNode child;
+    private final AbstractSyntaxTree child;
 
     // CONSTRUCTORS
     //==============================================================
@@ -24,7 +24,7 @@ public class IfElseNode extends ASTBaseNode {
      * if the condition does not hold.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfElseNode(final IfNode ifNode, final ASTBaseNode child) {
+    public IfElseNode(final IfNode ifNode, final AbstractSyntaxTree child) {
         this.ifNode = ifNode;
         this.child = child;
     }

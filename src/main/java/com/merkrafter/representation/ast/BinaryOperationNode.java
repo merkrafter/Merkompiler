@@ -13,8 +13,8 @@ import java.util.List;
 public class BinaryOperationNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
-    private final ASTBaseNode leftOperand;
-    private final ASTBaseNode rightOperand;
+    private final AbstractSyntaxTree leftOperand;
+    private final AbstractSyntaxTree rightOperand;
 
     private final BinaryOperationNodeType binOpType;
 
@@ -25,9 +25,9 @@ public class BinaryOperationNode extends ASTBaseNode {
      * Creates a new BinaryOperationNode from an operation and two operands.
      * It does no type validation at this point.
      ***************************************************************/
-    public BinaryOperationNode(final ASTBaseNode leftOperand,
+    public BinaryOperationNode(final AbstractSyntaxTree leftOperand,
                                final BinaryOperationNodeType binOpType,
-                               final ASTBaseNode rightOperand) {
+                               final AbstractSyntaxTree rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
         this.binOpType = binOpType;

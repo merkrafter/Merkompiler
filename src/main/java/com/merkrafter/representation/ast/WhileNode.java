@@ -14,8 +14,8 @@ import java.util.List;
 public class WhileNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
-    private final ASTBaseNode condition;
-    private final ASTBaseNode child;
+    private final AbstractSyntaxTree condition;
+    private final AbstractSyntaxTree child;
 
     // CONSTRUCTORS
     //==============================================================
@@ -25,7 +25,7 @@ public class WhileNode extends ASTBaseNode {
      * while the condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public WhileNode(final ASTBaseNode condition, final ASTBaseNode child) {
+    public WhileNode(final AbstractSyntaxTree condition, final AbstractSyntaxTree child) {
         this.condition = condition;
         this.child = child;
     }

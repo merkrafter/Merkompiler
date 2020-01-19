@@ -21,7 +21,7 @@ public abstract class ASTBaseNode implements AbstractSyntaxTree {
     /**
      * Next sequential instruction in the represented program.
      */
-    private ASTBaseNode next;
+    private AbstractSyntaxTree next;
 
     // CONSTRUCTORS
     //==============================================================
@@ -45,7 +45,7 @@ public abstract class ASTBaseNode implements AbstractSyntaxTree {
     /**
      * Next sequential instruction in the represented program.
      */
-    public ASTBaseNode getNext() {
+    public AbstractSyntaxTree getNext() {
         return next;
     }
 
@@ -57,7 +57,7 @@ public abstract class ASTBaseNode implements AbstractSyntaxTree {
      *
      * @param next the node that represents the instruction after this node's
      */
-    public void setNext(final ASTBaseNode next) {
+    public void setNext(final AbstractSyntaxTree next) {
         this.next = next;
     }
 
