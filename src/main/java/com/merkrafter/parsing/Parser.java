@@ -30,7 +30,6 @@ public class Parser {
      */
     private SymbolTable symbolTable;
 
-
     // CONSTRUCTORS
     //==============================================================
 
@@ -59,20 +58,41 @@ public class Parser {
      * Parses the tokens given by the underlying token iterator.
      */
     public boolean parse() {
-        return parseClass() && scanner.getSym().getType() == EOF;
+        return !(parseClass() instanceof ErrorNode) && scanner.getSym().getType() == EOF;
     }
 
-    boolean parseClass() {
-        if (scanner.getSym() instanceof KeywordToken
-            && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.CLASS) {
-            scanner.processToken();
-            if (parseIdentifier() != null) {
-                if (parseClassBody()) {
-                    return true;
-                }
-            }
+    ASTBaseNode parseClass() {
+        final Token sym = scanner.getSym();
+        if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.CLASS)) {
+            return new ErrorNode("Expected class keyword but found " + scanner.getSym());
         }
-        return false;
+        scanner.processToken();
+
+        final String identifier = parseIdentifier();
+        if (identifier == null) {
+            return new ErrorNode("Expected class name but found " + scanner.getSym());
+        }
+
+        final ClassDescription clazz = new ClassDescription(identifier, symbolTable);
+
+        final SymbolTable prevSymbolTable = symbolTable;
+        symbolTable = clazz.getSymbolTable();
+
+        // reads all methods and variables into the symbol table
+        final boolean success = parseClassBody();
+
+        // find parameterless main method
+        final ProcedureDescription mainProcedure =
+                new ProcedureDescriptionProxy("main", null, symbolTable);
+        clazz.setEntryPoint(new ProcedureCallNode(mainProcedure, null));
+
+        // do not return immediately in case of errors, because the symbol table scope must be reset
+        symbolTable = prevSymbolTable;
+        if (success) {
+            return new ClassNode(clazz);
+        } else {
+            return new ErrorNode("Error while parsing the class body");
+        }
     }
 
     boolean parseClassBody() {

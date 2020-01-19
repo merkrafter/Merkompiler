@@ -33,7 +33,7 @@ class ParserTest {
                 new Token(TokenType.SEMICOLON, null, 1, 1),
                 new Token(TokenType.R_BRACE, null, 1, 1)});
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseClass());
+        assertFalse(parser.parseClass().hasSyntaxError());
     }
 
     /**
