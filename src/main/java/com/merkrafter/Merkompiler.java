@@ -6,6 +6,7 @@ import com.merkrafter.config.ErrorCode;
 import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
 import com.merkrafter.parsing.Parser;
+import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
 import java.io.File;
@@ -68,8 +69,9 @@ public class Merkompiler {
             } while (scanner.getSym().getType() != TokenType.EOF);
         } else if (config.getStage() == CompilerStage.PARSING) {
             final Parser parser = new Parser(scanner);
-            if (!parser.parse()) {
-                System.err.println("Parsing error!");
+            final AbstractSyntaxTree abstractSyntaxTree = parser.parse();
+            for (final String errMsg : abstractSyntaxTree.getAllErrors()) {
+                System.err.println(errMsg);
             }
         }
     }
