@@ -67,7 +67,7 @@ public class Parser {
 
         final Token sym = scanner.getSym();
         if (sym.getType() != EOF) {
-            return new ErrorNode("Unexpected symbol at end of class: " + sym);
+            return new ErrorNode(generateErrorMessage("<EOF>"));
         }
 
         return ast;
@@ -76,13 +76,13 @@ public class Parser {
     ASTBaseNode parseClass() {
         final Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.CLASS)) {
-            return new ErrorNode("Expected class keyword but found " + scanner.getSym());
+            return new ErrorNode(generateErrorMessage("'class' keyword"));
         }
         scanner.processToken();
 
         final String identifier = parseIdentifier();
         if (identifier == null) {
-            return new ErrorNode("Expected class name but found " + scanner.getSym());
+            return new ErrorNode(generateErrorMessage("class name"));
         }
 
         final ClassDescription clazz = new ClassDescription(identifier, symbolTable);
@@ -415,7 +415,7 @@ public class Parser {
         if (!(node instanceof ErrorNode)) {
             return node;
         }
-        return new ErrorNode("Expected statement but found " + scanner.getSym().getType());
+        return new ErrorNode(generateErrorMessage("statement"));
     }
 
     /**
@@ -428,7 +428,7 @@ public class Parser {
         final String identifier = parseIdentifier();
         if (identifier == null) {
             // both an assignment and a procedure call need an identifier first
-            return new ErrorNode("Expected an identifier");
+            return new ErrorNode(generateErrorMessage("identifier"));
         }
 
         // try parsing an assignment
@@ -442,11 +442,11 @@ public class Parser {
         // begin parsing a procedure call
         final ParameterListNode parameters = parseActualParameters();
         if (parameters == null) {
-            return new ErrorNode("Expected a parameter list");
+            return new ErrorNode(generateErrorMessage("parameter list"));
         }
         final Token sym = scanner.getSym();
         if (sym.getType() != SEMICOLON) {
-            return new ErrorNode("Expected ';' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("';'"));
         }
         // this actually is a procedure call
         scanner.processToken();
@@ -482,7 +482,7 @@ public class Parser {
     ASTBaseNode parseAssignment() {
         final String identifier = parseIdentifier();
         if (identifier == null) {
-            return new ErrorNode("");
+            return new ErrorNode(generateErrorMessage("identifier"));
         }
         final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
         return new AssignmentNode(new VariableAccessNode(var), parseAssignmentWithoutIdent());
@@ -499,7 +499,7 @@ public class Parser {
     private ASTBaseNode parseAssignmentWithoutIdent() {
         Token sym = scanner.getSym();
         if (sym.getType() != ASSIGN) {
-            return new ErrorNode("Expected '=' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'='"));
         }
         scanner.processToken();
 
@@ -509,7 +509,7 @@ public class Parser {
         }
         sym = scanner.getSym();
         if (sym.getType() != SEMICOLON) {
-            return new ErrorNode("Expected ';' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("';'"));
         }
         scanner.processToken();
 
@@ -543,13 +543,13 @@ public class Parser {
         // if keyword
         Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.IF)) {
-            return new ErrorNode("Expected if keyword but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'if' keyword"));
         }
         scanner.processToken();
 
         sym = scanner.getSym();
         if (sym.getType() != L_PAREN) {
-            return new ErrorNode("Expected '(' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'('"));
         }
         scanner.processToken();
 
@@ -559,46 +559,45 @@ public class Parser {
             return condition;
         }
         if (scanner.getSym().getType() != R_PAREN) {
-            return new ErrorNode("Expected ')' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("')'"));
         }
         scanner.processToken();
 
         // if-associated block:
         if (scanner.getSym().getType() != L_BRACE) {
-            return new ErrorNode("Expected '{' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'{'"));
         }
         scanner.processToken();
 
         final ASTBaseNode ifBranch = parseStatementSequence();
         if (ifBranch instanceof ErrorNode) {
-            return new ErrorNode("Expected statement(s), but found " + scanner.getSym().getType());
+            return new ErrorNode(generateErrorMessage("statement(s)"));
             //return ifBranch;
         }
         if (scanner.getSym().getType() != R_BRACE) {
-            return new ErrorNode("Expected '}' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'}'"));
         }
         scanner.processToken();
 
         sym = scanner.getSym();
         if (!(sym instanceof KeywordToken
               && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.ELSE)) {
-            return new ErrorNode("Expected else keyword but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'else' keyword"));
         }
         scanner.processToken();
 
         // else-associated block
         if (scanner.getSym().getType() != L_BRACE) {
-            return new ErrorNode("Expected '{' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'{'"));
         }
         scanner.processToken();
 
         final ASTBaseNode elseBranch = parseStatementSequence();
         if (elseBranch instanceof ErrorNode) {
-            return new ErrorNode("Expected statement(s), but found " + scanner.getSym().getType());
-            //return elseBranch;
+            return new ErrorNode(generateErrorMessage("statement(s)"));
         }
         if (scanner.getSym().getType() != R_BRACE) {
-            return new ErrorNode("Expected '}' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'}'"));
         }
         scanner.processToken();
 
@@ -619,13 +618,13 @@ public class Parser {
 
         // while keyword
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.WHILE)) {
-            return new ErrorNode("Expected while keyword but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'while' keyword"));
         }
         scanner.processToken();
 
         sym = scanner.getSym();
         if (sym.getType() != L_PAREN) {
-            return new ErrorNode("Expected '(' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'('"));
         }
         scanner.processToken();
 
@@ -636,23 +635,23 @@ public class Parser {
         }
         sym = scanner.getSym();
         if (sym.getType() != R_PAREN) {
-            return new ErrorNode("Expected ')' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("')'"));
         }
         scanner.processToken();
 
         sym = scanner.getSym();
         if (sym.getType() != L_BRACE) {
-            return new ErrorNode("Expected '{' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'{'"));
         }
         scanner.processToken();
 
         // associated block
         final ASTBaseNode statements = parseStatementSequence();
         if (statements instanceof ErrorNode) {
-            return new ErrorNode("Expected statement(s), but found " + scanner.getSym().getType());
+            return new ErrorNode(generateErrorMessage("statement(s)"));
         }
         if (scanner.getSym().getType() != R_BRACE) {
-            return new ErrorNode("Expected '}' but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'}'"));
         }
         scanner.processToken();
 
@@ -670,7 +669,7 @@ public class Parser {
     ASTBaseNode parseReturnStatement() {
         Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.RETURN)) {
-            return new ErrorNode("Expected return keyword but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("'return' keyword"));
         }
         scanner.processToken();
 
@@ -689,7 +688,7 @@ public class Parser {
         // before doing something with the expression the terminal semicolon must be validated
         sym = scanner.getSym();
         if (sym.getType() != SEMICOLON) {
-            return new ErrorNode("Expected semicolon but found " + sym.getType());
+            return new ErrorNode(generateErrorMessage("';'"));
         }
         scanner.processToken();
 
@@ -882,13 +881,13 @@ public class Parser {
          * Parse an expression
          */
         if (scanner.getSym().getType() != L_PAREN) {
-            return new ErrorNode("Expected '(' but found " + scanner.getSym().getType());
+            return new ErrorNode(generateErrorMessage("'('"));
         }
         scanner.processToken();
 
         node = parseExpression();
         if (scanner.getSym().getType() != R_PAREN) {
-            return new ErrorNode("Expected ')' but found " + scanner.getSym().getType());
+            return new ErrorNode(generateErrorMessage("')'"));
         }
         scanner.processToken();
 
@@ -912,12 +911,7 @@ public class Parser {
             scanner.processToken();
             return node;
         } else {
-            return new ErrorNode(String.format(
-                    "Expected number literal in %s at (%d, %d) but found %s instead",
-                    sym.getFilename(),
-                    sym.getLine(),
-                    sym.getPosition(),
-                    sym.getType().toString()));
+            return new ErrorNode(generateErrorMessage("number literal"));
         }
     }
 
@@ -944,5 +938,17 @@ public class Parser {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Creates an error message with the expected symbol. The actual value is derived from the
+     * current token of the scanner.
+     *
+     * @param expectedConstruct a String that describes what should have been there
+     * @return a string that can be used as an output for users
+     */
+    private String generateErrorMessage(final String expectedConstruct) {
+        final String template = "%s was found, but %s was expected.";
+        return String.format(template, scanner.getSym(), expectedConstruct);
     }
 }
