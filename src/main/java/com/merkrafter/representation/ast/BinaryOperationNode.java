@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.List;
+
 /****
  * This AST node represents a binary operation. It therefore has two child nodes.
  *
@@ -87,5 +89,13 @@ public class BinaryOperationNode extends ASTBaseNode {
     public boolean hasSyntaxError() {
         return leftOperand == null || rightOperand == null || binOpType == null
                || leftOperand.hasSyntaxError() || rightOperand.hasSyntaxError();
+    }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return collectErrorsFrom(leftOperand, rightOperand);
     }
 }

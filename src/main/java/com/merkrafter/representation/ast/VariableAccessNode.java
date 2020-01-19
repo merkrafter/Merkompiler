@@ -3,6 +3,9 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /****
  * This AST node represents the access to a variable from a symbol table.
  *
@@ -57,4 +60,13 @@ public class VariableAccessNode extends ASTBaseNode {
         return false;
     }
 
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        final List<String> errors = new LinkedList<>();
+        errors.add("Missing variable");
+        return errors;
+    }
 }

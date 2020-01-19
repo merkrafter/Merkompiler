@@ -2,6 +2,9 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /****
  * This is the base node of all node types that an Abstract Syntax Tree
  * may be made of. The AST represents the program's structure.
@@ -9,7 +12,7 @@ import com.merkrafter.representation.Type;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public abstract class ASTBaseNode {
+public abstract class ASTBaseNode implements AbstractSyntaxTree {
     // CONSTANTS
     //==============================================================
 
@@ -58,14 +61,13 @@ public abstract class ASTBaseNode {
         this.next = next;
     }
 
-    /**
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    public abstract boolean hasSemanticsError();
-
-    /**
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    public abstract boolean hasSyntaxError();
-
+    static List<String> collectErrorsFrom(final AbstractSyntaxTree... nodes) {
+        final List<String> errors = new LinkedList<>();
+        for (final AbstractSyntaxTree node : nodes) {
+            if (node != null) {
+                errors.addAll(node.getAllErrors());
+            }
+        }
+        return errors;
+    }
 }

@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.List;
+
 /****
  * This class represents a return statement.
  *
@@ -62,5 +64,13 @@ public class ReturnNode extends ASTBaseNode {
     @Override
     public boolean hasSyntaxError() {
         return false;
+    }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return collectErrorsFrom(expression);
     }
 }

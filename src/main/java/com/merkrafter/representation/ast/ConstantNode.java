@@ -3,6 +3,8 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /****
@@ -96,5 +98,13 @@ public class ConstantNode<T> extends ASTBaseNode {
     @Override
     public boolean hasSyntaxError() {
         return false;
+    }
+
+    /**
+     * @return an empty list
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return new LinkedList<>();
     }
 }

@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.List;
+
 /****
  * This AST node represents the assignment of a value to a variable.
  *
@@ -63,4 +65,13 @@ public class AssignmentNode extends ASTBaseNode {
         return variable == null || value == null || variable.hasSyntaxError()
                || value.hasSyntaxError();
     }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return collectErrorsFrom(variable, value);
+    }
+
 }

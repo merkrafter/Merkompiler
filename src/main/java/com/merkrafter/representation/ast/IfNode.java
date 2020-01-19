@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.List;
+
 /****
  * This AST node represents an if statement.
  *
@@ -60,5 +62,13 @@ public class IfNode extends ASTBaseNode {
     public boolean hasSyntaxError() {
         return condition == null || child == null || condition.hasSyntaxError()
                || child.hasSyntaxError();
+    }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return collectErrorsFrom(condition, child);
     }
 }

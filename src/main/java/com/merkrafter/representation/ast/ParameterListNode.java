@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /****
@@ -63,5 +64,15 @@ public class ParameterListNode extends ASTBaseNode {
     @Override
     public boolean hasSyntaxError() {
         return parameters == null;
+    }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        final List<String> errors = new LinkedList<>();
+        errors.add("Missing parameters");
+        return errors;
     }
 }

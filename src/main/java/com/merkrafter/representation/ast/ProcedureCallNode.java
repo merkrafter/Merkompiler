@@ -3,6 +3,8 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 
+import java.util.List;
+
 /****
  * This AST node represents the call to a procedure or method in a JavaSST program.
  *
@@ -66,5 +68,13 @@ public class ProcedureCallNode extends ASTBaseNode {
     @Override
     public boolean hasSyntaxError() {
         return procedure == null;
+    }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return collectErrorsFrom(args);
     }
 }

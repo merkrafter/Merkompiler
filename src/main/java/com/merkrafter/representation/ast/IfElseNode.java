@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.List;
+
 /****
  * This AST node represents an if-else construct.
  *
@@ -58,7 +60,14 @@ public class IfElseNode extends ASTBaseNode {
      */
     @Override
     public boolean hasSyntaxError() {
-        return ifNode == null || child == null || ifNode.hasSyntaxError()
-               || child.hasSyntaxError();
+        return ifNode == null || child == null || ifNode.hasSyntaxError() || child.hasSyntaxError();
+    }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return collectErrorsFrom(ifNode, child);
     }
 }

@@ -2,6 +2,9 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /****
  * This node class signals an error (a syntax or type error, for instance).
  *
@@ -63,5 +66,15 @@ public class ErrorNode extends ASTBaseNode {
     @Override
     public boolean hasSyntaxError() {
         return true;
+    }
+
+    /**
+     * @return a list containing the error message of this node
+     */
+    @Override
+    public List<String> getAllErrors() {
+        final List<String> errors = new LinkedList<>();
+        errors.add(message);
+        return errors;
     }
 }

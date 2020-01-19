@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.List;
+
 /****
  * This AST node represents a while construct. It is very similar to the IfNode but can not
  * be interchanged with it as there is not while-else construct, for instance.
@@ -61,5 +63,13 @@ public class WhileNode extends ASTBaseNode {
     public boolean hasSyntaxError() {
         return condition == null || child == null || condition.hasSyntaxError()
                || child.hasSyntaxError();
+    }
+
+    /**
+     * @return a list of all errors, both semantic and syntactical ones.
+     */
+    @Override
+    public List<String> getAllErrors() {
+        return collectErrorsFrom(condition, child);
     }
 }
