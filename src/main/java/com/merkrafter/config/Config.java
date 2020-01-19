@@ -1,25 +1,22 @@
 package com.merkrafter.config;
 
+import com.merkrafter.Merkompiler;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 
 /**
  * This class holds configuration data for this program.
  * It also contains the description of this program's command line options etc.
  *
  * @author merkrafter
+ * @since v0.1.0
  */
 public class Config {
+    // ATTRIBUTES
+    //==============================================================
     private final String inputFile;
     private final String outputFile;
 
@@ -27,6 +24,8 @@ public class Config {
 
     private final CompilerStage stage;
 
+    // CONSTRUCTORS
+    //==============================================================
     private Config(final String inputFile, final String outputFile, boolean verbose,
                    final CompilerStage stage) {
         this.inputFile = inputFile;
@@ -35,6 +34,8 @@ public class Config {
         this.stage = stage;
     }
 
+    // GETTER
+    //==============================================================
     public String getInputFile() {
         return inputFile;
     }
@@ -51,6 +52,10 @@ public class Config {
         return stage;
     }
 
+    // METHODS
+    //==============================================================
+    // public methods
+    //--------------------------------------------------------------
     public static Config fromArgs(final String args) throws ArgumentParserException {
         return fromArgs(fromString(args));
     }
@@ -61,11 +66,7 @@ public class Config {
                                                      .build()
                                                      .defaultHelp(true)
                                                      .description("Compiles JavaSST files");
-        try {
-            parser.version("${prog} " + getVersion());
-        } catch (XmlPullParserException | IOException ignored) {
-            parser.version("No version information available.");
-        }
+        parser.version("${prog} " + Merkompiler.VERSION);
         parser.addArgument("INPUT")
               .required(true)
               .type(String.class)
@@ -127,16 +128,5 @@ public class Config {
                              outputFile,
                              verbose,
                              stage);
-    }
-
-    /**
-     * Retrieve version information from the pom.xml file.
-     *
-     * @return a String containing the software version
-     */
-    private static String getVersion() throws IOException, XmlPullParserException {
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = reader.read(new FileReader("pom.xml"));
-        return model.getVersion();
     }
 }

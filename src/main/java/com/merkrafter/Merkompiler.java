@@ -15,6 +15,10 @@ import java.io.PrintStream;
 
 public class Merkompiler {
 
+    // META-INFORMATION
+    //==============================================================
+    public static final String VERSION = "v0.3.0";
+
     /**
      * The main function of this compiler reads in the filename and handles other possible command line
      * options. It then runs the compiler on the input file.
