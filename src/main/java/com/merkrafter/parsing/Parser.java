@@ -56,9 +56,21 @@ public class Parser {
 
     /**
      * Parses the tokens given by the underlying token iterator.
+     *
+     * @return the AST of the program
      */
-    public boolean parse() {
-        return !(parseClass() instanceof ErrorNode) && scanner.getSym().getType() == EOF;
+    public AbstractSyntaxTree parse() {
+        final AbstractSyntaxTree ast = parseClass();
+        if (ast instanceof ErrorNode) {
+            return ast;
+        }
+
+        final Token sym = scanner.getSym();
+        if (sym.getType() != EOF) {
+            return new ErrorNode("Unexpected symbol at end of class: " + sym);
+        }
+
+        return ast;
     }
 
     ASTBaseNode parseClass() {
