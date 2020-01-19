@@ -32,7 +32,7 @@ public class IdentToken extends Token {
     /**
      * @return the identifier this token stands for
      */
-    String getIdent() {
+    public String getIdent() {
         return ident;
     }
 
