@@ -8,6 +8,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -55,6 +56,7 @@ public class Config {
         return fromArgs(fromString(args));
     }
 
+    @NotNull
     public static Config fromArgs(final String[] args) throws ArgumentParserException {
         // define the parser
         final ArgumentParser parser = ArgumentParsers.newFor("Merkompiler")
