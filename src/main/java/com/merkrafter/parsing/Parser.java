@@ -378,9 +378,9 @@ public class Parser {
             return headNode;
         }
         AbstractSyntaxTree last = headNode;
-        AbstractSyntaxTree current = parseStatement();
+        Statement current = parseStatement();
         while (!(current instanceof ErrorNode)) {
-            ((ASTBaseNode)last).setNext(current); // can not be something else
+            ((ASTBaseNode) last).setNext(current); // can not be something else
             last = current;
             current = parseStatement();
         }
@@ -395,11 +395,11 @@ public class Parser {
      *
      * @return ASTBaseNode representing this statement or ErrorNode
      */
-    AbstractSyntaxTree parseStatement() {
+    Statement parseStatement() {
         // factoring of
         // statement = ident '=' expression ';' | ident actual_parameters ';'
         //             ^ assignment               ^ procedure call
-        AbstractSyntaxTree node = parseStatementForAssignmentOrProcedureCall();
+        Statement node = parseStatementForAssignmentOrProcedureCall();
         if (!(node instanceof ErrorNode)) {
             return node;
         }
@@ -424,7 +424,7 @@ public class Parser {
      *
      * @return AssignmentNode, ProcedureCallNode, or ErrorNode
      */
-    private AbstractSyntaxTree parseStatementForAssignmentOrProcedureCall() {
+    private Statement parseStatementForAssignmentOrProcedureCall() {
         final String identifier = parseIdentifier();
         if (identifier == null) {
             // both an assignment and a procedure call need an identifier first
@@ -539,7 +539,7 @@ public class Parser {
      *
      * @return IfElseNode representing this if statement or ErrorNode
      */
-    AbstractSyntaxTree parseIfStatement() {
+    Statement parseIfStatement() {
         // if keyword
         Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.IF)) {
@@ -556,7 +556,7 @@ public class Parser {
         // condition
         final AbstractSyntaxTree condition = parseExpression();
         if (condition instanceof ErrorNode) {
-            return condition;
+            return (ErrorNode) condition;
         }
         if (scanner.getSym().getType() != R_PAREN) {
             return new ErrorNode(generateErrorMessage("')'"));
@@ -613,7 +613,7 @@ public class Parser {
      *
      * @return WhileNode representing this while statement or ErrorNode
      */
-    AbstractSyntaxTree parseWhileStatement() {
+    Statement parseWhileStatement() {
         Token sym = scanner.getSym();
 
         // while keyword
@@ -631,7 +631,7 @@ public class Parser {
         // condition
         final AbstractSyntaxTree condition = parseExpression();
         if (condition instanceof ErrorNode) {
-            return condition;
+            return (ErrorNode) condition;
         }
         sym = scanner.getSym();
         if (sym.getType() != R_PAREN) {
@@ -666,7 +666,7 @@ public class Parser {
      *
      * @return ReturnNode representing this return statement or ErrorNode
      */
-    AbstractSyntaxTree parseReturnStatement() {
+    Statement parseReturnStatement() {
         Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.RETURN)) {
             return new ErrorNode(generateErrorMessage("'return' keyword"));
@@ -682,7 +682,7 @@ public class Parser {
 
         final AbstractSyntaxTree expression = parseSimpleExpression();
         if (expression instanceof ErrorNode) {
-            return expression;
+            return (ErrorNode) expression;
         }
 
         // before doing something with the expression the terminal semicolon must be validated

@@ -12,7 +12,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public abstract class ASTBaseNode implements AbstractSyntaxTree {
+public abstract class ASTBaseNode implements Statement {
     // CONSTANTS
     //==============================================================
 
@@ -21,7 +21,7 @@ public abstract class ASTBaseNode implements AbstractSyntaxTree {
     /**
      * Next sequential instruction in the represented program.
      */
-    private AbstractSyntaxTree next;
+    private Statement next;
 
     // CONSTRUCTORS
     //==============================================================
@@ -45,7 +45,7 @@ public abstract class ASTBaseNode implements AbstractSyntaxTree {
     /**
      * Next sequential instruction in the represented program.
      */
-    public AbstractSyntaxTree getNext() {
+    public Statement getNext() {
         return next;
     }
 
@@ -57,7 +57,7 @@ public abstract class ASTBaseNode implements AbstractSyntaxTree {
      *
      * @param next the node that represents the instruction after this node's
      */
-    public void setNext(final AbstractSyntaxTree next) {
+    public void setNext(final Statement next) {
         this.next = next;
     }
 
