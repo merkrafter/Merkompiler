@@ -4,13 +4,15 @@ import com.merkrafter.representation.Type;
 
 import java.util.List;
 
+import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
+
 /****
  * This AST node represents a binary operation. It therefore has two child nodes.
  *
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class BinaryOperationNode extends ASTBaseNode implements Expression {
+public class BinaryOperationNode implements Expression {
     // ATTRIBUTES
     //==============================================================
     private final AbstractSyntaxTree leftOperand;
