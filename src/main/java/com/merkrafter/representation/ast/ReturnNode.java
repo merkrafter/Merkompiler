@@ -13,7 +13,7 @@ import java.util.List;
 public class ReturnNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
-    private final AbstractSyntaxTree expression;
+    private final Expression expression;
 
     // CONSTRUCTORS
     //==============================================================
@@ -28,7 +28,7 @@ public class ReturnNode extends ASTBaseNode {
     /****
      * Creates a new return node with the given expression as its value.
      ***************************************************************/
-    public ReturnNode(final AbstractSyntaxTree expression) {
+    public ReturnNode(final Expression expression) {
         this.expression = expression;
     }
 
@@ -39,11 +39,12 @@ public class ReturnNode extends ASTBaseNode {
      * @return the type of the expression or VOID if this return does not have an expression
      */
     @Override
+    // need to keep this!
     public Type getReturnedType() {
         if (expression == null) {
             return Type.VOID;
         }
-        return ((ASTBaseNode)expression).getReturnedType();
+        return ((ASTBaseNode) expression).getReturnedType();
     }
 
     /**
