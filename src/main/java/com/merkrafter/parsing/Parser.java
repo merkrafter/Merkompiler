@@ -432,7 +432,7 @@ public class Parser {
         }
 
         // try parsing an assignment
-        final AbstractSyntaxTree expression = parseAssignmentWithoutIdent();
+        final Expression expression = parseAssignmentWithoutIdent();
         if (!(expression instanceof ErrorNode)) {
             final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
             final VariableAccessNode varNode = new VariableAccessNode(var);
@@ -496,14 +496,14 @@ public class Parser {
      *
      * @return the expression that will be assigned to a variable
      */
-    private AbstractSyntaxTree parseAssignmentWithoutIdent() {
+    private Expression parseAssignmentWithoutIdent() {
         Token sym = scanner.getSym();
         if (sym.getType() != ASSIGN) {
             return new ErrorNode(generateErrorMessage("'='"));
         }
         scanner.processToken();
 
-        final AbstractSyntaxTree expression = parseExpression();
+        final Expression expression = parseExpression();
         if (expression instanceof ErrorNode) {
             return expression;
         }
@@ -554,7 +554,7 @@ public class Parser {
         scanner.processToken();
 
         // condition
-        final AbstractSyntaxTree condition = parseExpression();
+        final Expression condition = parseExpression();
         if (condition instanceof ErrorNode) {
             return (ErrorNode) condition;
         }
@@ -629,7 +629,7 @@ public class Parser {
         scanner.processToken();
 
         // condition
-        final AbstractSyntaxTree condition = parseExpression();
+        final Expression condition = parseExpression();
         if (condition instanceof ErrorNode) {
             return (ErrorNode) condition;
         }
@@ -680,7 +680,7 @@ public class Parser {
             return new ReturnNode();
         }
 
-        final AbstractSyntaxTree expression = parseSimpleExpression();
+        final Expression expression = parseSimpleExpression();
         if (expression instanceof ErrorNode) {
             return (ErrorNode) expression;
         }
@@ -711,7 +711,7 @@ public class Parser {
 
         final List<AbstractSyntaxTree> paramList = new LinkedList<>();
 
-        AbstractSyntaxTree node = parseExpression();
+        Expression node = parseExpression();
         // it is okay if no expression comes here
         // but it is still necessary to check for the right paren afterwards
         if (node != null && !(node instanceof ErrorNode)) {
@@ -743,8 +743,8 @@ public class Parser {
      *
      * @return syntax tree for this expression
      */
-    AbstractSyntaxTree parseExpression() {
-        AbstractSyntaxTree node = parseSimpleExpression();
+    Expression parseExpression() {
+        Expression node = parseSimpleExpression();
         if (node == null) { // TODO check whether this case can happen; better avoid it
             return null;
         }
@@ -792,8 +792,8 @@ public class Parser {
      *
      * @return syntax tree for this simple expression
      */
-    AbstractSyntaxTree parseSimpleExpression() {
-        AbstractSyntaxTree node = parseTerm();
+    Expression parseSimpleExpression() {
+        Expression node = parseTerm();
         while (node != null && !(node instanceof ErrorNode)) {
             final Token sym = scanner.getSym();
             if (sym.getType() == PLUS) {
@@ -817,8 +817,8 @@ public class Parser {
      *
      * @return syntax tree for this term
      */
-    AbstractSyntaxTree parseTerm() {
-        AbstractSyntaxTree node = parseFactor();
+    Expression parseTerm() {
+        Expression node = parseFactor();
         while (node != null && !(node instanceof ErrorNode)) {
             final Token sym = scanner.getSym();
             if (sym.getType() == TIMES) {
@@ -842,7 +842,7 @@ public class Parser {
      *
      * @return syntax tree for this factor
      */
-    AbstractSyntaxTree parseFactor() {
+    Expression parseFactor() {
         final String identifier = parseIdentifier();
         if (identifier != null) {
             final ParameterListNode parameters = parseActualParameters();
@@ -872,7 +872,7 @@ public class Parser {
         /*
          * Parse a number
          */
-        AbstractSyntaxTree node = parseNumber();
+        Expression node = parseNumber();
         if (!(node instanceof ErrorNode)) {
             return node;
         }
@@ -899,7 +899,7 @@ public class Parser {
      *
      * @return whether a single NUMBER token comes next
      */
-    AbstractSyntaxTree parseNumber() {
+    Expression parseNumber() {
         final Token sym = scanner.getSym();
         if (sym.getType() == NUMBER) {
             ConstantNode<Long> node;
