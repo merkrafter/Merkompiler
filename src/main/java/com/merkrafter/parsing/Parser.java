@@ -372,15 +372,15 @@ public class Parser {
         return true;
     }
 
-    AbstractSyntaxTree parseStatementSequence() {
-        final AbstractSyntaxTree headNode = parseStatement();
+    Statement parseStatementSequence() {
+        final Statement headNode = parseStatement();
         if (headNode instanceof ErrorNode) {
             return headNode;
         }
-        AbstractSyntaxTree last = headNode;
+        Statement last = headNode;
         Statement current = parseStatement();
         while (!(current instanceof ErrorNode)) {
-            ((ASTBaseNode) last).setNext(current); // can not be something else
+            last.setNext(current);
             last = current;
             current = parseStatement();
         }
