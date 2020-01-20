@@ -12,7 +12,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class VariableAccessNode extends ASTBaseNode implements Expression {
+public class VariableAccessNode implements Expression {
     // ATTRIBUTES
     //==============================================================
     private final VariableDescription variableDescription;
