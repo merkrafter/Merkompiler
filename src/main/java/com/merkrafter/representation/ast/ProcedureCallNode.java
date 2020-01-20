@@ -11,7 +11,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ProcedureCallNode extends ASTBaseNode {
+public class ProcedureCallNode extends ASTBaseNode implements Expression {
     // ATTRIBUTES
     //==============================================================
     private final ProcedureDescription procedure;

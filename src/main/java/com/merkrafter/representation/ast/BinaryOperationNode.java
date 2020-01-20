@@ -10,7 +10,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class BinaryOperationNode extends ASTBaseNode {
+public class BinaryOperationNode extends ASTBaseNode implements Expression {
     // ATTRIBUTES
     //==============================================================
     private final AbstractSyntaxTree leftOperand;
