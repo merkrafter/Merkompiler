@@ -709,7 +709,7 @@ public class Parser {
         }
         scanner.processToken();
 
-        final List<AbstractSyntaxTree> paramList = new LinkedList<>();
+        final List<Expression> paramList = new LinkedList<>();
 
         Expression node = parseExpression();
         // it is okay if no expression comes here

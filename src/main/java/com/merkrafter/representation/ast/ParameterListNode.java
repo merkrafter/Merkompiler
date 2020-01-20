@@ -1,7 +1,5 @@
 package com.merkrafter.representation.ast;
 
-import com.merkrafter.representation.Type;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,10 +9,10 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ParameterListNode extends ASTBaseNode {
+public class ParameterListNode implements AbstractSyntaxTree {
     // ATTRIBUTES
     //==============================================================
-    private final List<AbstractSyntaxTree> parameters;
+    private final List<Expression> parameters;
 
     // CONSTRUCTORS
     //==============================================================
@@ -22,7 +20,7 @@ public class ParameterListNode extends ASTBaseNode {
     /****
      * Creates a new ParameterListNode.
      ***************************************************************/
-    public ParameterListNode(final List<AbstractSyntaxTree> parameters) {
+    public ParameterListNode(final List<Expression> parameters) {
         this.parameters = parameters;
     }
 
@@ -30,19 +28,9 @@ public class ParameterListNode extends ASTBaseNode {
     //==============================================================
 
     /**
-     * ParameterListNodes do not have a meaningful return type and hence return VOID.
-     *
-     * @return Type.VOID
-     */
-    @Override
-    public Type getReturnedType() {
-        return Type.VOID;
-    }
-
-    /**
      * @return a list of expressions
      */
-    public List<AbstractSyntaxTree> getParameters() {
+    public List<Expression> getParameters() {
         return parameters;
     }
 
