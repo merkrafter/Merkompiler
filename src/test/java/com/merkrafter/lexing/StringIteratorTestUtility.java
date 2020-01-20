@@ -20,7 +20,7 @@ public class StringIteratorTestUtility implements Iterator<Character> {
      */
     private int index = 0;
 
-    void setString(String string) {
+    public void setString(String string) {
         this.string = string;
     }
 
