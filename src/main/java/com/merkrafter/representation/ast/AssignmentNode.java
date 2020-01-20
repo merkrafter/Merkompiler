@@ -14,7 +14,7 @@ public class AssignmentNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
     private final VariableAccessNode variable;
-    private final AbstractSyntaxTree value;
+    private final Expression value;
 
     // CONSTRUCTORS
     //==============================================================
@@ -24,7 +24,7 @@ public class AssignmentNode extends ASTBaseNode {
      * the value to.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public AssignmentNode(final VariableAccessNode variable, final AbstractSyntaxTree value) {
+    public AssignmentNode(final VariableAccessNode variable, final Expression value) {
         this.variable = variable;
         this.value = value;
     }
