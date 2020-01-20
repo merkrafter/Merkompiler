@@ -15,8 +15,8 @@ import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
 public class BinaryOperationNode implements Expression {
     // ATTRIBUTES
     //==============================================================
-    private final AbstractSyntaxTree leftOperand;
-    private final AbstractSyntaxTree rightOperand;
+    private final Expression leftOperand;
+    private final Expression rightOperand;
 
     private final BinaryOperationNodeType binOpType;
 
@@ -27,9 +27,9 @@ public class BinaryOperationNode implements Expression {
      * Creates a new BinaryOperationNode from an operation and two operands.
      * It does no type validation at this point.
      ***************************************************************/
-    public BinaryOperationNode(final AbstractSyntaxTree leftOperand,
+    public BinaryOperationNode(final Expression leftOperand,
                                final BinaryOperationNodeType binOpType,
-                               final AbstractSyntaxTree rightOperand) {
+                               final Expression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
         this.binOpType = binOpType;
