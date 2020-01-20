@@ -1,7 +1,5 @@
 package com.merkrafter.representation.ast;
 
-import com.merkrafter.representation.Type;
-
 import java.util.List;
 
 import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
@@ -15,8 +13,8 @@ import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
 public class IfNode implements AbstractSyntaxTree {
     // ATTRIBUTES
     //==============================================================
-    private final AbstractSyntaxTree condition;
-    private final AbstractSyntaxTree child;
+    private final Expression condition;
+    private final Statement ifBranch;
 
     // CONSTRUCTORS
     //==============================================================
@@ -26,9 +24,9 @@ public class IfNode implements AbstractSyntaxTree {
      * condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfNode(final AbstractSyntaxTree condition, final AbstractSyntaxTree child) {
+    public IfNode(final Expression condition, final Statement ifBranch) {
         this.condition = condition;
-        this.child = child;
+        this.ifBranch = ifBranch;
     }
 
     // GETTER
@@ -41,8 +39,8 @@ public class IfNode implements AbstractSyntaxTree {
      */
     @Override
     public boolean hasSemanticsError() {
-        return condition == null || child == null || condition.hasSemanticsError()
-               || child.hasSemanticsError();
+        return condition == null || ifBranch == null || condition.hasSemanticsError()
+               || ifBranch.hasSemanticsError();
     }
 
     /**
@@ -52,8 +50,8 @@ public class IfNode implements AbstractSyntaxTree {
      */
     @Override
     public boolean hasSyntaxError() {
-        return condition == null || child == null || condition.hasSyntaxError()
-               || child.hasSyntaxError();
+        return condition == null || ifBranch == null || condition.hasSyntaxError()
+               || ifBranch.hasSyntaxError();
     }
 
     /**
@@ -61,6 +59,6 @@ public class IfNode implements AbstractSyntaxTree {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(condition, child);
+        return collectErrorsFrom(condition, ifBranch);
     }
 }

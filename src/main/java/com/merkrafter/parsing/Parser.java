@@ -569,7 +569,7 @@ public class Parser {
         }
         scanner.processToken();
 
-        final AbstractSyntaxTree ifBranch = parseStatementSequence();
+        final Statement ifBranch = parseStatementSequence();
         if (ifBranch instanceof ErrorNode) {
             return new ErrorNode(generateErrorMessage("statement(s)"));
             //return ifBranch;
@@ -592,7 +592,7 @@ public class Parser {
         }
         scanner.processToken();
 
-        final AbstractSyntaxTree elseBranch = parseStatementSequence();
+        final Statement elseBranch = parseStatementSequence();
         if (elseBranch instanceof ErrorNode) {
             return new ErrorNode(generateErrorMessage("statement(s)"));
         }
