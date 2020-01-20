@@ -4,13 +4,15 @@ import com.merkrafter.representation.Type;
 
 import java.util.List;
 
+import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
+
 /****
  * This AST node represents an if statement.
  *
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class IfNode extends ASTBaseNode {
+public class IfNode implements AbstractSyntaxTree {
     // ATTRIBUTES
     //==============================================================
     private final AbstractSyntaxTree condition;
@@ -31,16 +33,6 @@ public class IfNode extends ASTBaseNode {
 
     // GETTER
     //==============================================================
-
-    /**
-     * Since an if statement does not return anything, this method always returns Type.VOID.
-     *
-     * @return Type.VOID
-     */
-    @Override
-    public Type getReturnedType() {
-        return Type.VOID;
-    }
 
     /**
      * An IfNode has a semantics error if any of its child nodes is null or has an error itself.
