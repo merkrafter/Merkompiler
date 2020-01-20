@@ -14,7 +14,7 @@ import java.util.Objects;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ConstantNode<T> extends ASTBaseNode implements Expression {
+public class ConstantNode<T> implements Expression {
     // ATTRIBUTES
     //==============================================================
     private final Type type;
