@@ -9,7 +9,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class WhileNode extends ASTBaseNode {
+public class WhileNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
     private final Expression condition;

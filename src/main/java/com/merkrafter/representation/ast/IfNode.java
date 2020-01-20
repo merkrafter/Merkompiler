@@ -2,7 +2,7 @@ package com.merkrafter.representation.ast;
 
 import java.util.List;
 
-import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
+import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
 
 /****
  * This AST node represents an if statement.

@@ -10,7 +10,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ReturnNode extends ASTBaseNode {
+public class ReturnNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
     private final Expression expression;

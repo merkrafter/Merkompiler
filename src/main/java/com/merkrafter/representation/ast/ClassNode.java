@@ -5,7 +5,7 @@ import com.merkrafter.representation.ClassDescription;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
+import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
 
 /****
  * This node represents a class definition and is kind of an entry point for the whole program.

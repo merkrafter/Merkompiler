@@ -9,7 +9,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class IfElseNode extends ASTBaseNode {
+public class IfElseNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
     private final IfNode ifBranch;

@@ -8,7 +8,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class AssignmentNode extends ASTBaseNode {
+public class AssignmentNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
     private final VariableAccessNode variable;

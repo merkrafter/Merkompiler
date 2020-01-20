@@ -1,7 +1,6 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
-import com.merkrafter.representation.ast.ASTBaseNode;
 import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ConstantNode;
 import com.merkrafter.representation.ast.ParameterListNode;

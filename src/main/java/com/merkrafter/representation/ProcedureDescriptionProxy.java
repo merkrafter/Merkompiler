@@ -1,6 +1,5 @@
 package com.merkrafter.representation;
 
-import com.merkrafter.representation.ast.ASTBaseNode;
 import com.merkrafter.representation.ast.ParameterListNode;
 
 import java.util.Arrays;

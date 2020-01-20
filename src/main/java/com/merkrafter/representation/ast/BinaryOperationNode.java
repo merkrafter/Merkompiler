@@ -4,7 +4,7 @@ import com.merkrafter.representation.Type;
 
 import java.util.List;
 
-import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
+import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
 
 /****
  * This AST node represents a binary operation. It therefore has two child nodes.
