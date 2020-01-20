@@ -646,7 +646,7 @@ public class Parser {
         scanner.processToken();
 
         // associated block
-        final AbstractSyntaxTree statements = parseStatementSequence();
+        final Statement statements = parseStatementSequence();
         if (statements instanceof ErrorNode) {
             return new ErrorNode(generateErrorMessage("statement(s)"));
         }

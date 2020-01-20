@@ -14,8 +14,8 @@ import java.util.List;
 public class WhileNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
-    private final AbstractSyntaxTree condition;
-    private final AbstractSyntaxTree child;
+    private final Expression condition;
+    private final Statement loopBody;
 
     // CONSTRUCTORS
     //==============================================================
@@ -25,9 +25,9 @@ public class WhileNode extends ASTBaseNode {
      * while the condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public WhileNode(final AbstractSyntaxTree condition, final AbstractSyntaxTree child) {
+    public WhileNode(final Expression condition, final Statement loopBody) {
         this.condition = condition;
-        this.child = child;
+        this.loopBody = loopBody;
     }
 
     // GETTER
@@ -50,8 +50,8 @@ public class WhileNode extends ASTBaseNode {
      */
     @Override
     public boolean hasSemanticsError() {
-        return condition == null || child == null || condition.hasSemanticsError()
-               || child.hasSemanticsError();
+        return condition == null || loopBody == null || condition.hasSemanticsError()
+               || loopBody.hasSemanticsError();
     }
 
     /**
@@ -61,8 +61,8 @@ public class WhileNode extends ASTBaseNode {
      */
     @Override
     public boolean hasSyntaxError() {
-        return condition == null || child == null || condition.hasSyntaxError()
-               || child.hasSyntaxError();
+        return condition == null || loopBody == null || condition.hasSyntaxError()
+               || loopBody.hasSyntaxError();
     }
 
     /**
@@ -70,6 +70,6 @@ public class WhileNode extends ASTBaseNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(condition, child);
+        return collectErrorsFrom(condition, loopBody);
     }
 }
