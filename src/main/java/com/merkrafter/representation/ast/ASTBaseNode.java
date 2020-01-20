@@ -1,7 +1,5 @@
 package com.merkrafter.representation.ast;
 
-import com.merkrafter.representation.Type;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,13 +32,6 @@ public abstract class ASTBaseNode implements Statement {
 
     // GETTER
     //==============================================================
-
-    /**
-     * After evaluating this node, this is the type that is propagated upwards.
-     *
-     * @return the return type of this node
-     */
-    public abstract Type getReturnedType();
 
     /**
      * Next sequential instruction in the represented program.

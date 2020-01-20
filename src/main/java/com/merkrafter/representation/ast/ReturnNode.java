@@ -38,13 +38,11 @@ public class ReturnNode extends ASTBaseNode {
     /**
      * @return the type of the expression or VOID if this return does not have an expression
      */
-    @Override
-    // need to keep this!
     public Type getReturnedType() {
         if (expression == null) {
             return Type.VOID;
         }
-        return ((ASTBaseNode) expression).getReturnedType();
+        return expression.getReturnedType();
     }
 
     /**

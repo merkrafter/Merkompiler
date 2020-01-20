@@ -104,9 +104,7 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
             if (signature == null) {
                 signature = new Type[parameters.getParameters().size()];
                 // FIXME throws NPE if the one of the parameters is a variable that was not declared
-                Arrays.setAll(signature,
-                              i -> ((ASTBaseNode) parameters.getParameters()
-                                                            .get(i)).getReturnedType());
+                Arrays.setAll(signature, i -> parameters.getParameters().get(i).getReturnedType());
             }
             procedureDescription = (ProcedureDescription) symbolTable.find(name, signature);
         }

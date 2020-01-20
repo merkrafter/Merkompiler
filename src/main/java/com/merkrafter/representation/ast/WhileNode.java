@@ -1,7 +1,5 @@
 package com.merkrafter.representation.ast;
 
-import com.merkrafter.representation.Type;
-
 import java.util.List;
 
 /****
@@ -32,16 +30,6 @@ public class WhileNode extends ASTBaseNode {
 
     // GETTER
     //==============================================================
-
-    /**
-     * Since a while loop does not return anything, this method always returns Type.VOID.
-     *
-     * @return Type.VOID
-     */
-    @Override
-    public Type getReturnedType() {
-        return Type.VOID;
-    }
 
     /**
      * A WhileNode has a semantics error if the child nodes are null or have errors themselves.

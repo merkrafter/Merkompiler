@@ -1,7 +1,5 @@
 package com.merkrafter.representation.ast;
 
-import com.merkrafter.representation.Type;
-
 import java.util.List;
 
 /****
@@ -31,16 +29,6 @@ public class AssignmentNode extends ASTBaseNode {
 
     // GETTER
     //==============================================================
-
-    /**
-     * Since an assignment does not return anything, this method always returns Type.VOID.
-     *
-     * @return Type.VOID
-     */
-    @Override
-    public Type getReturnedType() {
-        return Type.VOID;
-    }
 
     /**
      * An AssignmentNode has a semantics error if the variable or expression is null or has an error
