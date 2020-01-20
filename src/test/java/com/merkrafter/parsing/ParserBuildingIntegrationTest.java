@@ -1,5 +1,9 @@
 package com.merkrafter.parsing;
 
+import com.merkrafter.lexing.Scanner;
+import com.merkrafter.lexing.StringIteratorTestUtility;
+import org.junit.jupiter.api.BeforeEach;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -9,4 +13,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ParserBuildingIntegrationTest {
 
+    /**
+     * This field enables iterating over Strings.
+     */
+    private StringIteratorTestUtility stringIterator;
+
+    private Scanner scanner;
+
+    /**
+     * Subject under test
+     */
+    private Parser parser;
+
+    @BeforeEach
+    void setUp() {
+        stringIterator = new StringIteratorTestUtility();
+        scanner = new Scanner(stringIterator);
+        parser = new Parser(scanner);
+    }
 }
