@@ -5,7 +5,8 @@ import com.merkrafter.representation.Type;
 import java.util.List;
 
 /****
- * This AST node represents an if-else construct.
+ * This AST node represents an if-else construct. The if branch is handled by
+ * a separate IfNode instance and the else branch is simply implemented as a sequence of Statements.
  *
  * @since v0.3.0
  * @author merkrafter
@@ -13,20 +14,20 @@ import java.util.List;
 public class IfElseNode extends ASTBaseNode {
     // ATTRIBUTES
     //==============================================================
-    private final IfNode ifNode;
-    private final AbstractSyntaxTree child;
+    private final IfNode ifBranch;
+    private final Statement elseBranch;
 
     // CONSTRUCTORS
     //==============================================================
 
     /****
-     * Creates a new IfElseNode from an if node handling the if branch and a node that is executed
+     * Creates a new IfElseNode from a node handling the if branch and a node that is executed
      * if the condition does not hold.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfElseNode(final IfNode ifNode, final AbstractSyntaxTree child) {
-        this.ifNode = ifNode;
-        this.child = child;
+    public IfElseNode(final IfNode ifBranch, final Statement elseBranch) {
+        this.ifBranch = ifBranch;
+        this.elseBranch = elseBranch;
     }
 
     // GETTER
@@ -49,8 +50,8 @@ public class IfElseNode extends ASTBaseNode {
      */
     @Override
     public boolean hasSemanticsError() {
-        return ifNode == null || child == null || ifNode.hasSemanticsError()
-               || child.hasSemanticsError();
+        return ifBranch == null || elseBranch == null || ifBranch.hasSemanticsError()
+               || elseBranch.hasSemanticsError();
     }
 
     /**
@@ -60,7 +61,8 @@ public class IfElseNode extends ASTBaseNode {
      */
     @Override
     public boolean hasSyntaxError() {
-        return ifNode == null || child == null || ifNode.hasSyntaxError() || child.hasSyntaxError();
+        return ifBranch == null || elseBranch == null || ifBranch.hasSyntaxError()
+               || elseBranch.hasSyntaxError();
     }
 
     /**
@@ -68,6 +70,6 @@ public class IfElseNode extends ASTBaseNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(ifNode, child);
+        return collectErrorsFrom(ifBranch, elseBranch);
     }
 }
