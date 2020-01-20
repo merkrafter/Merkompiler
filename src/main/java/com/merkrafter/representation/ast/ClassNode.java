@@ -6,13 +6,15 @@ import com.merkrafter.representation.Type;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.merkrafter.representation.ast.ASTBaseNode.collectErrorsFrom;
+
 /****
  * This node represents a class definition and is kind of an entry point for the whole program.
  *
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ClassNode extends ASTBaseNode {
+public class ClassNode implements AbstractSyntaxTree {
     // ATTRIBUTES
     //==============================================================
     private final ClassDescription classDescription;
@@ -32,16 +34,6 @@ public class ClassNode extends ASTBaseNode {
 
     public ClassDescription getClassDescription() {
         return classDescription;
-    }
-
-    /**
-     * This node does not return a type.
-     *
-     * @return null
-     */
-    @Override
-    public Type getReturnedType() {
-        return null;
     }
 
     // METHODS
