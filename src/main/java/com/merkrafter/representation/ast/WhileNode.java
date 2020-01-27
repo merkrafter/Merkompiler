@@ -72,4 +72,18 @@ public class WhileNode extends ASTBaseNode {
     public List<String> getAllErrors() {
         return collectErrorsFrom(condition, child);
     }
+
+    /**
+     * Two WhileNodes are considered equal if their conditions and children are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof WhileNode)) {
+            return false;
+        }
+        final WhileNode other = (WhileNode) obj;
+        return condition != null && other.condition != null && child != null && other.child != null
+               && condition.equals(other.condition) && child.equals(other.child);
+    }
 }

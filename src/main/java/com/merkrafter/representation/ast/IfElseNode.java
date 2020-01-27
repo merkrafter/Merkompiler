@@ -70,4 +70,18 @@ public class IfElseNode extends ASTBaseNode {
     public List<String> getAllErrors() {
         return collectErrorsFrom(ifNode, child);
     }
+
+    /**
+     * Two IfElseNodes are considered equal if their ifNodes and children are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof IfElseNode)) {
+            return false;
+        }
+        final IfElseNode other = (IfElseNode) obj;
+        return child != null && other.child != null && ifNode != null && other.ifNode != null
+               && child.equals(other.child) && ifNode.equals(other.ifNode);
+    }
 }

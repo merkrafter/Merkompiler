@@ -73,4 +73,16 @@ public class ReturnNode extends ASTBaseNode {
     public List<String> getAllErrors() {
         return collectErrorsFrom(expression);
     }
+
+    /**
+     * Two ReturnNodes are considered equal if their expressions are equal to each other.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof ReturnNode)) {
+            return false;
+        }
+        final ReturnNode other = (ReturnNode) obj;
+        return expression.equals(other.expression);
+    }
 }

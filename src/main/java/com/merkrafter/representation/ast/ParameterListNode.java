@@ -75,4 +75,18 @@ public class ParameterListNode extends ASTBaseNode {
         errors.add("Missing parameters");
         return errors;
     }
+
+    /**
+     * Two ParameterListNodes are considered equal if their parameter lists are non-null and are
+     * equal to each other.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof ParameterListNode)) {
+            return false;
+        }
+        final ParameterListNode other = (ParameterListNode) obj;
+        return parameters != null && other.parameters != null
+               && parameters.equals(other.parameters);
+    }
 }

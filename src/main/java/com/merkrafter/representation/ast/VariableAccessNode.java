@@ -69,4 +69,18 @@ public class VariableAccessNode extends ASTBaseNode {
         errors.add("Missing variable");
         return errors;
     }
+
+    /**
+     * Two VariableAccessNodes are considered equal if their variable descriptions are non-null and
+     * equal to each other.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof VariableAccessNode)) {
+            return false;
+        }
+        final VariableAccessNode other = (VariableAccessNode) obj;
+        return variableDescription != null && other.variableDescription != null
+               && variableDescription.equals(other.variableDescription);
+    }
 }

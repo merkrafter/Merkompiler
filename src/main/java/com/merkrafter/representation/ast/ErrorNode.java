@@ -77,4 +77,12 @@ public class ErrorNode extends ASTBaseNode {
         errors.add(message);
         return errors;
     }
+
+    /**
+     * An object is considered equal to an ErrorNode if and only if it is an ErrorNode itself.
+     */
+    @Override
+    public boolean equals(final Object other) {
+        return other instanceof ErrorNode;
+    }
 }

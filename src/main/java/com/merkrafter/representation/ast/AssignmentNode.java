@@ -74,4 +74,17 @@ public class AssignmentNode extends ASTBaseNode {
         return collectErrorsFrom(variable, value);
     }
 
+    /**
+     * Two AssignmentNodes are considered equal if their variables and values are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof AssignmentNode)) {
+            return false;
+        }
+        final AssignmentNode other = (AssignmentNode) obj;
+        return variable != null && other.variable != null && value != null && other.value != null
+               && variable.equals(other.variable) && value.equals(other.value);
+    }
 }

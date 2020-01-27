@@ -70,4 +70,7 @@ public abstract class ASTBaseNode implements AbstractSyntaxTree {
         }
         return errors;
     }
+
+    @Override
+    public abstract boolean equals(Object other);
 }
