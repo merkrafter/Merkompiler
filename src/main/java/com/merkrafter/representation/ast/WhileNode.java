@@ -60,4 +60,19 @@ public class WhileNode extends AbstractStatementNode {
     public List<String> getAllErrors() {
         return collectErrorsFrom(condition, loopBody);
     }
+
+    /**
+     * Two WhileNodes are considered equal if their conditions and children are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof WhileNode)) {
+            return false;
+        }
+        final WhileNode other = (WhileNode) obj;
+        return condition != null && other.condition != null && loopBody != null
+               && other.loopBody != null && condition.equals(other.condition) && loopBody.equals(
+                other.loopBody);
+    }
 }

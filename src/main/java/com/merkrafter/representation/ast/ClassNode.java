@@ -73,4 +73,18 @@ public class ClassNode implements AbstractSyntaxTree {
             return collectErrorsFrom(classDescription.getEntryPoint());
         }
     }
+
+    /**
+     * Two ClassNodes are considered equal if their class descriptions are non-null and are
+     * equal to each other.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof ClassNode)) {
+            return false;
+        }
+        final ClassNode other = (ClassNode) obj;
+        return classDescription != null && other.classDescription != null
+               && classDescription.equals(other.classDescription);
+    }
 }

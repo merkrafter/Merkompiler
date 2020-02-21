@@ -100,4 +100,19 @@ public class BinaryOperationNode implements Expression {
     public List<String> getAllErrors() {
         return collectErrorsFrom(leftOperand, rightOperand);
     }
+
+    /**
+     * Two BinaryOperationNodes are considered equal if their expressions and op types are non-null
+     * and are equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof BinaryOperationNode)) {
+            return false;
+        }
+        final BinaryOperationNode other = (BinaryOperationNode) obj;
+        return leftOperand != null && other.leftOperand != null && rightOperand != null
+               && other.rightOperand != null && binOpType == other.binOpType && leftOperand.equals(
+                other.leftOperand) && rightOperand.equals(other.rightOperand);
+    }
 }

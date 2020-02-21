@@ -83,6 +83,7 @@ public class ErrorNode implements Expression, Statement {
     }
 
     /**
+     * <<<<<<< HEAD
      * This method is only here to fulfill the requirements for implementing Statement. It does not
      * have any meaningful implementation.
      *
