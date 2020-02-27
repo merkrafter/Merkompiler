@@ -53,10 +53,11 @@ class ScannerTest {
 
     /**
      * The scanner should be able to detect number arguments.
+     * This test case also makes sure that each digit is recognized.
      */
     @ParameterizedTest
     // edge cases 0 and MAX_VALUE, one, two and three digit numbers
-    @ValueSource(longs = {0, 1, 10, 123, Long.MAX_VALUE})
+    @ValueSource(longs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 123, Long.MAX_VALUE})
     void scanNormalNumbers(final long number) {
         final String programCode = Long.toString(number);
         final Token[] expectedTokenList = {
