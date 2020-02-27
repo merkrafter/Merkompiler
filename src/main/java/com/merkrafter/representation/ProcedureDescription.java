@@ -1,5 +1,7 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.representation.ast.Statement;
+
 import java.util.List;
 
 /****
@@ -14,6 +16,8 @@ public interface ProcedureDescription {
     List<VariableDescription> getParamList();
 
     Type getReturnType();
+
+    Statement getEntryPoint();
 
     @Override
     boolean equals(Object o);

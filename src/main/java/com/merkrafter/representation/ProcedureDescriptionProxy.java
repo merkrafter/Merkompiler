@@ -1,6 +1,7 @@
 package com.merkrafter.representation;
 
 import com.merkrafter.representation.ast.ParameterListNode;
+import com.merkrafter.representation.ast.Statement;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,6 +76,15 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         // it is possible that the procedure is not in symbolTable
         if (procedureDescription != null) {
             return procedureDescription.getReturnType();
+        }
+        return null;
+    }
+
+    @Override
+    public Statement getEntryPoint() {
+        findProcedureDescription();
+        if (procedureDescription != null) {
+            return procedureDescription.getEntryPoint();
         }
         return null;
     }
