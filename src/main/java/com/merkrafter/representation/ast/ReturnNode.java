@@ -70,7 +70,7 @@ public class ReturnNode extends AbstractStatementNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(expression);
+        return collectErrorsFrom(expression, getNext());
     }
 
     /**

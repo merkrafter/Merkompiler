@@ -59,7 +59,8 @@ public class AssignmentNode extends AbstractStatementNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(variable, value);
+        final List<String> errors = collectErrorsFrom(variable, value, getNext());
+        return errors;
     }
 
     /**

@@ -58,7 +58,7 @@ public class IfElseNode extends AbstractStatementNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(ifBranch, elseBranch);
+        return collectErrorsFrom(ifBranch, elseBranch, getNext());
     }
 
     /**

@@ -58,7 +58,7 @@ public class WhileNode extends AbstractStatementNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(condition, loopBody);
+        return collectErrorsFrom(condition, loopBody, getNext());
     }
 
     /**
