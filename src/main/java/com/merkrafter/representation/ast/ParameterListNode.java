@@ -60,7 +60,9 @@ public class ParameterListNode implements AbstractSyntaxTree {
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = new LinkedList<>();
-        errors.add("Missing parameters");
+        if (parameters == null) {
+            errors.add("Missing parameters");
+        }
         return errors;
     }
 

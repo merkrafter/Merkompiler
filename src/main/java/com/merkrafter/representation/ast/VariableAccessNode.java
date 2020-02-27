@@ -66,7 +66,9 @@ public class VariableAccessNode implements Expression {
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = new LinkedList<>();
-        errors.add("Missing variable");
+        if (variableDescription == null) {
+            errors.add("Missing variable");
+        }
         return errors;
     }
 
