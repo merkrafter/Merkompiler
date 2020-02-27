@@ -150,7 +150,7 @@ class VariableDescriptionTest {
     }
 
     /**
-     * A variable description should NOT be considered equal to another one if they have
+     * A variable description should be considered equal to another one even if they have
      * different types.
      */
     @Test
@@ -162,8 +162,8 @@ class VariableDescriptionTest {
         final boolean constant = false;
         final VariableDescription varDesc1 = new VariableDescription(name, type1, value, constant);
         final VariableDescription varDesc2 = new VariableDescription(name, type2, value, constant);
-        assertNotEquals(varDesc1, varDesc2);
-        assertNotEquals(varDesc2, varDesc1);
+        assertEquals(varDesc1, varDesc2);
+        assertEquals(varDesc2, varDesc1);
     }
 
     /**
