@@ -432,7 +432,8 @@ public class Parser {
         // try parsing an assignment
         final Expression expression = parseAssignmentWithoutIdent();
         if (!(expression instanceof ErrorNode)) {
-            final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
+            final VariableDescription var =
+                    (VariableDescription) symbolTable.find(identifier, (Type[]) null);
             final VariableAccessNode varNode = new VariableAccessNode(var);
             return new AssignmentNode(varNode, expression);
         }
@@ -860,7 +861,8 @@ public class Parser {
             /*
              * Parse a variable access
              */
-            final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
+            final VariableDescription var =
+                    (VariableDescription) symbolTable.find(identifier, (Type[]) null);
 
             // no need to check whether a variable was found since the variable access node will
             // communicate an error by itself when its hasSemanticsError() method is called

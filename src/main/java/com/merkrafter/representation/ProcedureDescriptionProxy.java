@@ -110,6 +110,9 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
      */
     void findProcedureDescription() {
         if (procedureDescription == null) {
+            if (parameters == null) {
+                signature = new Type[0];
+            }
             if (signature == null) {
                 signature = new Type[parameters.getParameters().size()];
                 // FIXME throws NPE if the one of the parameters is a variable that was not declared
