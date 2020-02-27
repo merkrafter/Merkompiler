@@ -235,32 +235,6 @@ class ParserTest {
     }
 
     /**
-     * The parser should be able to parse procedure calls.
-     *
-     * @param inputTokens token lists provided by {@link ParserTestDataProvider#procedureCalls()}
-     */
-    @ParameterizedTest
-    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#procedureCalls")
-    void parseProcedureCall(final ParserTestDataProvider.TokenWrapper inputTokens) {
-        final Scanner scanner = new TestScanner(inputTokens.getTokens());
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseProcedureCall());
-    }
-
-    /**
-     * The parser should be able to parse intern procedure calls.
-     *
-     * @param inputTokens token lists provided by {@link ParserTestDataProvider#internProcedureCalls()}
-     */
-    @ParameterizedTest
-    @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#internProcedureCalls")
-    void parseInternProcedureCall(final ParserTestDataProvider.TokenWrapper inputTokens) {
-        final Scanner scanner = new TestScanner(inputTokens.getTokens());
-        final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseInternProcedureCall());
-    }
-
-    /**
      * The parser should be able to parse simple if constructs.
      *
      * @param inputTokens token lists provided by {@link ParserTestDataProvider#ifConstructs()}

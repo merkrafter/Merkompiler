@@ -515,21 +515,6 @@ public class Parser {
         return expression;
     }
 
-    boolean parseProcedureCall() {
-        if (parseInternProcedureCall() && scanner.getSym().getType() == SEMICOLON) {
-            scanner.processToken();
-            return true;
-        }
-        return false;
-    }
-
-    boolean parseInternProcedureCall() {
-        if (parseIdentifier() != null) {
-            return parseActualParameters() != null;
-        }
-        return false;
-    }
-
     /**
      * Tries to parse an if statement according to the
      * grammar: if_statement  = "if" "(" expression ")" "{" statement_sequence "}" "else" "{"statement_sequence "}".
