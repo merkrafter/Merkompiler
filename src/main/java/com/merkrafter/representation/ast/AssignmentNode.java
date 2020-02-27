@@ -60,6 +60,10 @@ public class AssignmentNode extends AbstractStatementNode {
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = collectErrorsFrom(variable, value, getNext());
+        if (variable.isConstant()) {
+            // TODO: test this; it should not trigger ON that mentioned init
+            errors.add("Can not assign a value to a constant after initialization");
+        }
         return errors;
     }
 

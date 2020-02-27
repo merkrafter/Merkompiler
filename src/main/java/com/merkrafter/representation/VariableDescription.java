@@ -44,7 +44,7 @@ public class VariableDescription extends ObjectDescription {
         return value;
     }
 
-    boolean isConstant() {
+    public boolean isConstant() {
         return constant;
     }
 

@@ -41,6 +41,13 @@ public class VariableAccessNode implements Expression {
     }
 
     /**
+     * Returns whether the underlying variable is a constant.
+     */
+    boolean isConstant() {
+        return variableDescription.isConstant();
+    }
+
+    /**
      * A VariableAccessNode has a semantics error if the underlying VariableDescription is null.
      *
      * @return whether the tree represented by this node has a semantics error somewhere
