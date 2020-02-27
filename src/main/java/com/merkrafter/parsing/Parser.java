@@ -183,7 +183,7 @@ public class Parser {
      */
     boolean parseMethodDeclaration() {
         // get procedure prototype
-        final ProcedureDescription procedureDescription = parseMethodHead();
+        final ActualProcedureDescription procedureDescription = parseMethodHead();
         if (procedureDescription == null) {
             return false;
         }
@@ -192,17 +192,18 @@ public class Parser {
         final SymbolTable prevSymbolTable = symbolTable;
         symbolTable = procedureDescription.getSymbols();
 
-        final boolean success = parseMethodBody();
+        final Statement statements = parseMethodBody();
+        procedureDescription.setEntrypoint(statements);
 
         // set the symbol table back to the previous scope
         symbolTable = prevSymbolTable;
 
-        if (!success) {
-            return false;
+        if (statements instanceof ErrorNode) {
+            return false; // TODO propagate the error message
         }
 
         // returns whether the operation was successful
-        return symbolTable.insert((ObjectDescription) procedureDescription);
+        return symbolTable.insert(procedureDescription);
     }
 
     /**
@@ -210,7 +211,7 @@ public class Parser {
      *
      * @return procedureDescription or null if an error occurred
      */
-    ProcedureDescription parseMethodHead() {
+    ActualProcedureDescription parseMethodHead() {
         final Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken
               && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC)) {
@@ -317,28 +318,25 @@ public class Parser {
      *
      * @return whether this operation was successful
      */
-    boolean parseMethodBody() {
+    Statement parseMethodBody() {
         Token sym = scanner.getSym();
         if (sym.getType() != L_BRACE) {
-            return false;
+            return new ErrorNode(generateErrorMessage("{"));
         }
         scanner.processToken();
 
         // only iterate through them; they're stored in the symbolTable
         while (parseLocalDeclaration()) ;
 
-        final AbstractSyntaxTree statements = parseStatementSequence();
-        if (statements instanceof ErrorNode) {
-            return false; // TODO propagate this error so that the message is not lost
-        }
+        final Statement statements = parseStatementSequence();
 
         sym = scanner.getSym();
         if (sym.getType() != R_BRACE) {
-            return false;
+            return new ErrorNode(generateErrorMessage("}"));
         }
         scanner.processToken();
 
-        return true;
+        return statements;
     }
 
     /**
