@@ -70,6 +70,18 @@ public class ReturnNode extends AbstractStatementNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(expression);
+        return collectErrorsFrom(expression, getNext());
+    }
+
+    /**
+     * Two ReturnNodes are considered equal if their expressions are equal to each other.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof ReturnNode)) {
+            return false;
+        }
+        final ReturnNode other = (ReturnNode) obj;
+        return expression.equals(other.expression);
     }
 }

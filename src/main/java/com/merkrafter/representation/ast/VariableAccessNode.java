@@ -41,6 +41,13 @@ public class VariableAccessNode implements Expression {
     }
 
     /**
+     * Returns whether the underlying variable is a constant.
+     */
+    boolean isConstant() {
+        return variableDescription.isConstant();
+    }
+
+    /**
      * A VariableAccessNode has a semantics error if the underlying VariableDescription is null.
      *
      * @return whether the tree represented by this node has a semantics error somewhere
@@ -66,7 +73,23 @@ public class VariableAccessNode implements Expression {
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = new LinkedList<>();
-        errors.add("Missing variable");
+        if (variableDescription == null) {
+            errors.add("Missing variable");
+        }
         return errors;
+    }
+
+    /**
+     * Two VariableAccessNodes are considered equal if their variable descriptions are non-null and
+     * equal to each other.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof VariableAccessNode)) {
+            return false;
+        }
+        final VariableAccessNode other = (VariableAccessNode) obj;
+        return variableDescription != null && other.variableDescription != null
+               && variableDescription.equals(other.variableDescription);
     }
 }

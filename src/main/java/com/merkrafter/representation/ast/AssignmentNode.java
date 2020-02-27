@@ -59,7 +59,25 @@ public class AssignmentNode extends AbstractStatementNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(variable, value);
+        final List<String> errors = collectErrorsFrom(variable, value, getNext());
+        if (variable.isConstant()) {
+            // TODO: test this; it should not trigger ON that mentioned init
+            errors.add("Can not assign a value to a constant after initialization");
+        }
+        return errors;
     }
 
+    /**
+     * Two AssignmentNodes are considered equal if their variables and values are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof AssignmentNode)) {
+            return false;
+        }
+        final AssignmentNode other = (AssignmentNode) obj;
+        return variable != null && other.variable != null && value != null && other.value != null
+               && variable.equals(other.variable) && value.equals(other.value);
+    }
 }

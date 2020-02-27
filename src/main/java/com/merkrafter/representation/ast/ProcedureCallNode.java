@@ -75,6 +75,20 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(args);
+        return collectErrorsFrom(args, procedure.getEntryPoint(), getNext());
+    }
+
+    /**
+     * Two ProcedureCallNodes are considered equal if their procedures and args are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof ProcedureCallNode)) {
+            return false;
+        }
+        final ProcedureCallNode other = (ProcedureCallNode) obj;
+        return procedure != null && other.procedure != null && args != null && other.args != null
+               && procedure.equals(other.procedure) && args.equals(other.args);
     }
 }

@@ -1,5 +1,7 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.representation.ast.Statement;
+
 import java.util.List;
 
 /****
@@ -14,6 +16,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     private final Type returnType;
     private final List<VariableDescription> paramList;
     private final SymbolTable symbols;
+    private Statement statements;
 
 
     // CONSTRUCTORS
@@ -64,6 +67,20 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     @Override
     public Type getReturnType() {
         return returnType;
+    }
+
+    /**
+     * @return the first statement of this procedure
+     */
+    @Override
+    public Statement getEntryPoint() {
+        return statements;
+    }
+
+    // SETTER
+    //==============================================================
+    public void setEntrypoint(final Statement statement) {
+        this.statements = statement;
     }
 
     // METHODS

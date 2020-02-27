@@ -66,4 +66,7 @@ public abstract class AbstractStatementNode implements Statement {
         }
         return errors;
     }
+
+    @Override
+    public abstract boolean equals(Object other);
 }

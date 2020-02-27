@@ -58,6 +58,21 @@ public class IfElseNode extends AbstractStatementNode {
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(ifBranch, elseBranch);
+        return collectErrorsFrom(ifBranch, elseBranch, getNext());
+    }
+
+    /**
+     * Two IfElseNodes are considered equal if their ifNodes and children are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof IfElseNode)) {
+            return false;
+        }
+        final IfElseNode other = (IfElseNode) obj;
+        return elseBranch != null && other.elseBranch != null && ifBranch != null
+               && other.ifBranch != null && elseBranch.equals(other.elseBranch) && ifBranch.equals(
+                other.ifBranch);
     }
 }

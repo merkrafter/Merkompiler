@@ -61,4 +61,19 @@ public class IfNode implements AbstractSyntaxTree {
     public List<String> getAllErrors() {
         return collectErrorsFrom(condition, ifBranch);
     }
+
+    /**
+     * Two IfNodes are considered equal if their conditions and children are non-null and are
+     * equal to each other respectively.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof IfNode)) {
+            return false;
+        }
+        final IfNode other = (IfNode) obj;
+        return condition != null && other.condition != null && ifBranch != null
+               && other.ifBranch != null && condition.equals(other.condition) && ifBranch.equals(
+                other.ifBranch);
+    }
 }

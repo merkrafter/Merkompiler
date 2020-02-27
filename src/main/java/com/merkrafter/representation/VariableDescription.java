@@ -44,7 +44,7 @@ public class VariableDescription extends ObjectDescription {
         return value;
     }
 
-    boolean isConstant() {
+    public boolean isConstant() {
         return constant;
     }
 
@@ -99,6 +99,6 @@ public class VariableDescription extends ObjectDescription {
             return false;
         }
         final VariableDescription that = (VariableDescription) other;
-        return Objects.equals(getName(), that.getName()) && getType() == that.getType();
+        return Objects.equals(getName(), that.getName());
     }
 }
