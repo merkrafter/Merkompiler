@@ -99,6 +99,6 @@ public class VariableDescription extends ObjectDescription {
             return false;
         }
         final VariableDescription that = (VariableDescription) other;
-        return Objects.equals(getName(), that.getName()) && getType() == that.getType();
+        return Objects.equals(getName(), that.getName());
     }
 }
