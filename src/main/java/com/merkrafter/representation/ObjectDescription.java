@@ -32,7 +32,7 @@ public abstract class ObjectDescription {
      *
      * @return the name of the object represented by this object description
      */
-    String getName() {
+    public String getName() {
         return name;
     }
 
