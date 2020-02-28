@@ -34,7 +34,9 @@ public class GraphicalClassNode extends ClassNode implements GraphicalAbstractSy
         final ClassDescription clazz = getClassDescription();
         final StringBuilder dotRepr = new StringBuilder();
         dotRepr.append(String.format("digraph %s {", clazz.getName()));
-        dotRepr.append(String.format("%s;", toString()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("    %s;", toString()));
+        dotRepr.append(System.lineSeparator());
         dotRepr.append("}");
         return dotRepr.toString();
     }
