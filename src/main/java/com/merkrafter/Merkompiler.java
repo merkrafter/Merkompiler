@@ -83,10 +83,8 @@ public class Merkompiler {
                 System.err.println(errMsg);
             }
             if (config.isGraphical() && numErrors == 0 && abstractSyntaxTree instanceof ClassNode) {
-                final GraphicalClassNode graphNode =
-                        new GraphicalClassNode((ClassNode) abstractSyntaxTree);
                 final PrintWriter dotFileWriter = new PrintWriter(config.getInputFile() + ".dot");
-                dotFileWriter.print(graphNode.getDotRepresentation());
+                dotFileWriter.print(((ClassNode)abstractSyntaxTree).getDotRepresentation());
                 dotFileWriter.close();
             }
         }
