@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.ClassDescription;
 import com.merkrafter.representation.ObjectDescription;
+import com.merkrafter.representation.graphical.GraphicalComponent;
+import com.merkrafter.representation.graphical.GraphicalObjectDescription;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +16,7 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ClassNode implements AbstractSyntaxTree {
+public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     // ATTRIBUTES
     //==============================================================
     private final ClassDescription classDescription;
@@ -93,4 +95,48 @@ public class ClassNode implements AbstractSyntaxTree {
                && classDescription.equals(other.classDescription);
     }
 
+    /**
+     * Writing this String to a .dot file and compiling it with the dot command will draw the AST.
+     *
+     * @return a dot/graphviz representation of this AST
+     */
+    public String getDotRepresentation() {
+        final ClassDescription clazz = getClassDescription();
+        final List<GraphicalObjectDescription> descriptions = new LinkedList<>();
+        for (final ObjectDescription obj : getDefinedObjects()) {
+            descriptions.add(new GraphicalObjectDescription(obj));
+        }
+
+        final StringBuilder dotRepr = new StringBuilder();
+        dotRepr.append(String.format("digraph %s {", clazz.getName()));
+        dotRepr.append(System.lineSeparator());
+
+        for (final GraphicalObjectDescription objDesc : descriptions) {
+            dotRepr.append(objDesc.getDotRepresentation());
+            dotRepr.append(System.lineSeparator());
+        }
+
+        // add this class node
+        dotRepr.append(String.format("%d[shape=box,label=\"%s\"];",
+                                     getID(),
+                                     getClassDescription().getName()));
+        dotRepr.append(System.lineSeparator());
+
+        // edges to children
+        for (final GraphicalObjectDescription objDesc : descriptions) {
+            dotRepr.append(String.format("%d -> %d;", getID(), objDesc.getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+        dotRepr.append(System.lineSeparator());
+
+        dotRepr.append("}");
+        return dotRepr.toString();
+    }
+
+    /**
+     * @return the hashCode of this GraphicalClassNode
+     */
+    public int getID() {
+        return hashCode();
+    }
 }
