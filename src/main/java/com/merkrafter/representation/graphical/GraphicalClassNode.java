@@ -36,20 +36,50 @@ public class GraphicalClassNode extends ClassNode implements GraphicalComponent 
     @Override
     public String getDotRepresentation() {
         final ClassDescription clazz = getClassDescription();
+        final List<GraphicalObjectDescription> descriptions = new LinkedList<>();
+        for (final ObjectDescription obj : getDefinedObjects()) {
+            descriptions.add(new GraphicalObjectDescription(obj));
+        }
+
         final StringBuilder dotRepr = new StringBuilder();
         dotRepr.append(String.format("digraph %s {", clazz.getName()));
         dotRepr.append(System.lineSeparator());
-        dotRepr.append(String.format("    %s;", toString()));
+
+        for (final GraphicalObjectDescription objDesc : descriptions) {
+            dotRepr.append(objDesc.getDotRepresentation());
+            dotRepr.append(System.lineSeparator());
+        }
+
+        dotRepr.append(getDeclaration());
         dotRepr.append(System.lineSeparator());
+
+        // edges to children
+        for (final GraphicalObjectDescription objDesc : descriptions) {
+            dotRepr.append(String.format("%d -> %d;", getID(), objDesc.getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+        dotRepr.append(System.lineSeparator());
+
         dotRepr.append("}");
         return dotRepr.toString();
     }
 
-
+    /**
+     * @return the hashCode of this GraphicalClassNode
+     */
     @Override
-    public String toString() {
-        return String.format("%d[shape=box,label=\"%s\"]",
-                             hashCode(),
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * Must include the ID.
+     *
+     * @return a dot/graphviz declaration of this component
+     */
+    private String getDeclaration() {
+        return String.format("%d[shape=box,label=\"%s\"];",
+                             getID(),
                              getClassDescription().getName());
     }
 }

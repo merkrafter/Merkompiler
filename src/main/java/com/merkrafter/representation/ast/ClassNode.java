@@ -1,6 +1,7 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.ClassDescription;
+import com.merkrafter.representation.ObjectDescription;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,10 @@ public class ClassNode implements AbstractSyntaxTree {
 
     public ClassDescription getClassDescription() {
         return classDescription;
+    }
+
+    protected List<ObjectDescription> getDefinedObjects() {
+        return getClassDescription().getSymbolTable().getDescriptions();
     }
 
     // METHODS
@@ -87,4 +92,5 @@ public class ClassNode implements AbstractSyntaxTree {
         return classDescription != null && other.classDescription != null
                && classDescription.equals(other.classDescription);
     }
+
 }
