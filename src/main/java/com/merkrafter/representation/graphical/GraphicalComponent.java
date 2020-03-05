@@ -1,7 +1,5 @@
 package com.merkrafter.representation.graphical;
 
-import com.merkrafter.representation.ast.AbstractSyntaxTree;
-
 /****
  * Classes that implement this interface can be shown to the user in some
  * graphical way. It currently supports only dot/graphviz.
@@ -12,16 +10,19 @@ import com.merkrafter.representation.ast.AbstractSyntaxTree;
  * @author merkrafter
  * @since v0.4.0
  ***************************************************************/
-public interface GraphicalAbstractSyntaxTree extends AbstractSyntaxTree {
+public interface GraphicalComponent {
     // METHODS
     //==============================================================
     // public methods
     //--------------------------------------------------------------
 
     /**
-     * Writing this String to a .dot file and compiling it with the dot command will draw the AST.
-     *
-     * @return a dot/graphviz representation of this AST
+     * @return an identifier unique in the whole AST
      */
-    String createDotRepresentation();
+    int getID();
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    String getDotRepresentation();
 }

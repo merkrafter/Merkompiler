@@ -1,7 +1,11 @@
 package com.merkrafter.representation.graphical;
 
 import com.merkrafter.representation.ClassDescription;
+import com.merkrafter.representation.ObjectDescription;
 import com.merkrafter.representation.ast.ClassNode;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /****
  * This class represents a graphical version of the plain ClassNode.
@@ -9,7 +13,7 @@ import com.merkrafter.representation.ast.ClassNode;
  * @author merkrafter
  * @since v0.4.0
  ***************************************************************/
-public class GraphicalClassNode extends ClassNode implements GraphicalAbstractSyntaxTree {
+public class GraphicalClassNode extends ClassNode implements GraphicalComponent {
     // CONSTRUCTORS
     //==============================================================
 
@@ -30,7 +34,7 @@ public class GraphicalClassNode extends ClassNode implements GraphicalAbstractSy
      * @return a dot/graphviz representation of this AST
      */
     @Override
-    public String createDotRepresentation() {
+    public String getDotRepresentation() {
         final ClassDescription clazz = getClassDescription();
         final StringBuilder dotRepr = new StringBuilder();
         dotRepr.append(String.format("digraph %s {", clazz.getName()));
