@@ -80,4 +80,36 @@ public class AssignmentNode extends AbstractStatementNode {
         return variable != null && other.variable != null && value != null && other.value != null
                && variable.equals(other.variable) && value.equals(other.value);
     }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        // define next statement
+        final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define children
+        dotRepr.append(String.format("%d[label=%s];", variable.hashCode(), variable.getName()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d[label=\"expression\"];", value.hashCode()));
+        dotRepr.append(System.lineSeparator());
+
+        // define this node
+        dotRepr.append(String.format("%d[label=%s];", getID(), "ASSIGN"));
+        dotRepr.append(System.lineSeparator());
+
+        // define links
+        if (getNext() != null) {
+            dotRepr.append(String.format("%d -> %d;", getID(), getNext().getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+        dotRepr.append(String.format("%d -> %d;", getID(), variable.hashCode()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d -> %d;", getID(), value.hashCode()));
+        dotRepr.append(System.lineSeparator());
+
+        return dotRepr.toString();
+    }
 }

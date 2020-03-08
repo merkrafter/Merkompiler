@@ -69,4 +69,23 @@ public abstract class AbstractStatementNode implements Statement {
 
     @Override
     public abstract boolean equals(Object other);
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's next statement
+     */
+    @Override
+    public String getDotRepresentation() {
+        if (next == null) {
+            return "";
+        }
+        return getNext().getDotRepresentation();
+    }
 }

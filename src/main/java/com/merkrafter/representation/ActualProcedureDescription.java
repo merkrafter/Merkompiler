@@ -146,9 +146,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
         final StringBuilder dotRepr = new StringBuilder();
 
         // define entry point
-        dotRepr.append(String.format("%d[label=%s];",
-                                     getEntryPoint().hashCode(),
-                                     getEntryPoint().getClass().getSimpleName()));
+        dotRepr.append(getEntryPoint().getDotRepresentation());
         dotRepr.append(System.lineSeparator());
 
         // define this as a node (with method name)

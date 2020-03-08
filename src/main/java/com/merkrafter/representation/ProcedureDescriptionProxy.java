@@ -135,9 +135,10 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
      */
     @Override
     public String getDotRepresentation() {
-        if(resolved()) {
+        if (resolved()) {
             return procedureDescription.getDotRepresentation();
         }
-        return String.format("%d[shape=box,label=%s];", getID(), name) + System.lineSeparator();
+        return String.format("%d[shape=box,label=\"extern %s\"];", getID(), name)
+               + System.lineSeparator();
     }
 }

@@ -84,4 +84,32 @@ public class ReturnNode extends AbstractStatementNode {
         final ReturnNode other = (ReturnNode) obj;
         return expression.equals(other.expression);
     }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this
+        dotRepr.append(String.format("%d[label=\"RETURN\"];", getID()));
+        dotRepr.append(System.lineSeparator());
+
+        // define child
+        // define links
+        if (expression != null) {
+            dotRepr.append(String.format("%d[label=\"EXPRESSION\"];", expression.hashCode()));
+            dotRepr.append(System.lineSeparator());
+            dotRepr.append(String.format("%d -> %d;", getID(), expression.hashCode()));
+            dotRepr.append(System.lineSeparator());
+        }
+        if (getNext() != null) {
+            dotRepr.append(String.format("%d -> %d;", getID(), getNext().getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+
+        return dotRepr.toString();
+    }
 }

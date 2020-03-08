@@ -76,4 +76,27 @@ public class IfNode implements AbstractSyntaxTree {
                && other.ifBranch != null && condition.equals(other.condition) && ifBranch.equals(
                 other.ifBranch);
     }
+
+    String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder();
+
+        // define children
+        dotRepr.append(String.format("%d[label=\"CONDITION\"];", condition.hashCode()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(ifBranch.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this
+        dotRepr.append(String.format("%d[label=\"IF\"];", hashCode()));
+        dotRepr.append(System.lineSeparator());
+
+        // define links
+        dotRepr.append(String.format("%d -> %d;", hashCode(), condition.hashCode()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d -> %d;", hashCode(), ifBranch.getID()));
+        dotRepr.append(System.lineSeparator());
+
+        // return
+        return dotRepr.toString();
+    }
 }

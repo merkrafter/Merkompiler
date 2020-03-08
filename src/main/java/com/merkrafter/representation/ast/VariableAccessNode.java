@@ -47,6 +47,13 @@ public class VariableAccessNode implements Expression {
         return variableDescription.isConstant();
     }
 
+    public String getName() {
+        if (variableDescription == null) {
+            return "";
+        }
+        return variableDescription.getName();
+    }
+
     /**
      * A VariableAccessNode has a semantics error if the underlying VariableDescription is null.
      *
