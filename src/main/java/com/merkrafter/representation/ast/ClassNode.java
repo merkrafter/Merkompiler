@@ -102,16 +102,13 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
      */
     public String getDotRepresentation() {
         final ClassDescription clazz = getClassDescription();
-        final List<GraphicalObjectDescription> descriptions = new LinkedList<>();
-        for (final ObjectDescription obj : getDefinedObjects()) {
-            descriptions.add(new GraphicalObjectDescription(obj));
-        }
+        final List<ObjectDescription> descriptions = getDefinedObjects();
 
         final StringBuilder dotRepr = new StringBuilder();
         dotRepr.append(String.format("digraph %s {", clazz.getName()));
         dotRepr.append(System.lineSeparator());
 
-        for (final GraphicalObjectDescription objDesc : descriptions) {
+        for (final ObjectDescription objDesc : descriptions) {
             dotRepr.append(objDesc.getDotRepresentation());
             dotRepr.append(System.lineSeparator());
         }
@@ -123,7 +120,7 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         dotRepr.append(System.lineSeparator());
 
         // edges to children
-        for (final GraphicalObjectDescription objDesc : descriptions) {
+        for (final ObjectDescription objDesc : descriptions) {
             dotRepr.append(String.format("%d -> %d;", getID(), objDesc.getID()));
             dotRepr.append(System.lineSeparator());
         }

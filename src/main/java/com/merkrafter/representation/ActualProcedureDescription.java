@@ -129,4 +129,36 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
         }
         return true;
     }
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component
+     */
+    @Override
+    public String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder();
+
+        // define entry point
+        dotRepr.append(String.format("%d[label=%s];",
+                                     getEntryPoint().hashCode(),
+                                     getEntryPoint().getClass().getSimpleName()));
+        dotRepr.append(System.lineSeparator());
+
+        // define this as a node (with method name)
+        dotRepr.append(String.format("%d[shape=box,label=%s];", getID(), getName()));
+        dotRepr.append(System.lineSeparator());
+
+        // paint edge from this to entry point
+        dotRepr.append(String.format("%d -> %d;", getID(), getEntryPoint().hashCode()));
+        dotRepr.append(System.lineSeparator());
+
+        return dotRepr.toString();
+    }
 }

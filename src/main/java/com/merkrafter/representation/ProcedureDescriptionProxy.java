@@ -122,4 +122,22 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         }
     }
 
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component
+     */
+    @Override
+    public String getDotRepresentation() {
+        if(resolved()) {
+            return procedureDescription.getDotRepresentation();
+        }
+        return String.format("%d[shape=box,label=%s];", getID(), name) + System.lineSeparator();
+    }
 }
