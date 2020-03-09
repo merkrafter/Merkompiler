@@ -93,7 +93,7 @@ public class AssignmentNode extends AbstractStatementNode {
         // define children
         dotRepr.append(String.format("%d[label=%s];", variable.hashCode(), variable.getName()));
         dotRepr.append(System.lineSeparator());
-        dotRepr.append(String.format("%d[label=\"expression\"];", value.hashCode()));
+        dotRepr.append(value.getDotRepresentation());
         dotRepr.append(System.lineSeparator());
 
         // define this node
@@ -107,7 +107,7 @@ public class AssignmentNode extends AbstractStatementNode {
         }
         dotRepr.append(String.format("%d -> %d;", getID(), variable.hashCode()));
         dotRepr.append(System.lineSeparator());
-        dotRepr.append(String.format("%d -> %d;", getID(), value.hashCode()));
+        dotRepr.append(String.format("%d -> %d;", getID(), value.getID()));
         dotRepr.append(System.lineSeparator());
 
         return dotRepr.toString();

@@ -115,4 +115,41 @@ public class BinaryOperationNode implements Expression {
                && other.rightOperand != null && binOpType == other.binOpType && leftOperand.equals(
                 other.leftOperand) && rightOperand.equals(other.rightOperand);
     }
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder();
+
+        // define children
+        dotRepr.append(leftOperand.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(rightOperand.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this
+        dotRepr.append(String.format("%d[label=\"BINOP%s%s\"];",
+                                     getID(),
+                                     System.lineSeparator(),
+                                     binOpType.name()));
+        dotRepr.append(System.lineSeparator());
+
+        // define links
+        dotRepr.append(String.format("%d -> %d;", getID(), leftOperand.getID()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d -> %d;", getID(), rightOperand.getID()));
+        dotRepr.append(System.lineSeparator());
+
+        return dotRepr.toString();
+    }
 }

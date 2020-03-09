@@ -100,9 +100,9 @@ public class ReturnNode extends AbstractStatementNode {
         // define child
         // define links
         if (expression != null) {
-            dotRepr.append(String.format("%d[label=\"EXPRESSION\"];", expression.hashCode()));
+            dotRepr.append(expression.getDotRepresentation());
             dotRepr.append(System.lineSeparator());
-            dotRepr.append(String.format("%d -> %d;", getID(), expression.hashCode()));
+            dotRepr.append(String.format("%d -> %d;", getID(), expression.getID()));
             dotRepr.append(System.lineSeparator());
         }
         if (getNext() != null) {

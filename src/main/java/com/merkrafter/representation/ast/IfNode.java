@@ -81,7 +81,7 @@ public class IfNode implements AbstractSyntaxTree {
         final StringBuilder dotRepr = new StringBuilder();
 
         // define children
-        dotRepr.append(String.format("%d[label=\"CONDITION\"];", condition.hashCode()));
+        dotRepr.append(condition.getDotRepresentation());
         dotRepr.append(System.lineSeparator());
         dotRepr.append(ifBranch.getDotRepresentation());
         dotRepr.append(System.lineSeparator());
@@ -91,7 +91,7 @@ public class IfNode implements AbstractSyntaxTree {
         dotRepr.append(System.lineSeparator());
 
         // define links
-        dotRepr.append(String.format("%d -> %d;", hashCode(), condition.hashCode()));
+        dotRepr.append(String.format("%d -> %d;", hashCode(), condition.getID()));
         dotRepr.append(System.lineSeparator());
         dotRepr.append(String.format("%d -> %d;", hashCode(), ifBranch.getID()));
         dotRepr.append(System.lineSeparator());

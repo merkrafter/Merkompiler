@@ -85,7 +85,7 @@ public class WhileNode extends AbstractStatementNode {
         dotRepr.append(System.lineSeparator());
 
         // define children
-        dotRepr.append(String.format("%d[label=\"condition\"];", condition.hashCode()));
+        dotRepr.append(condition.getDotRepresentation());
         dotRepr.append(System.lineSeparator());
         dotRepr.append(loopBody.getDotRepresentation());
         dotRepr.append(System.lineSeparator());
@@ -95,7 +95,7 @@ public class WhileNode extends AbstractStatementNode {
         dotRepr.append(System.lineSeparator());
 
         // define links
-        dotRepr.append(String.format("%d -> %d];", getID(), condition.hashCode()));
+        dotRepr.append(String.format("%d -> %d];", getID(), condition.getID()));
         dotRepr.append(System.lineSeparator());
         dotRepr.append(String.format("%d -> %d];", getID(), getNext().getID()));
         dotRepr.append(System.lineSeparator());

@@ -106,4 +106,24 @@ public class ConstantNode<T> implements Expression {
     public List<String> getAllErrors() {
         return new LinkedList<>();
     }
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        return String.format("%d[label=\"%s%s%s\"];",
+                             getID(),
+                             type.name(),
+                             System.lineSeparator(),
+                             value.toString());
+    }
 }
