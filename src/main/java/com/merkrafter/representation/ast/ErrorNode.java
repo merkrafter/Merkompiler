@@ -103,4 +103,28 @@ public class ErrorNode implements Expression, Statement {
     @Override
     public void setNext(final Statement next) {
     }
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        return String.format("%d[label=\"ERROR\"]", getID());
+    }
+
+    /**
+     * @return false
+     */
+    @Override
+    public boolean hasReturnType(final Type type) {
+        return false;
+    }
 }

@@ -84,4 +84,43 @@ public class ReturnNode extends AbstractStatementNode {
         final ReturnNode other = (ReturnNode) obj;
         return expression.equals(other.expression);
     }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this
+        dotRepr.append(String.format("%d[label=\"RETURN\"];", getID()));
+        dotRepr.append(System.lineSeparator());
+
+        // define child
+        // define links
+        if (expression != null) {
+            dotRepr.append(expression.getDotRepresentation());
+            dotRepr.append(System.lineSeparator());
+            dotRepr.append(String.format("%d -> %d;", getID(), expression.getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+        if (getNext() != null) {
+            dotRepr.append(String.format("%d -> %d;", getID(), getNext().getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+
+        return dotRepr.toString();
+    }
+
+    /**
+     * If this Statement sequence has a return statement, this method returns its type.
+     * If not, null is returned.
+     *
+     * @return the type that is returned by this statement sequence
+     */
+    @Override
+    public boolean hasReturnType(final Type type) {
+        return getReturnedType().equals(type);
+    }
 }

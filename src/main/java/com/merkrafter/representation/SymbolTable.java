@@ -36,6 +36,12 @@ public class SymbolTable {
         this.enclosingSymbolTable = enclosingSymbolTable;
     }
 
+    // GETTER
+    //==============================================================
+    public List<ObjectDescription> getDescriptions() {
+        return descriptions;
+    }
+
     // METHODS
     //==============================================================
     // public methods

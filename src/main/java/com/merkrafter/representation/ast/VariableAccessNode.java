@@ -47,6 +47,13 @@ public class VariableAccessNode implements Expression {
         return variableDescription.isConstant();
     }
 
+    public String getName() {
+        if (variableDescription == null) {
+            return "";
+        }
+        return variableDescription.getName();
+    }
+
     /**
      * A VariableAccessNode has a semantics error if the underlying VariableDescription is null.
      *
@@ -91,5 +98,21 @@ public class VariableAccessNode implements Expression {
         final VariableAccessNode other = (VariableAccessNode) obj;
         return variableDescription != null && other.variableDescription != null
                && variableDescription.equals(other.variableDescription);
+    }
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        return String.format("%d[label=\"VAR%s%s\"];", getID(), System.lineSeparator(), getName());
     }
 }

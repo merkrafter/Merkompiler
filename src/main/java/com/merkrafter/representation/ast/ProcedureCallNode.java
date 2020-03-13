@@ -91,4 +91,18 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
         return procedure != null && other.procedure != null && args != null && other.args != null
                && procedure.equals(other.procedure) && args.equals(other.args);
     }
+
+    @Override
+    public int getID() {
+        return procedure.getID();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        return super.getDotRepresentation() + System.lineSeparator()
+               + procedure.getDotRepresentation();
+    }
 }

@@ -51,4 +51,20 @@ public class ClassDescription extends ObjectDescription {
     public void setEntryPoint(final ProcedureCallNode entryPoint) {
         this.entryPoint = entryPoint;
     }
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return 0;
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        return "";
+    }
 }

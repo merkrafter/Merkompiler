@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.List;
 
 /****
@@ -74,5 +76,35 @@ public class WhileNode extends AbstractStatementNode {
         return condition != null && other.condition != null && loopBody != null
                && other.loopBody != null && condition.equals(other.condition) && loopBody.equals(
                 other.loopBody);
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define children
+        dotRepr.append(condition.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(loopBody.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this
+        dotRepr.append(String.format("%d[label=%s];", getID(), "WHILE"));
+        dotRepr.append(System.lineSeparator());
+
+        // define links
+        dotRepr.append(String.format("%d -> %d;", getID(), condition.getID()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d -> %d;", getID(), getNext().getID()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d -> %d;", getID(), loopBody.getID()));
+        dotRepr.append(System.lineSeparator());
+
+        // return
+        return dotRepr.toString();
     }
 }

@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.List;
 
 /****
@@ -75,4 +77,46 @@ public class IfElseNode extends AbstractStatementNode {
                && other.ifBranch != null && elseBranch.equals(other.elseBranch) && ifBranch.equals(
                 other.ifBranch);
     }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define children
+        dotRepr.append(ifBranch.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(elseBranch.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this
+        dotRepr.append(String.format("%d[label=%s];", getID(), "IF_ELSE"));
+        dotRepr.append(System.lineSeparator());
+
+        // define links
+        if (getNext() != null) {
+            dotRepr.append(String.format("%d -> %d;", getID(), getNext().getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+        dotRepr.append(String.format("%d -> %d;", getID(), ifBranch.hashCode()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d -> %d;", getID(), elseBranch.getID()));
+        dotRepr.append(System.lineSeparator());
+
+        return dotRepr.toString();
+    }
+
+    /**
+     * Returns whether this given return type is compatible with the next statements in this
+     * sequence or with both branches of this IfElseNode.
+     */
+    @Override
+    public boolean hasReturnType(Type type) {
+        return super.hasReturnType(type)
+               || ifBranch.hasReturnType(type) && elseBranch.hasReturnType(type);
+    }
+
 }

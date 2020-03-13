@@ -19,19 +19,19 @@ public class Config {
     //==============================================================
     private final String inputFile;
     private final String outputFile;
-
     private final boolean verbose;
-
     private final CompilerStage stage;
+    private final boolean graphical;
 
     // CONSTRUCTORS
     //==============================================================
     private Config(final String inputFile, final String outputFile, boolean verbose,
-                   final CompilerStage stage) {
+                   final CompilerStage stage, final boolean graphical) {
         this.inputFile = inputFile;
         this.outputFile = outputFile;
         this.verbose = verbose;
         this.stage = stage;
+        this.graphical = graphical;
     }
 
     // GETTER
@@ -50,6 +50,10 @@ public class Config {
 
     public CompilerStage getStage() {
         return stage;
+    }
+
+    public boolean isGraphical() {
+        return graphical;
     }
 
     // METHODS
@@ -86,6 +90,9 @@ public class Config {
               .dest("compilerStage")
               .setDefault(CompilerStage.latest())
               .help("only process the input file up to the given stage (including)");
+        parser.addArgument("-g", "--graphical")
+              .action(Arguments.storeTrue())
+              .help("output a .dot file showing the abstract syntax tree of the specified source file");
 
 
         // parse the arguments
@@ -97,15 +104,17 @@ public class Config {
         String outputFileName = null;
         boolean verbose = false;
         CompilerStage stage = CompilerStage.latest();
+        boolean graphical = false;
 
         if (namespace != null) {
             inputFileName = namespace.getString("INPUT");
             outputFileName = namespace.getString("output");
             verbose = namespace.getBoolean("verbose");
             stage = namespace.get("compilerStage");
+            graphical = namespace.get("graphical");
         }
 
-        return new Config(inputFileName, outputFileName, verbose, stage);
+        return new Config(inputFileName, outputFileName, verbose, stage, graphical);
     }
 
     /**
@@ -123,10 +132,11 @@ public class Config {
      */
     @Override
     public String toString() {
-        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, stage=%s)",
+        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, stage=%s, graphical=%b)",
                              inputFile,
                              outputFile,
                              verbose,
-                             stage);
+                             stage,
+                             graphical);
     }
 }

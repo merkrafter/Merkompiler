@@ -61,6 +61,16 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
     }
 
     @Override
+    public String getName() {
+        findProcedureDescription();
+        // it is possible that the procedure is not in symbolTable
+        if (procedureDescription != null) {
+            return procedureDescription.getName();
+        }
+        return name;
+    }
+
+    @Override
     public List<VariableDescription> getParamList() {
         findProcedureDescription();
         // it is possible that the procedure is not in symbolTable
@@ -122,4 +132,23 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         }
     }
 
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component
+     */
+    @Override
+    public String getDotRepresentation() {
+        if (resolved()) {
+            return procedureDescription.getDotRepresentation();
+        }
+        return String.format("%d[shape=box,label=\"extern %s\"];", getID(), name)
+               + System.lineSeparator();
+    }
 }

@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.List;
 
 import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
@@ -75,5 +77,35 @@ public class IfNode implements AbstractSyntaxTree {
         return condition != null && other.condition != null && ifBranch != null
                && other.ifBranch != null && condition.equals(other.condition) && ifBranch.equals(
                 other.ifBranch);
+    }
+
+    String getDotRepresentation() {
+        final StringBuilder dotRepr = new StringBuilder();
+
+        // define children
+        dotRepr.append(condition.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(ifBranch.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this
+        dotRepr.append(String.format("%d[label=\"IF\"];", hashCode()));
+        dotRepr.append(System.lineSeparator());
+
+        // define links
+        dotRepr.append(String.format("%d -> %d;", hashCode(), condition.getID()));
+        dotRepr.append(System.lineSeparator());
+        dotRepr.append(String.format("%d -> %d;", hashCode(), ifBranch.getID()));
+        dotRepr.append(System.lineSeparator());
+
+        // return
+        return dotRepr.toString();
+    }
+
+    /**
+     * @return the type of the if branch
+     */
+    boolean hasReturnType(final Type type) {
+        return ifBranch.hasReturnType(type);
     }
 }

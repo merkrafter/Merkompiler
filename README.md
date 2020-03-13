@@ -34,7 +34,11 @@ $ mvn test
 ```
 
 ## Built with
-- [argparse4j](https://github.com/argparse4j/argparse4j) by Tatsuhiro Tsujikawa
+- [argparse4j](https://github.com/argparse4j/argparse4j) by Tatsuhiro Tsujikawa under the [MIT license](https://github.com/argparse4j/argparse4j/blob/master/LICENSE.txt)
+
+## Tests built with
+- [junit5](https://github.com/junit-team/junit5)
+- [mockito](https://github.com/mockito/mockito)
 
 ## Contributing
 As this is a study project, direct contributing is not allowed.

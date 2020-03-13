@@ -1,5 +1,7 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.representation.graphical.GraphicalComponent;
+
 import java.util.Objects;
 
 /****
@@ -9,7 +11,7 @@ import java.util.Objects;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public abstract class ObjectDescription {
+public abstract class ObjectDescription implements GraphicalComponent {
     // ATTRIBUTES
     //==============================================================
     private final String name;
@@ -32,7 +34,7 @@ public abstract class ObjectDescription {
      *
      * @return the name of the object represented by this object description
      */
-    String getName() {
+    public String getName() {
         return name;
     }
 

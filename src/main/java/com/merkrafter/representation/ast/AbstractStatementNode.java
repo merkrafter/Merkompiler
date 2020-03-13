@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,4 +71,34 @@ public abstract class AbstractStatementNode implements Statement {
 
     @Override
     public abstract boolean equals(Object other);
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's next statement
+     */
+    @Override
+    public String getDotRepresentation() {
+        if (next == null) {
+            return "";
+        }
+        return getNext().getDotRepresentation();
+    }
+
+    /**
+     * @return the type of the next statement in this sequence
+     */
+    @Override
+    public boolean hasReturnType(final Type type) {
+        if (getNext() == null) {
+            return type == Type.VOID;
+        }
+        return getNext().hasReturnType(type);
+    }
 }
