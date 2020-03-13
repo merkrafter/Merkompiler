@@ -2,8 +2,9 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.ClassDescription;
 import com.merkrafter.representation.ObjectDescription;
+import com.merkrafter.representation.ProcedureDescription;
+import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
-import com.merkrafter.representation.graphical.GraphicalObjectDescription;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -72,13 +73,14 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
      */
     @Override
     public List<String> getAllErrors() {
+        final List<String> errors = new LinkedList<>();
         if (classDescription == null) {
-            final List<String> errors = new LinkedList<>();
             errors.add("No class was defined");
-            return errors;
         } else {
-            return collectErrorsFrom(classDescription.getEntryPoint());
+            errors.addAll(collectErrorsFrom(classDescription.getEntryPoint()));
+            errors.addAll(getErrorsFromProcedures());
         }
+        return errors;
     }
 
     /**
@@ -128,6 +130,27 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
 
         dotRepr.append("}");
         return dotRepr.toString();
+    }
+
+    private List<String> getErrorsFromProcedures() {
+        final List<String> errors = new LinkedList<>();
+        for (final ObjectDescription obj : getClassDescription().getSymbolTable()
+                                                                .getDescriptions()) {
+            if (obj instanceof ProcedureDescription) {
+                errors.addAll(findErrorsInProcedure((ProcedureDescription) obj));
+            }
+        }
+        return errors;
+    }
+
+    private static List<String> findErrorsInProcedure(final ProcedureDescription proc) {
+        final List<String> errors = new LinkedList<>();
+        final Type returnType = proc.getReturnType();
+        if (!proc.getEntryPoint().hasReturnType(returnType)) {
+            errors.add(String.format("Return type mismatch in procedure %s", proc.getName()));
+        }
+        errors.addAll(collectErrorsFrom(proc.getEntryPoint()));
+        return errors;
     }
 
     /**

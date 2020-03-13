@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -87,5 +89,16 @@ public abstract class AbstractStatementNode implements Statement {
             return "";
         }
         return getNext().getDotRepresentation();
+    }
+
+    /**
+     * @return the type of the next statement in this sequence
+     */
+    @Override
+    public boolean hasReturnType(final Type type) {
+        if (getNext() == null) {
+            return type == Type.VOID;
+        }
+        return getNext().hasReturnType(type);
     }
 }

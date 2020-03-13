@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.List;
 
 /****

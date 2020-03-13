@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.List;
 
 /****
@@ -106,4 +108,15 @@ public class IfElseNode extends AbstractStatementNode {
 
         return dotRepr.toString();
     }
+
+    /**
+     * Returns whether this given return type is compatible with the next statements in this
+     * sequence or with both branches of this IfElseNode.
+     */
+    @Override
+    public boolean hasReturnType(Type type) {
+        return super.hasReturnType(type)
+               || ifBranch.hasReturnType(type) && elseBranch.hasReturnType(type);
+    }
+
 }

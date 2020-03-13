@@ -112,4 +112,15 @@ public class ReturnNode extends AbstractStatementNode {
 
         return dotRepr.toString();
     }
+
+    /**
+     * If this Statement sequence has a return statement, this method returns its type.
+     * If not, null is returned.
+     *
+     * @return the type that is returned by this statement sequence
+     */
+    @Override
+    public boolean hasReturnType(final Type type) {
+        return getReturnedType().equals(type);
+    }
 }

@@ -119,4 +119,12 @@ public class ErrorNode implements Expression, Statement {
     public String getDotRepresentation() {
         return String.format("%d[label=\"ERROR\"]", getID());
     }
+
+    /**
+     * @return false
+     */
+    @Override
+    public boolean hasReturnType(final Type type) {
+        return false;
+    }
 }

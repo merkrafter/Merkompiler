@@ -14,6 +14,8 @@ import java.util.List;
 public interface ProcedureDescription extends GraphicalComponent {
     SymbolTable getSymbols();
 
+    String getName();
+
     List<VariableDescription> getParamList();
 
     Type getReturnType();

@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.representation.Type;
+
 import java.util.List;
 
 import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
@@ -98,5 +100,12 @@ public class IfNode implements AbstractSyntaxTree {
 
         // return
         return dotRepr.toString();
+    }
+
+    /**
+     * @return the type of the if branch
+     */
+    boolean hasReturnType(final Type type) {
+        return ifBranch.hasReturnType(type);
     }
 }

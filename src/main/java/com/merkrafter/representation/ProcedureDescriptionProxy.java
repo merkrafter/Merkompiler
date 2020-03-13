@@ -61,6 +61,16 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
     }
 
     @Override
+    public String getName() {
+        findProcedureDescription();
+        // it is possible that the procedure is not in symbolTable
+        if (procedureDescription != null) {
+            return procedureDescription.getName();
+        }
+        return name;
+    }
+
+    @Override
     public List<VariableDescription> getParamList() {
         findProcedureDescription();
         // it is possible that the procedure is not in symbolTable
