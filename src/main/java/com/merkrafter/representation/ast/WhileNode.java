@@ -97,11 +97,11 @@ public class WhileNode extends AbstractStatementNode {
         dotRepr.append(System.lineSeparator());
 
         // define links
-        dotRepr.append(String.format("%d -> %d];", getID(), condition.getID()));
+        dotRepr.append(String.format("%d -> %d;", getID(), condition.getID()));
         dotRepr.append(System.lineSeparator());
-        dotRepr.append(String.format("%d -> %d];", getID(), getNext().getID()));
+        dotRepr.append(String.format("%d -> %d;", getID(), getNext().getID()));
         dotRepr.append(System.lineSeparator());
-        dotRepr.append(String.format("%d -> %d];", getID(), loopBody.getID()));
+        dotRepr.append(String.format("%d -> %d;", getID(), loopBody.getID()));
         dotRepr.append(System.lineSeparator());
 
         // return
