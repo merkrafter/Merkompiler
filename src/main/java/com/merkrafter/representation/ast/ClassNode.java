@@ -79,6 +79,17 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         } else {
             errors.addAll(collectErrorsFrom(classDescription.getEntryPoint()));
             errors.addAll(getErrorsFromProcedures());
+            errors.addAll(getErrorsFromExpressions());
+        }
+        return errors;
+    }
+
+    private List<String> getErrorsFromExpressions() {
+        final List<String> errors = new LinkedList<>();
+        for(final ObjectDescription obj: getClassDescription().getSymbolTable().getDescriptions()) {
+            if(obj instanceof Expression) {
+                errors.addAll(((Expression)obj).getTypingErrors());
+            }
         }
         return errors;
     }

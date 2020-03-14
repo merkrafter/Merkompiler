@@ -47,6 +47,14 @@ public class ConstantNode<T> implements Expression {
     }
 
     /**
+     * @return empty list
+     */
+    @Override
+    public List<String> getTypingErrors() {
+        return new LinkedList<>();
+    }
+
+    /**
      * Returns the value stored by this constant node.
      *
      * @return value stored by this constant node

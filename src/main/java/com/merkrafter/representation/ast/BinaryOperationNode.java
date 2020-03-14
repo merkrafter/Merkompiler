@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
@@ -69,6 +70,17 @@ public class BinaryOperationNode implements Expression {
              */
         }
         return Type.BOOLEAN;
+    }
+
+    @Override
+    public List<String> getTypingErrors() {
+        final List<String> errors = new LinkedList<>();
+        errors.addAll(leftOperand.getTypingErrors());
+        errors.addAll(rightOperand.getTypingErrors());
+        if(!leftOperand.getReturnedType().equals(rightOperand.getReturnedType())){
+            errors.add("Type mismatch in expression");
+        }
+        return errors;
     }
 
     /**

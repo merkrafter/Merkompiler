@@ -52,6 +52,11 @@ public class ErrorNode implements Expression, Statement {
         return Type.VOID;
     }
 
+    @Override
+    public List<String> getTypingErrors() {
+        return new LinkedList<>();
+    }
+
     /**
      * An ErrorNode is always counted as an error.
      *

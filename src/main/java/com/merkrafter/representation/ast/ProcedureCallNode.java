@@ -3,6 +3,7 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /****
@@ -41,6 +42,11 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     @Override
     public Type getReturnedType() {
         return procedure.getReturnType();
+    }
+
+    @Override
+    public List<String> getTypingErrors() {
+        return new LinkedList<>();
     }
 
     /**

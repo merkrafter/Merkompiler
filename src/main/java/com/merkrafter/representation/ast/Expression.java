@@ -3,6 +3,8 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
 
+import java.util.List;
+
 /****
  * An expression is anything that can be evaluated to a type.
  *
@@ -19,4 +21,6 @@ public interface Expression extends AbstractSyntaxTree, GraphicalComponent {
      * @return the type that this expression evaluates to
      */
     Type getReturnedType();
+
+    List<String> getTypingErrors();
 }

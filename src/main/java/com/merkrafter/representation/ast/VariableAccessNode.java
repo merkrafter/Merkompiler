@@ -41,6 +41,14 @@ public class VariableAccessNode implements Expression {
     }
 
     /**
+     * @return empty list
+     */
+    @Override
+    public List<String> getTypingErrors() {
+        return new LinkedList<>();
+    }
+
+    /**
      * Returns whether the underlying variable is a constant.
      */
     boolean isConstant() {
