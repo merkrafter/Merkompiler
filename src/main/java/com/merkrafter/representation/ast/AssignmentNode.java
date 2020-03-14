@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /****
@@ -111,5 +112,15 @@ public class AssignmentNode extends AbstractStatementNode {
         dotRepr.append(System.lineSeparator());
 
         return dotRepr.toString();
+    }
+
+    @Override
+    public List<String> getTypingErrors() {
+        final List<String> errors = new LinkedList<>();
+        errors.addAll(super.getTypingErrors());
+        if (!variable.getReturnedType().equals(value.getReturnedType())) {
+            errors.add("Type mismatch in assignment to " + variable.getName());
+        }
+        return errors;
     }
 }

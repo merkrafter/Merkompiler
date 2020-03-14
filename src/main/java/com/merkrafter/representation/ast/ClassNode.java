@@ -86,9 +86,10 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
 
     private List<String> getErrorsFromExpressions() {
         final List<String> errors = new LinkedList<>();
-        for(final ObjectDescription obj: getClassDescription().getSymbolTable().getDescriptions()) {
-            if(obj instanceof Expression) {
-                errors.addAll(((Expression)obj).getTypingErrors());
+        for (final ObjectDescription obj : getClassDescription().getSymbolTable()
+                                                                .getDescriptions()) {
+            if (obj instanceof Expression) {
+                errors.addAll(((Expression) obj).getTypingErrors());
             }
         }
         return errors;
@@ -161,6 +162,7 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
             errors.add(String.format("Return type mismatch in procedure %s", proc.getName()));
         }
         errors.addAll(collectErrorsFrom(proc.getEntryPoint()));
+        errors.addAll(proc.getEntryPoint().getTypingErrors());
         return errors;
     }
 

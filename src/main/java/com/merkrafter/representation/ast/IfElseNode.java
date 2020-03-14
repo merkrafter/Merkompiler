@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /****
@@ -117,6 +118,15 @@ public class IfElseNode extends AbstractStatementNode {
     public boolean hasReturnType(Type type) {
         return super.hasReturnType(type)
                || ifBranch.hasReturnType(type) && elseBranch.hasReturnType(type);
+    }
+
+    @Override
+    public List<String> getTypingErrors() {
+        final List<String> errors = new LinkedList<>();
+        errors.addAll(super.getTypingErrors());
+        errors.addAll(ifBranch.getTypingErrors());
+        errors.addAll(elseBranch.getTypingErrors());
+        return errors;
     }
 
 }

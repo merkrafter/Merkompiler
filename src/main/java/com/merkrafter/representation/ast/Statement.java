@@ -3,6 +3,8 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
 
+import java.util.List;
+
 /****
  * A statement is any instruction that can stand for itself. Statements represent a linked list.
  *
@@ -31,4 +33,6 @@ public interface Statement extends AbstractSyntaxTree, GraphicalComponent {
      * @return the type that is returned by this statement sequence
      */
     boolean hasReturnType(Type type);
+
+    List<String> getTypingErrors();
 }

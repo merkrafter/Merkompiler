@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
@@ -107,5 +109,14 @@ public class IfNode implements AbstractSyntaxTree {
      */
     boolean hasReturnType(final Type type) {
         return ifBranch.hasReturnType(type);
+    }
+
+    public List<String> getTypingErrors() {
+        final List<String> errors = new LinkedList<>();
+        if(!condition.getReturnedType().equals(Type.BOOLEAN)){
+            errors.add("Condition does not evaluate to boolean in if statement");
+        }
+        errors.addAll(ifBranch.getTypingErrors());
+              return errors;
     }
 }

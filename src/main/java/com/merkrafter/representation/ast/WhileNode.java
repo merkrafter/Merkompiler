@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /****
@@ -108,5 +109,16 @@ public class WhileNode extends AbstractStatementNode {
 
         // return
         return dotRepr.toString();
+    }
+
+    @Override
+    public List<String> getTypingErrors() {
+        final List<String> errors = new LinkedList<>();
+        errors.addAll(super.getTypingErrors());
+        if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
+            errors.add("Condition does not evaluate to boolean in while loop");
+        }
+        errors.addAll(loopBody.getTypingErrors());
+        return errors;
     }
 }

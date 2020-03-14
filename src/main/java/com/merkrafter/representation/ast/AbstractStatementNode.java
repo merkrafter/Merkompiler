@@ -101,4 +101,12 @@ public abstract class AbstractStatementNode implements Statement {
         }
         return getNext().hasReturnType(type);
     }
+
+    @Override
+    public List<String> getTypingErrors() {
+        if (getNext() == null) {
+            return new LinkedList<>();
+        }
+        return getNext().getTypingErrors();
+    }
 }
