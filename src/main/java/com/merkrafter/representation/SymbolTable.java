@@ -15,8 +15,8 @@ import java.util.List;
 public class SymbolTable {
     // ATTRIBUTES
     //==============================================================
-    private List<ObjectDescription> descriptions;
-    private SymbolTable enclosingSymbolTable; // TODO may be final
+    private final List<ObjectDescription> descriptions;
+    private final SymbolTable enclosingSymbolTable;
 
     // CONSTRUCTORS
     //==============================================================
