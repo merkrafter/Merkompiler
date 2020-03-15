@@ -119,11 +119,10 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
          * descriptions and whether their types match
          */
         for (int i = 0; i < numParams; i++) {
-            final ObjectDescription thisParam = getParamList().get(i);
-            final ObjectDescription thatParam = that.getParamList().get(i);
-            if (thisParam instanceof VariableDescription && thatParam instanceof VariableDescription
-                && (((VariableDescription) thisParam).getType() != ((VariableDescription) thatParam)
-                    .getType())) {
+            final VariableDescription thisParam = getParamList().get(i);
+            final VariableDescription thatParam = that.getParamList().get(i);
+            if (thisParam != null && thatParam != null
+                && thisParam.getType() != thatParam.getType()) {
                 return false;
             }
         }
