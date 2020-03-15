@@ -113,8 +113,8 @@ public class WhileNode extends AbstractStatementNode {
 
     @Override
     public List<String> getTypingErrors() {
-        final List<String> errors = new LinkedList<>();
-        errors.addAll(super.getTypingErrors());
+        final List<String> errors = super.getTypingErrors();
+        errors.addAll(condition.getTypingErrors());
         if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
             errors.add("Condition does not evaluate to boolean in while loop");
         }

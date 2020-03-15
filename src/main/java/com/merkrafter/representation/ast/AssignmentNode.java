@@ -116,8 +116,8 @@ public class AssignmentNode extends AbstractStatementNode {
 
     @Override
     public List<String> getTypingErrors() {
-        final List<String> errors = new LinkedList<>();
-        errors.addAll(super.getTypingErrors());
+        final List<String> errors = super.getTypingErrors();
+        errors.addAll(value.getTypingErrors());
         if (!variable.getReturnedType().equals(value.getReturnedType())) {
             errors.add("Type mismatch in assignment to " + variable.getName());
         }

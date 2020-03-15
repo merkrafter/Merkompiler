@@ -77,8 +77,14 @@ public class BinaryOperationNode implements Expression {
         final List<String> errors = new LinkedList<>();
         errors.addAll(leftOperand.getTypingErrors());
         errors.addAll(rightOperand.getTypingErrors());
-        if(!leftOperand.getReturnedType().equals(rightOperand.getReturnedType())){
-            errors.add("Type mismatch in expression");
+        if (!leftOperand.getReturnedType().equals(rightOperand.getReturnedType())) {
+            errors.add(String.format("Type mismatch in expression: %s and %s",
+                                     leftOperand.getReturnedType(),
+                                     rightOperand.getReturnedType()));
+        }
+        if (leftOperand.getReturnedType().equals(Type.VOID) || rightOperand.getReturnedType()
+                                                                           .equals(Type.VOID)) {
+            errors.add("Type mismatch in expression: void must not occur in expression");
         }
         return errors;
     }

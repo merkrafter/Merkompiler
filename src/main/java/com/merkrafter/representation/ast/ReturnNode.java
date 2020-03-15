@@ -123,4 +123,13 @@ public class ReturnNode extends AbstractStatementNode {
     public boolean hasReturnType(final Type type) {
         return getReturnedType().equals(type);
     }
+
+    @Override
+    public List<String> getTypingErrors() {
+        final List<String> errors = super.getTypingErrors();
+        if (expression != null && expression.getReturnedType().equals(Type.VOID)) {
+            errors.add("Returning void value is not allowed");
+        }
+        return errors;
+    }
 }

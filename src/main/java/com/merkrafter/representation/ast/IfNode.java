@@ -112,11 +112,11 @@ public class IfNode implements AbstractSyntaxTree {
     }
 
     public List<String> getTypingErrors() {
-        final List<String> errors = new LinkedList<>();
-        if(!condition.getReturnedType().equals(Type.BOOLEAN)){
+        final List<String> errors = condition.getTypingErrors();
+        if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
             errors.add("Condition does not evaluate to boolean in if statement");
         }
         errors.addAll(ifBranch.getTypingErrors());
-              return errors;
+        return errors;
     }
 }
