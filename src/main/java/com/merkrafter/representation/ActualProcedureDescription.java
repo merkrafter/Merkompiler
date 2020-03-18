@@ -153,7 +153,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
         dotRepr.append(System.lineSeparator());
 
         // paint edge from this to entry point
-        dotRepr.append(String.format("%d -> %d;", getID(), getEntryPoint().hashCode()));
+        dotRepr.append(String.format("%d -> %d;", getID(), getEntryPoint().getID()));
         dotRepr.append(System.lineSeparator());
 
         return dotRepr.toString();
