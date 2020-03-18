@@ -108,9 +108,18 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
      */
     @Override
     public String getDotRepresentation() {
-        return super.getDotRepresentation() + System.lineSeparator() + String.format(
-                "%d[label=\"%s\"];",
-                procedure.getID(),
-                procedure.getName());
+        final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+        // define this node
+        dotRepr.append(String.format("%d[label=\"%s\"];", procedure.getID(), procedure.getName()));
+
+        // define links to next
+        if (getNext() != null) {
+            dotRepr.append(String.format("%d -> %d;", getID(), getNext().getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+
+        return dotRepr.toString();
     }
 }
