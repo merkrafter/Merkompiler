@@ -81,7 +81,7 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
      */
     @Override
     public List<String> getAllErrors() {
-        return collectErrorsFrom(args, procedure.getEntryPoint(), getNext());
+        return collectErrorsFrom(args, getNext());
     }
 
     /**
