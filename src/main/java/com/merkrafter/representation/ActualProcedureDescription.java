@@ -1,6 +1,8 @@
 package com.merkrafter.representation;
 
 import com.merkrafter.representation.ast.Statement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -13,9 +15,13 @@ import java.util.List;
 public class ActualProcedureDescription extends ObjectDescription implements ProcedureDescription {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final Type returnType;
+    @NotNull
     private final List<VariableDescription> paramList;
+    @NotNull
     private final SymbolTable symbols;
+    @Nullable
     private Statement statements;
 
 
@@ -27,9 +33,9 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
      * This constructor does not validate whether the enclosingSymbolTable does only contain
      * valid objects.
      ***************************************************************/
-    public ActualProcedureDescription(final Type returnType, final String name,
-                                      final List<VariableDescription> paramList,
-                                      final SymbolTable enclosingSymbolTable) {
+    public ActualProcedureDescription(@NotNull final Type returnType, @NotNull final String name,
+                                      @NotNull final List<VariableDescription> paramList,
+                                      @Nullable final SymbolTable enclosingSymbolTable) {
         super(name);
         this.returnType = returnType;
         this.paramList = paramList;
@@ -44,6 +50,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
      *
      * @return this class's symbol table
      */
+    @NotNull
     @Override
     public SymbolTable getSymbols() {
         return symbols;
@@ -54,6 +61,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
      *
      * @return a list of all parameters of this procedure
      */
+    @NotNull
     @Override
     public List<VariableDescription> getParamList() {
         return paramList;
@@ -64,6 +72,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
      *
      * @return the return type of this procedure
      */
+    @NotNull
     @Override
     public Type getReturnType() {
         return returnType;
@@ -72,6 +81,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     /**
      * @return the first statement of this procedure
      */
+    @Nullable
     @Override
     public Statement getEntryPoint() {
         return statements;
@@ -79,7 +89,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
 
     // SETTER
     //==============================================================
-    public void setEntrypoint(final Statement statement) {
+    public void setEntrypoint(@NotNull final Statement statement) {
         this.statements = statement;
     }
 
@@ -99,11 +109,11 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
      * @return whether this is equal to o
      */
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@NotNull final Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (getClass() != o.getClass()) {
             return false;
         }
         if (!super.equals(o)) {
@@ -140,20 +150,23 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     /**
      * @return dot/graphviz declarations of this component
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         final StringBuilder dotRepr = new StringBuilder();
 
         // define entry point
-        dotRepr.append(getEntryPoint().getDotRepresentation());
-        dotRepr.append(System.lineSeparator());
+        if (getEntryPoint() != null) {
+            dotRepr.append(getEntryPoint().getDotRepresentation());
+            dotRepr.append(System.lineSeparator());
+
+            // paint edge from this to entry point
+            dotRepr.append(String.format("%d -> %d;", getID(), getEntryPoint().getID()));
+            dotRepr.append(System.lineSeparator());
+        }
 
         // define this as a node (with method name)
         dotRepr.append(String.format("%d[shape=box,label=%s];", getID(), getName()));
-        dotRepr.append(System.lineSeparator());
-
-        // paint edge from this to entry point
-        dotRepr.append(String.format("%d -> %d;", getID(), getEntryPoint().getID()));
         dotRepr.append(System.lineSeparator());
 
         return dotRepr.toString();
