@@ -1,10 +1,13 @@
 package com.merkrafter.representation.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.LinkedList;
 import java.util.List;
 
 /****
  * This class is used to store values that can be passed to a procedure call.
+ * It is basically an AbstractSyntaxTree-implementing List
  *
  * @since v0.3.0
  * @author merkrafter
@@ -12,6 +15,7 @@ import java.util.List;
 public class ParameterListNode implements AbstractSyntaxTree {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final List<Expression> parameters;
 
     // CONSTRUCTORS
@@ -20,7 +24,7 @@ public class ParameterListNode implements AbstractSyntaxTree {
     /****
      * Creates a new ParameterListNode.
      ***************************************************************/
-    public ParameterListNode(final List<Expression> parameters) {
+    public ParameterListNode(@NotNull final List<Expression> parameters) {
         this.parameters = parameters;
     }
 
@@ -30,40 +34,34 @@ public class ParameterListNode implements AbstractSyntaxTree {
     /**
      * @return a list of expressions
      */
+    @NotNull
     public List<Expression> getParameters() {
         return parameters;
     }
 
     /**
-     * A ParameterListNode can have an error if the underlying parameter list is null.
-     *
-     * @return whether a semantics error occurred
+     * @return false
      */
     @Override
     public boolean hasSemanticsError() {
-        return parameters == null;
+        return false;
     }
 
     /**
-     * A ParameterListNode can have an error if the underlying parameter list is null.
-     *
-     * @return whether a syntax error occurred
+     * @return false
      */
     @Override
     public boolean hasSyntaxError() {
-        return parameters == null;
+        return false;
     }
 
     /**
-     * @return a list of all errors, both semantic and syntactical ones.
+     * @return empty list
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
-        final List<String> errors = new LinkedList<>();
-        if (parameters == null) {
-            errors.add("Missing parameters");
-        }
-        return errors;
+        return new LinkedList<>();
     }
 
     /**
@@ -76,7 +74,6 @@ public class ParameterListNode implements AbstractSyntaxTree {
             return false;
         }
         final ParameterListNode other = (ParameterListNode) obj;
-        return parameters != null && other.parameters != null
-               && parameters.equals(other.parameters);
+        return parameters.equals(other.parameters);
     }
 }
