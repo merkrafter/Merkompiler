@@ -14,6 +14,7 @@ public class OtherToken extends Token {
     /**
      * the string that could not be recognized as another token
      */
+    @NotNull
     private final String string;
 
     // CONSTRUCTORS
@@ -22,20 +23,10 @@ public class OtherToken extends Token {
     /****
      * Creates a new OtherToken from a string and position data.
      ***************************************************************/
-    public OtherToken(final String string, final String filename, final long line,
+    public OtherToken(@NotNull final String string, @NotNull final String filename, final long line,
                       final int position) {
         super(TokenType.OTHER, filename, line, position);
         this.string = string;
-    }
-
-    // GETTER
-    //==============================================================
-
-    /**
-     * @return the string that could not be recognized as another token
-     */
-    String getString() {
-        return string;
     }
 
     // METHODS
