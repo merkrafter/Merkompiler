@@ -1,5 +1,6 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -45,7 +46,7 @@ class ScannerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"$", "\"", "@", "_", "!", "§", "%", "&", "|", "^", "\\", "?", "~", "#"})
-    void scanOtherTokens(final String string) {
+    void scanOtherTokens(@NotNull final String string) {
         final String programCode = string;
         final Token[] expectedTokenList = {
                 new OtherToken(string, "", 1, 1), new Token(EOF, "", 1, string.length())};
@@ -74,7 +75,7 @@ class ScannerTest {
     // all values should be decimal 8's, because in JavaSST there are no octal numbers hence these
     // value source numbers will cause an error when trying to evaluate them as octal.
     @ValueSource(strings = {"08", "008"})
-    void scanSpecialNumbers(final String number) {
+    void scanSpecialNumbers(@NotNull final String number) {
         final long expectedNumber = 8;
         final Token[] expectedTokenList = {
                 new NumberToken(expectedNumber, "", 1, 1),
@@ -87,7 +88,7 @@ class ScannerTest {
      */
     @ParameterizedTest
     @EnumSource(Keyword.class)
-    void scanKeyword(final Keyword keyword) {
+    void scanKeyword(@NotNull final Keyword keyword) {
         final String programCode = keyword.name().toLowerCase();
         final Token[] expectedTokenList = {
                 new KeywordToken(keyword, "", 1, 1),
@@ -419,7 +420,8 @@ class ScannerTest {
      * @param scanner the object to get the tokens from
      * @return a list of all tokens found
      */
-    private List<Token> getTokenList(final Scanner scanner) {
+    @NotNull
+    private List<Token> getTokenList(@NotNull final Scanner scanner) {
         LinkedList<Token> tokenList = new LinkedList<>();
         do {
             scanner.processToken();
@@ -435,7 +437,7 @@ class ScannerTest {
      * @param scanner the object to get the tokens from
      * @return a list of all types of tokens found
      */
-    private List<TokenType> getTokenTypeList(final Scanner scanner) {
+    private List<TokenType> getTokenTypeList(@NotNull final Scanner scanner) {
         return getTokenList(scanner).stream().map(Token::getType).collect(Collectors.toList());
     }
 

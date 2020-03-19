@@ -1,6 +1,7 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +32,7 @@ class ReturnCheckTest {
     @ExtendWith(MockitoExtension.class)
     @ParameterizedTest
     @EnumSource(Type.class)
-    void testIfElseSingleType(final Type type) {
+    void testIfElseSingleType(@NotNull final Type type) {
 
         Mockito.lenient().when(retNode.hasReturnType(type)).thenReturn(true);
         final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(null, retNode), retNode);

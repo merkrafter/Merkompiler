@@ -5,6 +5,7 @@ import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ConstantNode;
 import com.merkrafter.representation.ast.ErrorNode;
 import com.merkrafter.representation.ast.ParameterListNode;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -71,7 +72,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
-    void parseMethodDeclaration(final Keyword methodType) {
+    void parseMethodDeclaration(@NotNull final Keyword methodType) {
         final Scanner scanner = new TestScanner(new Token[]{
                 // method head
                 new KeywordToken(Keyword.PUBLIC, "", 1, 1),
@@ -94,7 +95,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
-    void parseMethodHead(final Keyword methodType) {
+    void parseMethodHead(@NotNull final Keyword methodType) {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.PUBLIC, "", 1, 1),
                 new KeywordToken(methodType, "", 1, 1),
@@ -110,7 +111,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
-    void parseMethodType(final Keyword keyword) {
+    void parseMethodType(@NotNull final Keyword keyword) {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(keyword, "", 1, 1)});
         final Parser parser = new Parser(scanner);
@@ -177,7 +178,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#statements")
-    void parseStatementSequence(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseStatementSequence(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         assertFalse(parser.parseStatementSequence().hasSyntaxError());
@@ -190,7 +191,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#statements")
-    void parseStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseStatement(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree node = parser.parseStatement();
@@ -215,7 +216,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#assignments")
-    void parseAssignment(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseAssignment(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree astUnderTest = parser.parseAssignment();
@@ -229,7 +230,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#assignmentsWithoutSemicolon")
-    void parseFaultyAssignment(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseFaultyAssignment(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseAssignment().hasSyntaxError());
@@ -242,7 +243,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#ifConstructs")
-    void parseIfStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseIfStatement(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree node = parser.parseIfStatement();
@@ -256,7 +257,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#whileLoops")
-    void parseWhileStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseWhileStatement(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         assertFalse(parser.parseWhileStatement().hasSyntaxError());
@@ -269,7 +270,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#returnStatements")
-    void parseReturnStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseReturnStatement(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertFalse(parser.parseReturnStatement().hasSyntaxError());
@@ -306,7 +307,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#expressions")
-    void parseExpression(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseExpression(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertFalse(parser.parseExpression().hasSyntaxError());
@@ -319,7 +320,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#simpleExpressions")
-    void parseSimpleExpression(final ParserTestDataProvider.TokenWrapper inputTokens) {
+    void parseSimpleExpression(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
         assertFalse(parser.parseSimpleExpression().hasSyntaxError());
@@ -330,7 +331,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {"TIMES", "DIVIDE"})
-    void parseTerm(final TokenType tokenType) {
+    void parseTerm(@NotNull final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.IDENT, "", 0, 0),
                 new Token(tokenType, "", 0, 0),
@@ -358,7 +359,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {"NUMBER", "IDENT"})
-    void parseInternProcedureCallWithOneArgAsFactor(final TokenType tokenType) {
+    void parseInternProcedureCallWithOneArgAsFactor(@NotNull final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.IDENT, "", 0, 0),
                 new Token(TokenType.L_PAREN, "", 0, 0),
@@ -391,7 +392,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {"PLUS", "MINUS", "TIMES", "DIVIDE"})
-    void parseBinOpExpressionAsFactor(final TokenType binOp) {
+    void parseBinOpExpressionAsFactor(@NotNull final TokenType binOp) {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.L_PAREN, "", 0, 0),
                 new Token(TokenType.NUMBER, "", 0, 0),
@@ -409,7 +410,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {"IDENT", "NUMBER"})
-    void parseSimpleExpressionAsFactor(final TokenType tokenType) {
+    void parseSimpleExpressionAsFactor(@NotNull final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.L_PAREN, "", 0, 0),
                 new Token(tokenType, "", 0, 0),
@@ -423,7 +424,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {"IDENT", "NUMBER"})
-    void parseIdentifierOrNumberAsFactor(final TokenType tokenType) {
+    void parseIdentifierOrNumberAsFactor(@NotNull final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{new Token(tokenType, "", 0, 0)});
         final Parser parser = new Parser(scanner);
         assertFalse(parser.parseFactor().hasSyntaxError());
@@ -445,7 +446,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {"NUMBER"}, mode = EnumSource.Mode.EXCLUDE)
-    void tryParseNoNumber(final TokenType tokenType) {
+    void tryParseNoNumber(@NotNull final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{new Token(tokenType, "", 0, 0)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseNumber().hasSyntaxError());
@@ -466,7 +467,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {"IDENT"}, mode = EnumSource.Mode.EXCLUDE)
-    void tryParseNoIdentifier(final TokenType tokenType) {
+    void tryParseNoIdentifier(@NotNull final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{new Token(tokenType, "", 0, 0)});
         final Parser parser = new Parser(scanner);
         assertNull(parser.parseIdentifier());
@@ -507,6 +508,7 @@ class ParserTest {
             }
         }
 
+        @NotNull
         @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder();
