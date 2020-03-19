@@ -1,5 +1,8 @@
 package com.merkrafter.representation;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +18,9 @@ import java.util.List;
 public class SymbolTable {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final List<ObjectDescription> descriptions;
+    @Nullable
     private final SymbolTable enclosingSymbolTable;
 
     // CONSTRUCTORS
@@ -31,13 +36,14 @@ public class SymbolTable {
     /****
      * Creates a new empty SymbolTable with the given enclosing SymbolTable.
      ***************************************************************/
-    public SymbolTable(final SymbolTable enclosingSymbolTable) {
+    public SymbolTable(@Nullable final SymbolTable enclosingSymbolTable) {
         descriptions = new LinkedList<>();
         this.enclosingSymbolTable = enclosingSymbolTable;
     }
 
     // GETTER
     //==============================================================
+    @NotNull
     public List<ObjectDescription> getDescriptions() {
         return descriptions;
     }
@@ -53,7 +59,7 @@ public class SymbolTable {
      * @param objectDescription the ObjectDescription to insert
      * @return whether the insertion was successful
      */
-    public boolean insert(final ObjectDescription objectDescription) {
+    public boolean insert(@NotNull final ObjectDescription objectDescription) {
         for (final ObjectDescription storedObjDesc : descriptions) {
             if (storedObjDesc.equals(objectDescription)) {
                 return false;
@@ -72,7 +78,8 @@ public class SymbolTable {
      * @param prototype an ObjectDescription that should be equal to the searched ObjectDescription
      * @return an ObjectDescription with the given prototype or null if there is no such object
      */
-    public ObjectDescription find(final ObjectDescription prototype) {
+    @Nullable
+    public ObjectDescription find(@NotNull final ObjectDescription prototype) {
         for (final ObjectDescription storedObjDesc : descriptions) {
             if (storedObjDesc.equals(prototype)) {
                 return storedObjDesc;
@@ -94,6 +101,7 @@ public class SymbolTable {
      * @param signature if a procedure is searched, then the signature can be passed here; otherwise set it to null
      * @return an ObjectDescription with the given prototype or null if there is no such object
      */
+    @Nullable
     public ObjectDescription find(final String name, final Type... signature) {
         ObjectDescription prototype;
         if (signature == null) { // if signature.length == 0 it is a parameterless procedure
