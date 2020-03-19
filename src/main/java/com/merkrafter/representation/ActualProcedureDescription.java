@@ -121,7 +121,8 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
         }
         final ProcedureDescription that = (ProcedureDescription) o;
         final int numParams = getParamList().size();
-        if (numParams != that.getParamList().size()) {
+        final List<VariableDescription> paramList = that.getParamList();
+        if (paramList == null || numParams != paramList.size()) {
             return false;
         }
 
