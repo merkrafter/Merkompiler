@@ -23,6 +23,11 @@ import java.util.stream.Stream;
  ***************************************************************/
 
 class ParserTestDataProvider {
+    // CONSTANTS
+    //==============================================================
+    private static final String FUNC = "func";
+    private static final String VAR = "var";
+
     // METHODS
     //==============================================================
     // public methods
@@ -90,36 +95,36 @@ class ParserTestDataProvider {
     static Stream<TokenWrapper> internProcedureCalls() {
         return Stream.of(
                 // a call of an intern procedure without arguments
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with a single identifier as its argument
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with a single number as its argument
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
                                   .add(tokenFrom(TokenType.NUMBER))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with two identifiers as arguments
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.COMMA))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with an expression like a*b/2 as argument
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.PLUS))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.DIVIDE))
                                   .add(tokenFrom(TokenType.NUMBER))
                                   .add(tokenFrom(TokenType.R_PAREN)));

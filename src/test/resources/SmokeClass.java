@@ -22,4 +22,9 @@ class SmokeClass {
         if (a >= b) {println(a);} else {println(b);}
         println(result);
     }
+
+    public void println(int x) {
+        // dummy procedure
+        return;
+    }
 }

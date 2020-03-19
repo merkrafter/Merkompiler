@@ -5,7 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ class ScannerTest {
     /**
      * This field enables iterating over Strings.
      */
-    private StringIterator stringIterator;
+    private StringIteratorTestUtility stringIterator;
     /**
      * This field is the test subject.
      */
@@ -35,7 +34,7 @@ class ScannerTest {
      */
     @BeforeEach
     void setUp() {
-        stringIterator = new StringIterator();
+        stringIterator = new StringIteratorTestUtility();
         scanner = new Scanner(stringIterator);
     }
 
@@ -54,10 +53,11 @@ class ScannerTest {
 
     /**
      * The scanner should be able to detect number arguments.
+     * This test case also makes sure that each digit is recognized.
      */
     @ParameterizedTest
     // edge cases 0 and MAX_VALUE, one, two and three digit numbers
-    @ValueSource(longs = {0, 1, 10, 123, Long.MAX_VALUE})
+    @ValueSource(longs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 123, Long.MAX_VALUE})
     void scanNormalNumbers(final long number) {
         final String programCode = Long.toString(number);
         final Token[] expectedTokenList = {
@@ -466,44 +466,4 @@ class ScannerTest {
         assertArrayEquals(expectedTokenList, actualTokenList.toArray(), actualTokenList.toString());
     }
 
-    /**
-     * This class provides the possibility to iterate over strings.
-     * It can be used as a tool to mock a file as the input to a Scanner.
-     */
-    private class StringIterator implements Iterator<Character> {
-        /**
-         * The string to iterate over. It is not set by the constructor as the input string will not
-         * be known during the setUp method anyway.
-         */
-        private String string = "";
-        /**
-         * Tracks the index in the string.
-         */
-        private int index = 0;
-
-        void setString(String string) {
-            this.string = string;
-        }
-
-        /**
-         * @return true if there are more characters in the string
-         */
-        @Override
-        public boolean hasNext() {
-            return index < string.length();
-        }
-
-        /**
-         * Returns the next character in the string if there is any left. This should be checked via
-         * hasNext() before this method is called in order to avoid an exception.
-         *
-         * @return next character in the string
-         *
-         * @throws IndexOutOfBoundsException if there are no more characters left to read
-         */
-        @Override
-        public Character next() {
-            return string.charAt(index++);
-        }
-    }
 }

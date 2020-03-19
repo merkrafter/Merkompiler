@@ -155,4 +155,27 @@ class ConfigTest {
 
         assertEquals(expectedStage, actualConfig.getStage());
     }
+
+    /**
+     * The fromArgs method should be able to detect the graphical flag being set, independent of
+     * whether the long or short argument was used or whether it was specified before or after
+     * the input file.
+     *
+     * @throws ArgumentParserException if the arguments can not be parsed; should not happen
+     */
+    @ParameterizedTest
+    // {short, long} x {before input file, after input file}
+    @ValueSource(strings = {
+            "-g Test.java", "--graphical Test.java", "Test.java -g", "Test.java --graphical"})
+    void parseInputFileWithGraphical(final String string) throws ArgumentParserException {
+        final String[] args = fromString(string);
+        final Config actualConfig = Config.fromArgs(args);
+
+        final String expectedInputFilename = "Test.java";
+        final boolean expectedGraphical = true;
+
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedGraphical, actualConfig.isGraphical());
+    }
+
 }

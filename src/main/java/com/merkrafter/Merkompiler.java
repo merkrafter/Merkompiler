@@ -6,13 +6,21 @@ import com.merkrafter.config.ErrorCode;
 import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.TokenType;
 import com.merkrafter.parsing.Parser;
+import com.merkrafter.representation.ast.AbstractSyntaxTree;
+import com.merkrafter.representation.ast.ClassNode;
+import com.merkrafter.representation.graphical.GraphicalClassNode;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 
 public class Merkompiler {
+
+    // META-INFORMATION
+    //==============================================================
+    public static final String VERSION = "v0.4.0";
 
     /**
      * The main function of this compiler reads in the filename and handles other possible command line
@@ -68,9 +76,20 @@ public class Merkompiler {
             } while (scanner.getSym().getType() != TokenType.EOF);
         } else if (config.getStage() == CompilerStage.PARSING) {
             final Parser parser = new Parser(scanner);
-            if (!parser.parse()) {
-                System.err.println("Parsing error!");
+            final AbstractSyntaxTree abstractSyntaxTree = parser.parse();
+            int numErrors = 0;
+            for (final String errMsg : abstractSyntaxTree.getAllErrors()) {
+                numErrors++;
+                System.err.println(errMsg);
             }
+            if (config.isGraphical() && numErrors == 0 && abstractSyntaxTree instanceof ClassNode) {
+                final PrintWriter dotFileWriter = new PrintWriter(config.getInputFile() + ".dot");
+                dotFileWriter.print(((ClassNode)abstractSyntaxTree).getDotRepresentation());
+                dotFileWriter.close();
+            }
+        }
+        if (out != System.out) {
+            out.close();
         }
     }
 }

@@ -32,7 +32,7 @@ public class NumberToken extends Token {
     /**
      * @return the number this token stands for
      */
-    long getNumber() {
+    public long getNumber() {
         return number;
     }
 

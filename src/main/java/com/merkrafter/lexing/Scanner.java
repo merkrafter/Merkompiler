@@ -78,8 +78,17 @@ public class Scanner {
         return id;
     }
 
-    public String getNum() {
-        return num;
+    /**
+     * Returns the last number that this scanner read.
+     * If the scanner did not encounter a number yet, a 0 is returned.
+     *
+     * @return the last read number
+     */
+    public long getNum() {
+        if (num == null || num.isEmpty()) {
+            return 0;
+        }
+        return Long.parseLong(num);
     }
 
     // SETTER
@@ -125,6 +134,7 @@ public class Scanner {
             case '3':
             case '4':
             case '5':
+            case '6':
             case '7':
             case '8':
             case '9':
