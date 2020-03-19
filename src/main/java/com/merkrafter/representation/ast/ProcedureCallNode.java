@@ -45,7 +45,10 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     @NotNull
     @Override
     public Type getReturnedType() {
-        return procedure.getReturnType();
+        final Type returnedType = procedure.getReturnType();
+        // this can only happen if procedure is an unresolved proxy which should be handled before
+        assert returnedType != null;
+        return returnedType;
     }
 
     @NotNull
