@@ -102,7 +102,7 @@ public class SymbolTable {
      * @return an ObjectDescription with the given prototype or null if there is no such object
      */
     @Nullable
-    public ObjectDescription find(final String name, final Type... signature) {
+    public ObjectDescription find(@NotNull final String name, @Nullable final Type... signature) {
         ObjectDescription prototype;
         if (signature == null) { // if signature.length == 0 it is a parameterless procedure
             // this is a variable; only name is really relevant
