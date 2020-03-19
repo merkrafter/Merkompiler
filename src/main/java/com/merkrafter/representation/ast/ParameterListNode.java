@@ -22,6 +22,13 @@ public class ParameterListNode implements AbstractSyntaxTree {
     //==============================================================
 
     /****
+     * Creates a new empty ParameterListNode.
+     ***************************************************************/
+    public ParameterListNode() {
+        this(new LinkedList<>());
+    }
+
+    /****
      * Creates a new ParameterListNode.
      ***************************************************************/
     public ParameterListNode(@NotNull final List<Expression> parameters) {
