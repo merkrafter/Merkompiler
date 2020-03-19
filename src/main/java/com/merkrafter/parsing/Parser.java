@@ -434,6 +434,9 @@ public class Parser {
         if (!(expression instanceof ErrorNode)) {
             final VariableDescription var =
                     (VariableDescription) symbolTable.find(identifier, (Type[]) null);
+            if (var == null) {
+                return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
+            }
             final VariableAccessNode varNode = new VariableAccessNode(var);
             return new AssignmentNode(varNode, expression);
         }
@@ -483,7 +486,11 @@ public class Parser {
         if (identifier == null) {
             return new ErrorNode(generateErrorMessage("identifier"));
         }
-        final VariableDescription var = (VariableDescription) symbolTable.find(identifier);
+        final VariableDescription var =
+                (VariableDescription) symbolTable.find(identifier, (Type[]) null);
+        if (var == null) {
+            return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
+        }
         return new AssignmentNode(new VariableAccessNode(var), parseAssignmentWithoutIdent());
     }
 

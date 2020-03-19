@@ -179,7 +179,7 @@ class ParserTest {
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#statements")
     void parseStatementSequence(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
-        final Parser parser = new Parser(scanner);
+        final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         assertFalse(parser.parseStatementSequence().hasSyntaxError());
     }
 
@@ -192,7 +192,7 @@ class ParserTest {
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#statements")
     void parseStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
-        final Parser parser = new Parser(scanner);
+        final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree node = parser.parseStatement();
         assertFalse(node.hasSyntaxError());
     }
@@ -217,8 +217,9 @@ class ParserTest {
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#assignments")
     void parseAssignment(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
-        final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseAssignment().hasSyntaxError());
+        final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
+        final AbstractSyntaxTree astUnderTest = parser.parseAssignment();
+        assertFalse(astUnderTest.hasSyntaxError());
     }
 
     /**
@@ -243,7 +244,7 @@ class ParserTest {
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#ifConstructs")
     void parseIfStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
-        final Parser parser = new Parser(scanner);
+        final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree node = parser.parseIfStatement();
         assertFalse(node.hasSyntaxError());
     }
@@ -257,7 +258,7 @@ class ParserTest {
     @MethodSource("com.merkrafter.parsing.ParserTestDataProvider#whileLoops")
     void parseWhileStatement(final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
-        final Parser parser = new Parser(scanner);
+        final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         assertFalse(parser.parseWhileStatement().hasSyntaxError());
     }
 

@@ -1,6 +1,9 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
+import com.merkrafter.representation.SymbolTable;
+import com.merkrafter.representation.Type;
+import com.merkrafter.representation.VariableDescription;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +30,16 @@ class ParserTestDataProvider {
     //==============================================================
     private static final String FUNC = "func";
     private static final String VAR = "var";
+    public static final SymbolTable TEST_SYMBOLS = new SymbolTable();
+
+    static {
+        TEST_SYMBOLS.insert(new VariableDescription(VAR, Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("a", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("ab", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("b", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("c", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("n", Type.INT, 0, false));
+    }
 
     // METHODS
     //==============================================================
@@ -148,13 +161,13 @@ class ParserTestDataProvider {
                           TokenType.GREATER_EQUAL)
                       .map(cmpOp -> new TokenWrapper().add(tokenFrom(Keyword.IF))
                                                       .add(tokenFrom(TokenType.L_PAREN))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(cmpOp))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.R_PAREN))
 
                                                       .add(tokenFrom(TokenType.L_BRACE))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(TokenType.ASSIGN))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.SEMICOLON))
@@ -162,7 +175,7 @@ class ParserTestDataProvider {
 
                                                       .add(tokenFrom(Keyword.ELSE))
                                                       .add(tokenFrom(TokenType.L_BRACE))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(TokenType.ASSIGN))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.SEMICOLON))
@@ -189,13 +202,13 @@ class ParserTestDataProvider {
                           TokenType.GREATER_EQUAL)
                       .map(cmpOp -> new TokenWrapper().add(tokenFrom(Keyword.WHILE))
                                                       .add(tokenFrom(TokenType.L_PAREN))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(cmpOp))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.R_PAREN))
 
                                                       .add(tokenFrom(TokenType.L_BRACE))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(TokenType.ASSIGN))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.SEMICOLON))
