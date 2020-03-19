@@ -14,6 +14,7 @@ public class KeywordToken extends Token {
     /**
      * the keyword this token stands for
      */
+    @NotNull
     private final Keyword keyword;
 
     // CONSTRUCTORS
@@ -22,8 +23,8 @@ public class KeywordToken extends Token {
     /****
      * Creates a new KeywordToken from a keyword and position data.
      ***************************************************************/
-    public KeywordToken(final Keyword keyword, final String filename, final long line,
-                        final int position) {
+    public KeywordToken(@NotNull final Keyword keyword, @NotNull final String filename,
+                        final long line, final int position) {
         super(TokenType.KEYWORD, filename, line, position);
         this.keyword = keyword;
     }
@@ -34,6 +35,7 @@ public class KeywordToken extends Token {
     /**
      * @return the keyword this token stands for
      */
+    @NotNull
     public Keyword getKeyword() {
         return keyword;
     }
