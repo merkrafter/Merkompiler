@@ -1,6 +1,7 @@
 package com.merkrafter.representation.ast;
 
-import java.util.LinkedList;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /****
@@ -12,7 +13,9 @@ import java.util.List;
 public class AssignmentNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final VariableAccessNode variable;
+    @NotNull
     private final Expression value;
 
     // CONSTRUCTORS
@@ -23,7 +26,8 @@ public class AssignmentNode extends AbstractStatementNode {
      * the value to.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public AssignmentNode(final VariableAccessNode variable, final Expression value) {
+    public AssignmentNode(@NotNull final VariableAccessNode variable,
+                          @NotNull final Expression value) {
         this.variable = variable;
         this.value = value;
     }
@@ -39,8 +43,7 @@ public class AssignmentNode extends AbstractStatementNode {
      */
     @Override
     public boolean hasSemanticsError() {
-        return variable == null || value == null || variable.hasSemanticsError()
-               || value.hasSemanticsError();
+        return variable.hasSemanticsError() || value.hasSemanticsError();
     }
 
     /**
@@ -51,18 +54,17 @@ public class AssignmentNode extends AbstractStatementNode {
      */
     @Override
     public boolean hasSyntaxError() {
-        return variable == null || value == null || variable.hasSyntaxError()
-               || value.hasSyntaxError();
+        return variable.hasSyntaxError() || value.hasSyntaxError();
     }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = collectErrorsFrom(variable, value, getNext());
         if (variable.isConstant()) {
-            // TODO: test this; it should not trigger ON that mentioned init
             errors.add("Can not assign a value to a constant after initialization");
         }
         return errors;
@@ -73,18 +75,18 @@ public class AssignmentNode extends AbstractStatementNode {
      * equal to each other respectively.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof AssignmentNode)) {
             return false;
         }
         final AssignmentNode other = (AssignmentNode) obj;
-        return variable != null && other.variable != null && value != null && other.value != null
-               && variable.equals(other.variable) && value.equals(other.value);
+        return variable.equals(other.variable) && value.equals(other.value);
     }
 
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         // define next statement
@@ -114,6 +116,7 @@ public class AssignmentNode extends AbstractStatementNode {
         return dotRepr.toString();
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         final List<String> errors = super.getTypingErrors();
