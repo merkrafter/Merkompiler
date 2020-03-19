@@ -26,13 +26,13 @@ class ParserTest {
     @Test
     void parseClass() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.CLASS, null, 1, 1),
-                new IdentToken(CLASS_IDENT, null, 1, 1),
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken(VAR_IDENT, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1)});
+                new KeywordToken(Keyword.CLASS, "", 1, 1),
+                new IdentToken(CLASS_IDENT, "", 1, 1),
+                new Token(TokenType.L_BRACE, "", 1, 1),
+                new KeywordToken(Keyword.INT, "", 1, 1),
+                new IdentToken(VAR_IDENT, "", 1, 1),
+                new Token(TokenType.SEMICOLON, "", 1, 1),
+                new Token(TokenType.R_BRACE, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertFalse(parser.parseClass().hasSyntaxError());
     }
@@ -43,11 +43,11 @@ class ParserTest {
     @Test
     void parseClassBody() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken(VAR_IDENT, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1)});
+                new Token(TokenType.L_BRACE, "", 1, 1),
+                new KeywordToken(Keyword.INT, "", 1, 1),
+                new IdentToken(VAR_IDENT, "", 1, 1),
+                new Token(TokenType.SEMICOLON, "", 1, 1),
+                new Token(TokenType.R_BRACE, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseClassBody());
     }
@@ -58,9 +58,9 @@ class ParserTest {
     @Test
     void parseDeclarations() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken(VAR_IDENT, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1)});
+                new KeywordToken(Keyword.INT, "", 1, 1),
+                new IdentToken(VAR_IDENT, "", 1, 1),
+                new Token(TokenType.SEMICOLON, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseDeclarations());
     }
@@ -74,17 +74,17 @@ class ParserTest {
     void parseMethodDeclaration(final Keyword methodType) {
         final Scanner scanner = new TestScanner(new Token[]{
                 // method head
-                new KeywordToken(Keyword.PUBLIC, null, 1, 1),
-                new KeywordToken(methodType, null, 1, 1),
-                new IdentToken(PROC_IDENT, null, 1, 1),
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1),
+                new KeywordToken(Keyword.PUBLIC, "", 1, 1),
+                new KeywordToken(methodType, "", 1, 1),
+                new IdentToken(PROC_IDENT, "", 1, 1),
+                new Token(TokenType.L_PAREN, "", 1, 1),
+                new Token(TokenType.R_PAREN, "", 1, 1),
                 // method body
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new KeywordToken(Keyword.RETURN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1)});
+                new Token(TokenType.L_BRACE, "", 1, 1),
+                new KeywordToken(Keyword.RETURN, "", 1, 1),
+                new Token(TokenType.NUMBER, "", 1, 1),
+                new Token(TokenType.SEMICOLON, "", 1, 1),
+                new Token(TokenType.R_BRACE, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseMethodDeclaration());
     }
@@ -96,11 +96,11 @@ class ParserTest {
     @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
     void parseMethodHead(final Keyword methodType) {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.PUBLIC, null, 1, 1),
-                new KeywordToken(methodType, null, 1, 1),
-                new IdentToken(PROC_IDENT, null, 1, 1),
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1)});
+                new KeywordToken(Keyword.PUBLIC, "", 1, 1),
+                new KeywordToken(methodType, "", 1, 1),
+                new IdentToken(PROC_IDENT, "", 1, 1),
+                new Token(TokenType.L_PAREN, "", 1, 1),
+                new Token(TokenType.R_PAREN, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertNotNull(parser.parseMethodHead());
     }
@@ -112,7 +112,7 @@ class ParserTest {
     @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
     void parseMethodType(final Keyword keyword) {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(keyword, null, 1, 1)});
+                new KeywordToken(keyword, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertNotNull(parser.parseMethodType());
     }
@@ -123,10 +123,10 @@ class ParserTest {
     @Test
     void parseFormalParameters() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.L_PAREN, null, 1, 1),
-                new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken(VAR_IDENT, null, 1, 1),
-                new Token(TokenType.R_PAREN, null, 1, 1)});
+                new Token(TokenType.L_PAREN, "", 1, 1),
+                new KeywordToken(Keyword.INT, "", 1, 1),
+                new IdentToken(VAR_IDENT, "", 1, 1),
+                new Token(TokenType.R_PAREN, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertNotNull(parser.parseFormalParameters());
     }
@@ -137,7 +137,7 @@ class ParserTest {
     @Test
     void parseFpSection() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.INT, null, 1, 1), new IdentToken(VAR_IDENT, null, 1, 1)});
+                new KeywordToken(Keyword.INT, "", 1, 1), new IdentToken(VAR_IDENT, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertNotNull(parser.parseFpSection());
     }
@@ -148,11 +148,11 @@ class ParserTest {
     @Test
     void parseMethodBody() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new Token(TokenType.L_BRACE, null, 1, 1),
-                new KeywordToken(Keyword.RETURN, null, 1, 1),
-                new Token(TokenType.NUMBER, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1),
-                new Token(TokenType.R_BRACE, null, 1, 1)});
+                new Token(TokenType.L_BRACE, "", 1, 1),
+                new KeywordToken(Keyword.RETURN, "", 1, 1),
+                new Token(TokenType.NUMBER, "", 1, 1),
+                new Token(TokenType.SEMICOLON, "", 1, 1),
+                new Token(TokenType.R_BRACE, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertFalse(parser.parseMethodBody() instanceof ErrorNode);
     }
@@ -163,9 +163,9 @@ class ParserTest {
     @Test
     void parseLocalDeclaration() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.INT, null, 1, 1),
-                new IdentToken(VAR_IDENT, null, 1, 1),
-                new Token(TokenType.SEMICOLON, null, 1, 1)});
+                new KeywordToken(Keyword.INT, "", 1, 1),
+                new IdentToken(VAR_IDENT, "", 1, 1),
+                new Token(TokenType.SEMICOLON, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseLocalDeclaration());
     }
@@ -203,7 +203,7 @@ class ParserTest {
     @Test
     void parseType() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.INT, null, 1, 1)});
+                new KeywordToken(Keyword.INT, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertNotNull(parser.parseType());
     }
@@ -281,7 +281,7 @@ class ParserTest {
     @Test
     void parseStandaloneReturnStatementWithoutSemicolon() {
         final Scanner scanner = new TestScanner(new Token[]{
-                new KeywordToken(Keyword.RETURN, null, 1, 1)});
+                new KeywordToken(Keyword.RETURN, "", 1, 1)});
         final Parser parser = new Parser(scanner);
         assertTrue(parser.parseReturnStatement().hasSyntaxError());
     }

@@ -381,7 +381,7 @@ class ParserTestDataProvider {
      * @return a basic Token with the given TokenType set
      */
     static Token tokenFrom(final TokenType type) {
-        return new Token(type, null, 1, 1);
+        return new Token(type, "", 1, 1);
     }
 
     /**
@@ -391,7 +391,7 @@ class ParserTestDataProvider {
      * @return a KeywordToken with the given Keyword set
      */
     static Token tokenFrom(final Keyword keyword) {
-        return new KeywordToken(keyword, null, 1, 1);
+        return new KeywordToken(keyword, "", 1, 1);
     }
 
     /**
@@ -401,7 +401,7 @@ class ParserTestDataProvider {
      * @return an IdentToken with the given identifier set
      */
     static Token tokenFrom(final String identifier) {
-        return new IdentToken(identifier, null, 1, 1);
+        return new IdentToken(identifier, "", 1, 1);
     }
 
     /**
@@ -411,7 +411,7 @@ class ParserTestDataProvider {
      * @return a NumberToken with the given number set
      */
     static Token tokenFrom(final long number) {
-        return new NumberToken(number, null, 1, 1);
+        return new NumberToken(number, "", 1, 1);
     }
 
 
