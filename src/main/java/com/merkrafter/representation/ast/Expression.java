@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface Expression extends AbstractSyntaxTree, GraphicalComponent {
     /**
      * @return the type that this expression evaluates to
      */
-    Type getReturnedType();
+    @NotNull Type getReturnedType();
 
-    List<String> getTypingErrors();
+    @NotNull List<String> getTypingErrors();
 }
