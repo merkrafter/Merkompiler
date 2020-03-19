@@ -167,10 +167,11 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     }
 
     @NotNull
-    private static List<String> findErrorsInProcedure(final ProcedureDescription proc) {
+    private static List<String> findErrorsInProcedure(@NotNull final ProcedureDescription proc) {
         final List<String> errors = new LinkedList<>();
         final Type returnType = proc.getReturnType();
-        if (!proc.getEntryPoint().hasReturnType(returnType)) {
+        final Statement stmt = proc.getEntryPoint();
+        if (stmt == null || returnType == null || !stmt.hasReturnType(returnType)) {
             errors.add(String.format("Return type mismatch in procedure %s", proc.getName()));
         }
         errors.addAll(collectErrorsFrom(proc.getEntryPoint()));
