@@ -1,5 +1,7 @@
 package com.merkrafter.representation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /****
@@ -15,7 +17,9 @@ public class VariableDescription extends ObjectDescription {
 
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final Type type;
+    @NotNull
     private Object value;
     private final boolean constant;
 
@@ -26,8 +30,8 @@ public class VariableDescription extends ObjectDescription {
      * Creates a VariableDescriptor that stores information on a variable or
      * constant.
      ***************************************************************/
-    public VariableDescription(final String name, final Type type, final Object value,
-                               final boolean constant) {
+    public VariableDescription(@NotNull final String name, @NotNull final Type type,
+                               @NotNull final Object value, final boolean constant) {
         super(name);
         this.type = type;
         this.value = value;
@@ -36,11 +40,12 @@ public class VariableDescription extends ObjectDescription {
 
     // GETTER
     //==============================================================
+    @NotNull
     public Type getType() {
         return type;
     }
 
-    Object getValue() {
+    @NotNull Object getValue() {
         return value;
     }
 
@@ -62,7 +67,7 @@ public class VariableDescription extends ObjectDescription {
      * @param value the new value to set
      * @return whether this operation was successful
      */
-    boolean setValue(final Object value) {
+    boolean setValue(@NotNull final Object value) {
         if (!constant) {
             if (type == Type.INT) {
                 if (value instanceof Integer) {
@@ -91,11 +96,11 @@ public class VariableDescription extends ObjectDescription {
      * @return whether this is equal to other
      */
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(@NotNull final Object other) {
         if (this == other) {
             return true;
         }
-        if (other == null || getClass() != other.getClass()) {
+        if (getClass() != other.getClass()) {
             return false;
         }
         final VariableDescription that = (VariableDescription) other;
@@ -113,6 +118,7 @@ public class VariableDescription extends ObjectDescription {
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         return String.format("%d[label=\"%s\"];", getID(), getName());
