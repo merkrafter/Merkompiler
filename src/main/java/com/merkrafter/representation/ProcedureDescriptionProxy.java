@@ -2,6 +2,8 @@ package com.merkrafter.representation;
 
 import com.merkrafter.representation.ast.ParameterListNode;
 import com.merkrafter.representation.ast.Statement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,9 +23,13 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
     /**
      * the symbolTable that is supposed to contain the procedure
      */
+    @NotNull
     private final SymbolTable symbolTable;
+    @NotNull
     private final String name;
+    @NotNull
     private final ParameterListNode parameters;
+    @Nullable
     private ProcedureDescription procedureDescription;
     /**
      * this is managed by the findProcedureDescription method
@@ -37,8 +43,9 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
      * Creates a new ProcedureDescriptionProxy from the information on the procedure to find and the
      * SymbolTable it is supposed to be in.
      ***************************************************************/
-    public ProcedureDescriptionProxy(final String name, final ParameterListNode parameters,
-                                     final SymbolTable symbolTable) {
+    public ProcedureDescriptionProxy(@NotNull final String name,
+                                     @NotNull final ParameterListNode parameters,
+                                     @NotNull final SymbolTable symbolTable) {
         this.name = name;
         this.symbolTable = symbolTable;
         this.parameters = parameters;
@@ -50,6 +57,7 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
     /**
      * @return the symbols of the underlying procedure if it exists or null otherwise
      */
+    @NotNull
     @Override
     public SymbolTable getSymbols() {
         findProcedureDescription();
@@ -57,9 +65,10 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         if (procedureDescription != null) {
             return procedureDescription.getSymbols();
         }
-        return null;
+        return new SymbolTable();
     }
 
+    @NotNull
     @Override
     public String getName() {
         findProcedureDescription();
@@ -70,6 +79,7 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         return name;
     }
 
+    @Nullable
     @Override
     public List<VariableDescription> getParamList() {
         findProcedureDescription();
@@ -80,6 +90,7 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         return null;
     }
 
+    @Nullable
     @Override
     public Type getReturnType() {
         findProcedureDescription();
@@ -90,6 +101,7 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         return null;
     }
 
+    @Nullable
     @Override
     public Statement getEntryPoint() {
         findProcedureDescription();
@@ -102,16 +114,6 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
     // METHODS
     //==============================================================
     // package-private methods
-    //--------------------------------------------------------------
-
-    /**
-     * @return whether the underlying ProcedureDescription could be found in the symbolTable already
-     */
-    boolean resolved() {
-        return procedureDescription != null;
-    }
-
-    // private methods
     //--------------------------------------------------------------
 
     /**
@@ -143,9 +145,10 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
     /**
      * @return dot/graphviz declarations of this component
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
-        if (resolved()) {
+        if (procedureDescription != null) {
             return procedureDescription.getDotRepresentation();
         }
         return String.format("%d[shape=box,label=\"extern %s\"];", getID(), name)
