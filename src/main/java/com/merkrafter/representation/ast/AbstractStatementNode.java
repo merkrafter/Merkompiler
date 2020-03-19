@@ -1,6 +1,8 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +22,7 @@ public abstract class AbstractStatementNode implements Statement {
     /**
      * Next sequential instruction in the represented program.
      */
+    @Nullable
     private Statement next;
 
     // CONSTRUCTORS
@@ -37,6 +40,7 @@ public abstract class AbstractStatementNode implements Statement {
     /**
      * Next sequential instruction in the represented program.
      */
+    @Nullable
     public Statement getNext() {
         return next;
     }
@@ -49,7 +53,7 @@ public abstract class AbstractStatementNode implements Statement {
      *
      * @param next the node that represents the instruction after this node's
      */
-    public void setNext(final Statement next) {
+    public void setNext(@Nullable final Statement next) {
         this.next = next;
     }
 
@@ -59,6 +63,7 @@ public abstract class AbstractStatementNode implements Statement {
      * @param nodes child node(s) that should be tested
      * @return a list of all errors that can be found in this subtree
      */
+    @NotNull
     static List<String> collectErrorsFrom(final AbstractSyntaxTree... nodes) {
         final List<String> errors = new LinkedList<>();
         for (final AbstractSyntaxTree node : nodes) {
@@ -83,9 +88,10 @@ public abstract class AbstractStatementNode implements Statement {
     /**
      * @return dot/graphviz declarations of this component's next statement
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
-        if (next == null) {
+        if (getNext() == null) {
             return "";
         }
         return getNext().getDotRepresentation();
@@ -95,13 +101,14 @@ public abstract class AbstractStatementNode implements Statement {
      * @return the type of the next statement in this sequence
      */
     @Override
-    public boolean hasReturnType(final Type type) {
+    public boolean hasReturnType(@NotNull final Type type) {
         if (getNext() == null) {
             return type == Type.VOID;
         }
         return getNext().hasReturnType(type);
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         if (getNext() == null) {
