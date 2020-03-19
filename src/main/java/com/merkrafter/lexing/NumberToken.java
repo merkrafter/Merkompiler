@@ -22,7 +22,7 @@ public class NumberToken extends Token {
     /****
      * Creates a new NumberToken from a number and position data.
      ***************************************************************/
-    public NumberToken(final long number, final String filename, final long line,
+    public NumberToken(final long number, @NotNull final String filename, final long line,
                        final int position) {
         super(TokenType.NUMBER, filename, line, position);
         this.number = number;
