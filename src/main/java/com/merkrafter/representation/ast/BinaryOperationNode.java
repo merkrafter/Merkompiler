@@ -1,6 +1,7 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,9 +17,12 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
 public class BinaryOperationNode implements Expression {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final Expression leftOperand;
+    @NotNull
     private final Expression rightOperand;
 
+    @NotNull
     private final BinaryOperationNodeType binOpType;
 
     // CONSTRUCTORS
@@ -28,9 +32,9 @@ public class BinaryOperationNode implements Expression {
      * Creates a new BinaryOperationNode from an operation and two operands.
      * It does no type validation at this point.
      ***************************************************************/
-    public BinaryOperationNode(final Expression leftOperand,
-                               final BinaryOperationNodeType binOpType,
-                               final Expression rightOperand) {
+    public BinaryOperationNode(@NotNull final Expression leftOperand,
+                               @NotNull final BinaryOperationNodeType binOpType,
+                               @NotNull final Expression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
         this.binOpType = binOpType;
@@ -38,15 +42,13 @@ public class BinaryOperationNode implements Expression {
 
     // GETTER
     //==============================================================
-    public BinaryOperationNodeType getBinOpType() {
-        return binOpType;
-    }
 
     /**
      * After evaluating this node, this is the type that is propagated upwards.
      *
      * @return the return type of this node
      */
+    @NotNull
     @Override
     public Type getReturnedType() {
         // TODO regularly check this method
@@ -72,6 +74,7 @@ public class BinaryOperationNode implements Expression {
         return Type.BOOLEAN;
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         final List<String> errors = new LinkedList<>();
@@ -96,8 +99,7 @@ public class BinaryOperationNode implements Expression {
      */
     @Override
     public boolean hasSemanticsError() {
-        return leftOperand == null || rightOperand == null || binOpType == null
-               || leftOperand.hasSemanticsError() || rightOperand.hasSemanticsError();
+        return leftOperand.hasSemanticsError() || rightOperand.hasSemanticsError();
     }
 
     /**
@@ -107,13 +109,13 @@ public class BinaryOperationNode implements Expression {
      */
     @Override
     public boolean hasSyntaxError() {
-        return leftOperand == null || rightOperand == null || binOpType == null
-               || leftOperand.hasSyntaxError() || rightOperand.hasSyntaxError();
+        return leftOperand.hasSyntaxError() || rightOperand.hasSyntaxError();
     }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return collectErrorsFrom(leftOperand, rightOperand);
@@ -124,14 +126,13 @@ public class BinaryOperationNode implements Expression {
      * and are equal to each other respectively.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof BinaryOperationNode)) {
             return false;
         }
         final BinaryOperationNode other = (BinaryOperationNode) obj;
-        return leftOperand != null && other.leftOperand != null && rightOperand != null
-               && other.rightOperand != null && binOpType == other.binOpType && leftOperand.equals(
-                other.leftOperand) && rightOperand.equals(other.rightOperand);
+        return binOpType == other.binOpType && leftOperand.equals(other.leftOperand) && rightOperand
+                .equals(other.rightOperand);
     }
 
     /**
@@ -145,6 +146,7 @@ public class BinaryOperationNode implements Expression {
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         final StringBuilder dotRepr = new StringBuilder();
