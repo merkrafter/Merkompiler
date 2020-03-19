@@ -3,8 +3,9 @@ package com.merkrafter.parsing;
 import com.merkrafter.lexing.*;
 import com.merkrafter.representation.*;
 import com.merkrafter.representation.ast.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,11 +24,13 @@ public class Parser {
     /**
      * The scanner that provides the tokens for this parser
      */
+    @NotNull
     private final Scanner scanner;
 
     /**
      * The base symbol table that encloses all others.
      */
+    @NotNull
     private SymbolTable symbolTable;
 
     // CONSTRUCTORS
@@ -36,14 +39,14 @@ public class Parser {
     /****
      * Creates a new Parser based on a scanner that provides tokens.
      ***************************************************************/
-    public Parser(final Scanner scanner) {
+    public Parser(@NotNull final Scanner scanner) {
         this(scanner, null);
     }
 
     /**
      * Creates a new Parser with a set of global variables. Can be used for testing purposes.
      */
-    Parser(final Scanner scanner, final SymbolTable globalVariables) {
+    Parser(@NotNull final Scanner scanner, @Nullable final SymbolTable globalVariables) {
         this.scanner = scanner;
         this.scanner.processToken();
         symbolTable = new SymbolTable(globalVariables);
@@ -59,6 +62,7 @@ public class Parser {
      *
      * @return the AST of the program
      */
+    @NotNull
     public AbstractSyntaxTree parse() {
         final AbstractSyntaxTree ast = parseClass();
         if (ast instanceof ErrorNode) {
@@ -73,7 +77,7 @@ public class Parser {
         return ast;
     }
 
-    AbstractSyntaxTree parseClass() {
+    @NotNull AbstractSyntaxTree parseClass() {
         final Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.CLASS)) {
             return new ErrorNode(generateErrorMessage("'class' keyword"));
@@ -159,15 +163,14 @@ public class Parser {
             return false;
         }
         scanner.processToken();
-        if (parseExpression() == null) {
-            return false;
-        }
+        parseExpression(); // FIXME why is this statement alone?
+
         if (scanner.getSym().getType() != SEMICOLON) {
             return false;
         }
 
         // TODO evaluate the expression to set the value correctly
-        final VariableDescription var = new VariableDescription(identifier, type, null, true);
+        final VariableDescription var = new VariableDescription(identifier, type, 0, true);
         // TODO check whether this is successful
         symbolTable.insert(var);
 
@@ -211,7 +214,7 @@ public class Parser {
      *
      * @return procedureDescription or null if an error occurred
      */
-    ActualProcedureDescription parseMethodHead() {
+    @Nullable ActualProcedureDescription parseMethodHead() {
         final Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken
               && ((KeywordToken) scanner.getSym()).getKeyword() == Keyword.PUBLIC)) {
@@ -230,6 +233,9 @@ public class Parser {
         }
 
         final List<VariableDescription> formalParameters = parseFormalParameters();
+        if (formalParameters == null) {
+            return null;
+        }
         return new ActualProcedureDescription(type, identifier, formalParameters, symbolTable);
     }
 
@@ -238,7 +244,7 @@ public class Parser {
      *
      * @return type of a method or null if no applicable type was found
      */
-    Type parseMethodType() {
+    @Nullable Type parseMethodType() {
         final Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken)) {
             return null;
@@ -260,7 +266,7 @@ public class Parser {
      *
      * @return list of variable descriptions found or null if an error occurred
      */
-    List<VariableDescription> parseFormalParameters() {
+    @Nullable List<VariableDescription> parseFormalParameters() {
         Token sym = scanner.getSym();
         if (sym.getType() != L_PAREN) {
             return null;
@@ -298,7 +304,7 @@ public class Parser {
      *
      * @return a variable description for the formal parameter or null if an error occurs
      */
-    VariableDescription parseFpSection() {
+    @Nullable VariableDescription parseFpSection() {
         final Type type = parseType();
         if (type == null) {
             return null;
@@ -318,7 +324,7 @@ public class Parser {
      *
      * @return whether this operation was successful
      */
-    Statement parseMethodBody() {
+    @NotNull Statement parseMethodBody() {
         Token sym = scanner.getSym();
         if (sym.getType() != L_BRACE) {
             return new ErrorNode(generateErrorMessage("{"));
@@ -370,7 +376,7 @@ public class Parser {
         return true;
     }
 
-    Statement parseStatementSequence() {
+    @NotNull Statement parseStatementSequence() {
         final Statement headNode = parseStatement();
         if (headNode instanceof ErrorNode) {
             return headNode;
@@ -393,7 +399,7 @@ public class Parser {
      *
      * @return ASTBaseNode representing this statement or ErrorNode
      */
-    Statement parseStatement() {
+    @NotNull Statement parseStatement() {
         // factoring of
         // statement = ident '=' expression ';' | ident actual_parameters ';'
         //             ^ assignment               ^ procedure call
@@ -422,6 +428,7 @@ public class Parser {
      *
      * @return AssignmentNode, ProcedureCallNode, or ErrorNode
      */
+    @NotNull
     private Statement parseStatementForAssignmentOrProcedureCall() {
         final String identifier = parseIdentifier();
         if (identifier == null) {
@@ -464,7 +471,7 @@ public class Parser {
      *
      * @return the type of a KeywordToken
      */
-    Type parseType() {
+    @Nullable Type parseType() {
         final Token sym = scanner.getSym();
         if (sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.INT) {
             scanner.processToken();
@@ -481,7 +488,7 @@ public class Parser {
      *
      * @return AssignmentNode representing this assignment statement or ErrorNode
      */
-    AbstractSyntaxTree parseAssignment() {
+    @NotNull AbstractSyntaxTree parseAssignment() {
         final String identifier = parseIdentifier();
         if (identifier == null) {
             return new ErrorNode(generateErrorMessage("identifier"));
@@ -502,6 +509,7 @@ public class Parser {
      *
      * @return the expression that will be assigned to a variable
      */
+    @NotNull
     private Expression parseAssignmentWithoutIdent() {
         Token sym = scanner.getSym();
         if (sym.getType() != ASSIGN) {
@@ -530,7 +538,7 @@ public class Parser {
      *
      * @return IfElseNode representing this if statement or ErrorNode
      */
-    Statement parseIfStatement() {
+    @NotNull Statement parseIfStatement() {
         // if keyword
         Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.IF)) {
@@ -604,7 +612,7 @@ public class Parser {
      *
      * @return WhileNode representing this while statement or ErrorNode
      */
-    Statement parseWhileStatement() {
+    @NotNull Statement parseWhileStatement() {
         Token sym = scanner.getSym();
 
         // while keyword
@@ -657,7 +665,7 @@ public class Parser {
      *
      * @return ReturnNode representing this return statement or ErrorNode
      */
-    Statement parseReturnStatement() {
+    @NotNull Statement parseReturnStatement() {
         Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.RETURN)) {
             return new ErrorNode(generateErrorMessage("'return' keyword"));
@@ -694,7 +702,7 @@ public class Parser {
      *
      * @return list of actual parameters
      */
-    ParameterListNode parseActualParameters() {
+    @Nullable ParameterListNode parseActualParameters() {
         if (scanner.getSym().getType() != L_PAREN) {
             return null; // TODO return an error node later on
         }
@@ -705,14 +713,14 @@ public class Parser {
         Expression node = parseExpression();
         // it is okay if no expression comes here
         // but it is still necessary to check for the right paren afterwards
-        if (node != null && !(node instanceof ErrorNode)) {
+        if (!(node instanceof ErrorNode)) {
             paramList.add(node);
 
             while (scanner.getSym().getType() == COMMA) {
                 scanner.processToken();
 
                 node = parseExpression();
-                if (node == null || node instanceof ErrorNode) {
+                if (node instanceof ErrorNode) {
                     return null; // TODO return the error node
                 }
                 paramList.add(node);
@@ -734,11 +742,8 @@ public class Parser {
      *
      * @return syntax tree for this expression
      */
-    Expression parseExpression() {
+    @NotNull Expression parseExpression() {
         Expression node = parseSimpleExpression();
-        if (node == null) { // TODO check whether this case can happen; better avoid it
-            return null;
-        }
         final Token sym = scanner.getSym();
         switch (sym.getType()) {
             case EQUAL:
@@ -783,9 +788,9 @@ public class Parser {
      *
      * @return syntax tree for this simple expression
      */
-    Expression parseSimpleExpression() {
+    @NotNull Expression parseSimpleExpression() {
         Expression node = parseTerm();
-        while (node != null && !(node instanceof ErrorNode)) {
+        while (!(node instanceof ErrorNode)) {
             final Token sym = scanner.getSym();
             if (sym.getType() == PLUS) {
                 scanner.processToken();
@@ -808,9 +813,9 @@ public class Parser {
      *
      * @return syntax tree for this term
      */
-    Expression parseTerm() {
+    @NotNull Expression parseTerm() {
         Expression node = parseFactor();
-        while (node != null && !(node instanceof ErrorNode)) {
+        while (!(node instanceof ErrorNode)) {
             final Token sym = scanner.getSym();
             if (sym.getType() == TIMES) {
                 scanner.processToken();
@@ -833,7 +838,7 @@ public class Parser {
      *
      * @return syntax tree for this factor
      */
-    Expression parseFactor() {
+    @NotNull Expression parseFactor() {
         final String identifier = parseIdentifier();
         if (identifier != null) {
             final ParameterListNode parameters = parseActualParameters();
@@ -891,7 +896,7 @@ public class Parser {
      *
      * @return whether a single NUMBER token comes next
      */
-    Expression parseNumber() {
+    @NotNull Expression parseNumber() {
         final Token sym = scanner.getSym();
         if (sym.getType() == NUMBER) {
             ConstantNode<Long> node;
@@ -914,7 +919,7 @@ public class Parser {
      *
      * @return an identifier of a single IDENT token that comes next
      */
-    String parseIdentifier() {
+    @Nullable String parseIdentifier() {
         // this method does not return a Node yet as it does not know enough context
         // this could be a declaration, a variable or a procedure, for instance
         final Token sym = scanner.getSym();
@@ -939,7 +944,8 @@ public class Parser {
      * @param expectedConstruct a String that describes what should have been there
      * @return a string that can be used as an output for users
      */
-    private String generateErrorMessage(final String expectedConstruct) {
+    @NotNull
+    private String generateErrorMessage(@NotNull final String expectedConstruct) {
         final String template = "%s was found, but %s was expected.";
         return String.format(template, scanner.getSym(), expectedConstruct);
     }
