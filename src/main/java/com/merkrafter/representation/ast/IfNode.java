@@ -1,9 +1,8 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
@@ -17,7 +16,9 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
 public class IfNode implements AbstractSyntaxTree {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final Expression condition;
+    @NotNull
     private final Statement ifBranch;
 
     // CONSTRUCTORS
@@ -28,7 +29,7 @@ public class IfNode implements AbstractSyntaxTree {
      * condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfNode(final Expression condition, final Statement ifBranch) {
+    public IfNode(@NotNull final Expression condition, @NotNull final Statement ifBranch) {
         this.condition = condition;
         this.ifBranch = ifBranch;
     }
@@ -43,8 +44,7 @@ public class IfNode implements AbstractSyntaxTree {
      */
     @Override
     public boolean hasSemanticsError() {
-        return condition == null || ifBranch == null || condition.hasSemanticsError()
-               || ifBranch.hasSemanticsError();
+        return condition.hasSemanticsError() || ifBranch.hasSemanticsError();
     }
 
     /**
@@ -54,13 +54,13 @@ public class IfNode implements AbstractSyntaxTree {
      */
     @Override
     public boolean hasSyntaxError() {
-        return condition == null || ifBranch == null || condition.hasSyntaxError()
-               || ifBranch.hasSyntaxError();
+        return condition.hasSyntaxError() || ifBranch.hasSyntaxError();
     }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return collectErrorsFrom(condition, ifBranch);
@@ -71,17 +71,15 @@ public class IfNode implements AbstractSyntaxTree {
      * equal to each other respectively.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof IfNode)) {
             return false;
         }
         final IfNode other = (IfNode) obj;
-        return condition != null && other.condition != null && ifBranch != null
-               && other.ifBranch != null && condition.equals(other.condition) && ifBranch.equals(
-                other.ifBranch);
+        return condition.equals(other.condition) && ifBranch.equals(other.ifBranch);
     }
 
-    String getDotRepresentation() {
+    @NotNull String getDotRepresentation() {
         final StringBuilder dotRepr = new StringBuilder();
 
         // define children
@@ -107,10 +105,11 @@ public class IfNode implements AbstractSyntaxTree {
     /**
      * @return the type of the if branch
      */
-    boolean hasReturnType(final Type type) {
+    boolean hasReturnType(@NotNull final Type type) {
         return ifBranch.hasReturnType(type);
     }
 
+    @NotNull
     public List<String> getTypingErrors() {
         final List<String> errors = condition.getTypingErrors();
         if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
