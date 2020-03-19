@@ -14,6 +14,7 @@ public class IdentToken extends Token {
     /**
      * the identifier this token stands for
      */
+    @NotNull
     private final String ident;
 
     // CONSTRUCTORS
@@ -22,7 +23,7 @@ public class IdentToken extends Token {
     /****
      * Creates a new IdentToken from an identifier and position data.
      ***************************************************************/
-    public IdentToken(final String ident, final String filename, final long line,
+    public IdentToken(@NotNull final String ident, @NotNull final String filename, final long line,
                       final int position) {
         super(TokenType.IDENT, filename, line, position);
         this.ident = ident;
@@ -34,6 +35,7 @@ public class IdentToken extends Token {
     /**
      * @return the identifier this token stands for
      */
+    @NotNull
     public String getIdent() {
         return ident;
     }
