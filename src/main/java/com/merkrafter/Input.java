@@ -1,5 +1,7 @@
 package com.merkrafter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -29,6 +31,7 @@ public class Input implements Iterator<Character> {
     /**
      * This reader is used to read the file that is passed via the constructor.
      */
+    @NotNull
     private final BufferedReader reader;
     /**
      * This field stores the last character that was read from the file.
@@ -45,7 +48,7 @@ public class Input implements Iterator<Character> {
      * @param filename The path to the file that should be iterated over.
      * @throws FileNotFoundException if the path does not point to an existing file
      ***************************************************************/
-    Input(final String filename) throws FileNotFoundException {
+    Input(@NotNull final String filename) throws FileNotFoundException {
         reader = new BufferedReader(new FileReader(filename));
         next(); // read a first character
     }
@@ -70,6 +73,7 @@ public class Input implements Iterator<Character> {
      *
      * @return latest character in the file
      */
+    @NotNull
     @Override
     public Character next() {
         int returnValue = lastRead;
