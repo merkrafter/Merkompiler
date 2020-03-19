@@ -861,8 +861,9 @@ public class Parser {
             final VariableDescription var =
                     (VariableDescription) symbolTable.find(identifier, (Type[]) null);
 
-            // no need to check whether a variable was found since the variable access node will
-            // communicate an error by itself when its hasSemanticsError() method is called
+            if (var == null) {
+                return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
+            }
             return new VariableAccessNode(var);
         }
 
