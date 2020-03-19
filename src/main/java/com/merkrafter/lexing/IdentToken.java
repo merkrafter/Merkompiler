@@ -1,5 +1,7 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This class serves as a token and stores the identifier found.
  *
@@ -49,7 +51,7 @@ public class IdentToken extends Token {
      * @return whether this is equal to obj
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!super.equals(obj)) {
             return false;
         }
@@ -62,6 +64,7 @@ public class IdentToken extends Token {
      *
      * @return a String representation of this IdentToken
      */
+    @NotNull
     @Override
     public String toString() {
         return super.toString() + String.format("(%s)", ident);

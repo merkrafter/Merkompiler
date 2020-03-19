@@ -36,6 +36,7 @@ class ScannerTest {
     void setUp() {
         stringIterator = new StringIteratorTestUtility();
         scanner = new Scanner(stringIterator);
+        scanner.setFilename(""); // avoid null
     }
 
     /**
@@ -47,7 +48,7 @@ class ScannerTest {
     void scanOtherTokens(final String string) {
         final String programCode = string;
         final Token[] expectedTokenList = {
-                new OtherToken(string, null, 1, 1), new Token(EOF, null, 1, string.length())};
+                new OtherToken(string, "", 1, 1), new Token(EOF, "", 1, string.length())};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -61,8 +62,8 @@ class ScannerTest {
     void scanNormalNumbers(final long number) {
         final String programCode = Long.toString(number);
         final Token[] expectedTokenList = {
-                new NumberToken(number, null, 1, 1),
-                new Token(EOF, null, 1, Long.toString(number).length())};
+                new NumberToken(number, "", 1, 1),
+                new Token(EOF, "", 1, Long.toString(number).length())};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -76,8 +77,8 @@ class ScannerTest {
     void scanSpecialNumbers(final String number) {
         final long expectedNumber = 8;
         final Token[] expectedTokenList = {
-                new NumberToken(expectedNumber, null, 1, 1),
-                new Token(EOF, null, 1, number.length())};
+                new NumberToken(expectedNumber, "", 1, 1),
+                new Token(EOF, "", 1, number.length())};
         shouldScan(number, expectedTokenList);
     }
 
@@ -89,8 +90,8 @@ class ScannerTest {
     void scanKeyword(final Keyword keyword) {
         final String programCode = keyword.name().toLowerCase();
         final Token[] expectedTokenList = {
-                new KeywordToken(keyword, null, 1, 1),
-                new Token(EOF, null, 1, keyword.name().length())};
+                new KeywordToken(keyword, "", 1, 1),
+                new Token(EOF, "", 1, keyword.name().length())};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -345,7 +346,7 @@ class ScannerTest {
 
         final long expectedLine = 1;
         final int expectedPosition = 1;
-        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token expectedToken = new Token(IDENT, "", expectedLine, expectedPosition);
         final Token actualToken = getTokenList(scanner).get(0);
 
         assertEquals(expectedToken, actualToken);
@@ -361,7 +362,7 @@ class ScannerTest {
 
         final long expectedLine = 2;
         final int expectedPosition = 1;
-        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token expectedToken = new Token(IDENT, "", expectedLine, expectedPosition);
         final Token actualToken = getTokenList(scanner).get(1); // second token 'b'
 
         assertEquals(expectedToken, actualToken);
