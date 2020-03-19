@@ -120,7 +120,7 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
      */
     void findProcedureDescription() {
         if (procedureDescription == null) {
-            if (parameters == null) {
+            if (parameters.getParameters().isEmpty()) {
                 signature = new Type[0];
             }
             if (signature == null) {

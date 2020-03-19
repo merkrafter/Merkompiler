@@ -95,8 +95,8 @@ public class Parser {
 
         // find parameterless main method
         final ProcedureDescription mainProcedure =
-                new ProcedureDescriptionProxy("main", null, symbolTable);
-        clazz.setEntryPoint(new ProcedureCallNode(mainProcedure, null));
+                new ProcedureDescriptionProxy("main", new ParameterListNode(), symbolTable);
+        clazz.setEntryPoint(new ProcedureCallNode(mainProcedure, new ParameterListNode()));
 
         // do not return immediately in case of errors, because the symbol table scope must be reset
         symbolTable = prevSymbolTable;
