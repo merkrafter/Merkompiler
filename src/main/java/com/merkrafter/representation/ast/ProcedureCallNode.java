@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.VariableDescription;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +47,31 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
 
     @Override
     public List<String> getTypingErrors() {
-        return new LinkedList<>();
+        final List<String> errors = new LinkedList<>();
+        if (procedure.getParamList() == null) {
+            errors.add(String.format(
+                    "Could not verify the arguments in call to unknown procedure %s",
+                    procedure.getName()));
+        }
+        // this case should never happen because the procedure call should only be created when
+        // the types of call arguments and formal parameters match, but better check this twice
+        // in case something changes in the other parts of the program
+        else if (args.getParameters().size() != procedure.getParamList().size()) {
+            errors.add(String.format("Incorrect number of arguments in call to procedure %s",
+                                     procedure.getName()));
+        } else {
+            for (int i = 0; i < args.getParameters().size(); i++) {
+                if (!args.getParameters()
+                         .get(i)
+                         .getReturnedType()
+                         .equals(procedure.getParamList().get(i).getType())) {
+                    errors.add(String.format("Type mismatch in arg #%d in call to procedure %s",
+                                             i + 1,
+                                             procedure.getName()));
+                }
+            }
+        }
+        return errors;
     }
 
     /**

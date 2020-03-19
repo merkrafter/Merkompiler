@@ -103,4 +103,28 @@ public class TypeCheckTest {
         final List<String> errors = nodeUnderTest.getTypingErrors();
         assertFalse(errors.isEmpty());
     }
+
+    /**
+     * void voidFunc() {...}
+     * void singleArg(int arg) {...}
+     * singleArg(voidFunc()); // should return an error
+     */
+    @Test
+    void testVoidAsArgument() {
+        // define a procedure that takes a single int-type argument
+        final LinkedList<VariableDescription> args = new LinkedList<>();
+        args.add(new VariableDescription("arg", Type.INT, 0, false));
+        final ProcedureDescription singleArgumentProcedure =
+                new ActualProcedureDescription(Type.VOID, "singleArg", args, null);
+
+        // describe a call of that procedure with a void-returning procedure as an argument
+        final LinkedList<Expression> params = new LinkedList<>();
+        params.add(voidFuncCall);
+        final ParameterListNode paramNode = new ParameterListNode(params);
+        final ProcedureCallNode nodeUnderTest =
+                new ProcedureCallNode(singleArgumentProcedure, paramNode);
+
+        final List<String> errors = nodeUnderTest.getTypingErrors();
+        assertFalse(errors.isEmpty());
+    }
 }
