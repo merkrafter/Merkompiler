@@ -59,6 +59,7 @@ public class VariableAccessNode implements Expression {
         return variableDescription.isConstant();
     }
 
+    @NotNull
     public String getName() {
         return variableDescription.getName();
     }
