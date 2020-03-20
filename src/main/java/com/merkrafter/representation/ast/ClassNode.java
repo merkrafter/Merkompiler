@@ -61,25 +61,6 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     //--------------------------------------------------------------
 
     /**
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return classDescription.getEntryPoint() == null || classDescription.getEntryPoint()
-                                                                           .hasSemanticsError();
-    }
-
-    /**
-     * @return a class node has an error if the class was not defined or the class had an error
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        // it is syntactically correct to not have an entry point
-        return classDescription.getEntryPoint() != null && classDescription.getEntryPoint()
-                                                                           .hasSyntaxError();
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull

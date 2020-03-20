@@ -51,26 +51,6 @@ public class ReturnNode extends AbstractStatementNode {
     }
 
     /**
-     * A ReturnNode has a semantics error if the return value exists but has an error.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return expression != null && expression.hasSemanticsError();
-    }
-
-    /**
-     * A ReturnNode can not have a syntax error.
-     *
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull

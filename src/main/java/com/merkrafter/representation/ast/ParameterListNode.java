@@ -47,22 +47,6 @@ public class ParameterListNode implements AbstractSyntaxTree {
     }
 
     /**
-     * @return false
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return false;
-    }
-
-    /**
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
-    }
-
-    /**
      * @return empty list
      */
     @NotNull

@@ -54,26 +54,6 @@ public class ErrorNode implements Expression, Statement {
     }
 
     /**
-     * An ErrorNode is always counted as an error.
-     *
-     * @return true
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return true;
-    }
-
-    /**
-     * An ErrorNode is always counted as an error.
-     *
-     * @return true
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return true;
-    }
-
-    /**
      * @return a list containing the error message of this node
      */
     @NotNull

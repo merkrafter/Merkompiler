@@ -37,26 +37,6 @@ public class WhileNode extends AbstractStatementNode {
     //==============================================================
 
     /**
-     * A WhileNode has a semantics error if the child nodes are null or have errors themselves.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return condition.hasSemanticsError() || loopBody.hasSemanticsError();
-    }
-
-    /**
-     * A WhileNode has a syntax error if the child nodes are null or have errors themselves.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return condition.hasSyntaxError() || loopBody.hasSyntaxError();
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull

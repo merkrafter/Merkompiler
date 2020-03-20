@@ -93,26 +93,6 @@ public class BinaryOperationNode implements Expression {
     }
 
     /**
-     * A BinaryOperationNode has a semantics error if any child node is null or has an error itself.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return leftOperand.hasSemanticsError() || rightOperand.hasSemanticsError();
-    }
-
-    /**
-     * A BinaryOperationNode has a syntax error if any child node is null or has an error itself.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return leftOperand.hasSyntaxError() || rightOperand.hasSyntaxError();
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull

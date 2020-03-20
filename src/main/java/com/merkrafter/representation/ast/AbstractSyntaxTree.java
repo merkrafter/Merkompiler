@@ -18,16 +18,6 @@ public interface AbstractSyntaxTree {
     //--------------------------------------------------------------
 
     /**
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    boolean hasSemanticsError();
-
-    /**
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    boolean hasSyntaxError();
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull List<String> getAllErrors();

@@ -94,26 +94,6 @@ public class ConstantNode<T> implements Expression {
     }
 
     /**
-     * A ConstantNode can not have a semantics error.
-     *
-     * @return false
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return false;
-    }
-
-    /**
-     * A ConstantNode can not have a syntax error.
-     *
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
-    }
-
-    /**
      * @return an empty list
      */
     @NotNull

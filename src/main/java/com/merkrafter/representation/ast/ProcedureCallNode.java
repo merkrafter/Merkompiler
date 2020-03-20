@@ -82,22 +82,6 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     }
 
     /**
-     * @return false
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return false;
-    }
-
-    /**
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull

@@ -39,7 +39,7 @@ class ParserTest {
                 new Token(TokenType.SEMICOLON, "", 1, 1),
                 new Token(TokenType.R_BRACE, "", 1, 1)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseClass().hasSyntaxError());
+        assertTrue(parser.parseClass().getAllErrors().isEmpty());
     }
 
     /**
@@ -185,7 +185,7 @@ class ParserTest {
     void parseStatementSequence(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseStatementSequence().hasSyntaxError());
+        assertTrue(parser.parseStatementSequence().getAllErrors().isEmpty());
     }
 
     /**
@@ -199,7 +199,7 @@ class ParserTest {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree node = parser.parseStatement();
-        assertFalse(node.hasSyntaxError());
+        assertTrue(node.getAllErrors().isEmpty());
     }
 
     /**
@@ -224,7 +224,7 @@ class ParserTest {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree astUnderTest = parser.parseAssignment();
-        assertFalse(astUnderTest.hasSyntaxError());
+        assertTrue(astUnderTest.getAllErrors().isEmpty());
     }
 
     /**
@@ -237,7 +237,7 @@ class ParserTest {
     void parseFaultyAssignment(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseAssignment().hasSyntaxError());
+        assertFalse(parser.parseAssignment().getAllErrors().isEmpty());
     }
 
     /**
@@ -251,7 +251,7 @@ class ParserTest {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree node = parser.parseIfStatement();
-        assertFalse(node.hasSyntaxError());
+        assertTrue(node.getAllErrors().isEmpty());
     }
 
     /**
@@ -264,7 +264,7 @@ class ParserTest {
     void parseWhileStatement(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseWhileStatement().hasSyntaxError());
+        assertTrue(parser.parseWhileStatement().getAllErrors().isEmpty());
     }
 
     /**
@@ -277,7 +277,7 @@ class ParserTest {
     void parseReturnStatement(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseReturnStatement().hasSyntaxError());
+        assertTrue(parser.parseReturnStatement().getAllErrors().isEmpty());
     }
 
     /**
@@ -288,7 +288,7 @@ class ParserTest {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.RETURN, "", 1, 1)});
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseReturnStatement().hasSyntaxError());
+        assertFalse(parser.parseReturnStatement().getAllErrors().isEmpty());
     }
 
     /**
@@ -314,7 +314,7 @@ class ParserTest {
     void parseExpression(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseExpression().hasSyntaxError());
+        assertTrue(parser.parseExpression().getAllErrors().isEmpty());
     }
 
     /**
@@ -327,7 +327,7 @@ class ParserTest {
     void parseSimpleExpression(@NotNull final ParserTestDataProvider.TokenWrapper inputTokens) {
         final Scanner scanner = new TestScanner(inputTokens.getTokens());
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseSimpleExpression().hasSyntaxError());
+        assertTrue(parser.parseSimpleExpression().getAllErrors().isEmpty());
     }
 
     /**
@@ -341,7 +341,7 @@ class ParserTest {
                 new Token(tokenType, "", 0, 0),
                 new Token(TokenType.NUMBER, "", 0, 0)});
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseTerm().hasSyntaxError());
+        assertTrue(parser.parseTerm().getAllErrors().isEmpty());
     }
 
     /**
@@ -354,7 +354,7 @@ class ParserTest {
                 new Token(TokenType.L_PAREN, "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        assertTrue(parser.parseFactor().getAllErrors().isEmpty());
     }
 
     /**
@@ -370,7 +370,7 @@ class ParserTest {
                 new Token(tokenType, "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        assertTrue(parser.parseFactor().getAllErrors().isEmpty());
     }
 
     /**
@@ -387,7 +387,7 @@ class ParserTest {
                 new Token(TokenType.IDENT, "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        assertTrue(parser.parseFactor().getAllErrors().isEmpty());
     }
 
     /**
@@ -405,7 +405,7 @@ class ParserTest {
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
         final AbstractSyntaxTree node = parser.parseFactor();
-        assertFalse(node.hasSyntaxError());
+        assertTrue(node.getAllErrors().isEmpty());
     }
 
     /**
@@ -419,7 +419,7 @@ class ParserTest {
                 new IdentToken("a", "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        assertTrue(parser.parseFactor().getAllErrors().isEmpty());
     }
 
     /**
@@ -433,7 +433,7 @@ class ParserTest {
                 new NumberToken(5, "", 0, 0),
                 new Token(TokenType.R_PAREN, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        assertTrue(parser.parseFactor().getAllErrors().isEmpty());
     }
 
     /**
@@ -443,7 +443,7 @@ class ParserTest {
     void parseIdentifierAsFactor() {
         final Scanner scanner = new TestScanner(new Token[]{new IdentToken("a", "", 0, 0)});
         final Parser parser = new Parser(scanner, ParserTestDataProvider.TEST_SYMBOLS);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        assertTrue(parser.parseFactor().getAllErrors().isEmpty());
     }
 
     /**
@@ -453,7 +453,7 @@ class ParserTest {
     void parseNumberAsFactor() {
         final Scanner scanner = new TestScanner(new Token[]{new NumberToken(0, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertFalse(parser.parseFactor().hasSyntaxError());
+        assertTrue(parser.parseFactor().getAllErrors().isEmpty());
     }
 
     /**
@@ -475,7 +475,7 @@ class ParserTest {
     void tryParseNoNumber(@NotNull final TokenType tokenType) {
         final Scanner scanner = new TestScanner(new Token[]{new Token(tokenType, "", 0, 0)});
         final Parser parser = new Parser(scanner);
-        assertTrue(parser.parseNumber().hasSyntaxError());
+        assertFalse(parser.parseNumber().getAllErrors().isEmpty());
     }
 
     /**

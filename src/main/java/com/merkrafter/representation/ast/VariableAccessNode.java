@@ -65,22 +65,6 @@ public class VariableAccessNode implements Expression {
     }
 
     /**
-     * @return false
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return false;
-    }
-
-    /**
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
-    }
-
-    /**
      * @return empty list
      */
     @NotNull

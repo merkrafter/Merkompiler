@@ -36,28 +36,6 @@ public class AssignmentNode extends AbstractStatementNode {
     //==============================================================
 
     /**
-     * An AssignmentNode has a semantics error if the variable or expression is null or has an error
-     * itself.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return variable.hasSemanticsError() || value.hasSemanticsError();
-    }
-
-    /**
-     * An AssignmentNode has a syntax error if the variable or expression is null or has an error
-     * itself.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return variable.hasSyntaxError() || value.hasSyntaxError();
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull

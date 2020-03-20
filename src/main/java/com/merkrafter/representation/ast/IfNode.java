@@ -38,26 +38,6 @@ public class IfNode implements AbstractSyntaxTree {
     //==============================================================
 
     /**
-     * An IfNode has a semantics error if any of its child nodes is null or has an error itself.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return condition.hasSemanticsError() || ifBranch.hasSemanticsError();
-    }
-
-    /**
-     * An IfNode has a syntax error if any of its child nodes is null or has an error itself.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return condition.hasSyntaxError() || ifBranch.hasSyntaxError();
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull
