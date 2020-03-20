@@ -1,5 +1,6 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -37,6 +38,7 @@ public class Scanner {
     /**
      * This field stores the current filename.
      */
+    @NotNull
     private String filename;
     /**
      * This field stores the line inside the current file.
@@ -66,6 +68,7 @@ public class Scanner {
         charBuffer = Optional.empty();
         line = 1;
         position = 0;
+        filename = "";
     }
 
     // GETTER
@@ -101,7 +104,7 @@ public class Scanner {
      *
      * @param filename a String representing a file name
      */
-    public void setFilename(final String filename) {
+    public void setFilename(@NotNull final String filename) {
         this.filename = filename;
     }
 
