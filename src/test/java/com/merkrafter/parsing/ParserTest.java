@@ -617,6 +617,40 @@ class ParserTest {
     }
 
     /**
+     * The scanner should NOT indicate an error if two procedures with the same names were declared
+     * if their formal parameters differ.
+     */
+    @Test
+    void testTwoProceduresWithSameNamesButDifferentFormalParameters() {
+        final String name = "a";
+        final Scanner scanner = new TestScanner(new Token[]{
+                // public void a(){return;}
+                new KeywordToken(Keyword.PUBLIC, "", 0, 0),
+                new KeywordToken(Keyword.VOID, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.L_BRACE, "", 0, 0),
+                new KeywordToken(Keyword.RETURN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new Token(TokenType.R_BRACE, "", 0, 0),
+                // public void a(int var){return;}
+                new KeywordToken(Keyword.PUBLIC, "", 0, 0),
+                new KeywordToken(Keyword.VOID, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken("var", "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.L_BRACE, "", 0, 0),
+                new KeywordToken(Keyword.RETURN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new Token(TokenType.R_BRACE, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertDoesNotThrow(parser::parseDeclarations);
+    }
+
+    /**
      * The scanner should indicate an error if two formal parameters with the same names were
      * declared in the same procedure.
      */
