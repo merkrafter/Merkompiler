@@ -45,12 +45,11 @@ class ParserBuildingIntegrationTest {
         scanner = new Scanner(stringIterator);
         scanner.setFilename(""); // avoid setting it to null
         parser = new Parser(scanner);
-        final AbstractSyntaxTree multTree = new BinaryOperationNode(new ConstantNode<Long>(INT, 3L),
+        final AbstractSyntaxTree multTree = new BinaryOperationNode(new ConstantNode<>(INT, 3L),
                                                                     BinaryOperationNodeType.TIMES,
-                                                                    new ConstantNode<Long>(INT,
-                                                                                           8L));
+                                                                    new ConstantNode<>(INT, 8L));
         final AbstractSyntaxTree expectedAST =
-                new BinaryOperationNode(new ConstantNode<Long>(INT, 5L),
+                new BinaryOperationNode(new ConstantNode<>(INT, 5L),
                                         BinaryOperationNodeType.PLUS,
                                         (Expression) multTree);
 
