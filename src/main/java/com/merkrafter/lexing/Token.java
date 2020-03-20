@@ -14,9 +14,7 @@ public class Token {
     @NotNull
     private final TokenType type;
     @NotNull
-    private final String filename;
-    private final long line;
-    private final int position;
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -25,11 +23,10 @@ public class Token {
      * Creates a new Token that stores important about information
      * for the Parser.
      ***************************************************************/
-    public Token(@NotNull final TokenType type, @NotNull final String filename, final long line, final int position) {
+    public Token(@NotNull final TokenType type, @NotNull final String filename, final long line,
+                 final int position) {
         this.type = type;
-        this.filename = filename;
-        this.line = line;
-        this.position = position;
+        this.position = new Position(filename, line, position);
     }
 
     // GETTER
@@ -44,24 +41,10 @@ public class Token {
     }
 
     /**
-     * @return the file this token is located in
+     * @return the position this token is located at
      */
     @NotNull
-    public String getFilename() {
-        return filename;
-    }
-
-    /**
-     * @return the line number inside the file this token is located in
-     */
-    public long getLine() {
-        return line;
-    }
-
-    /**
-     * @return the position inside the line this token is located in
-     */
-    public int getPosition() {
+    public Position getPosition() {
         return position;
     }
 
@@ -81,7 +64,7 @@ public class Token {
     public boolean equals(@NotNull final Object obj) {
         if (obj instanceof Token) {
             final Token other = (Token) obj;
-            return eqTypes(other) && eqLines(other) && eqPositions(other) && eqFilenames(other);
+            return eqTypes(other) && position.equals(other.position);
         }
         return false;
     }
@@ -90,39 +73,22 @@ public class Token {
      * @return whether both types are equal
      */
     private boolean eqTypes(@NotNull final Token other) {
-        return type == other.type;
-    }
-
-    /**
-     * @return whether both line numbers are equal
-     */
-    private boolean eqLines(@NotNull final Token other) {
-        return line == other.line;
-    }
-
-    /**
-     * @return whether both positions are equal
-     */
-    private boolean eqPositions(@NotNull final Token other) {
-        return position == other.position;
-    }
-
-    /**
-     * @return whether both Token's filenames are null or equal
-     */
-    private boolean eqFilenames(@NotNull final Token other) {
-        // both have a value
-        return filename.equals(other.filename);
+        return type.equals(other.type);
     }
 
     /**
      * Creates a String representation of this Token in the following format:
      * FILENAME(LINE,POSITION): TYPE
+     *
      * @return a String representation of this Token
      */
     @NotNull
     @Override
     public String toString() {
-        return String.format("%s(%d,%d): %s", filename, line, position, type);
+        return String.format("%s(%d,%d): %s",
+                             position.getFilename(),
+                             position.getLine(),
+                             position.getColumn(),
+                             type);
     }
 }
