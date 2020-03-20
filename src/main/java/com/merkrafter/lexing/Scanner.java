@@ -1,8 +1,9 @@
 package com.merkrafter.lexing;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
-import java.util.Optional;
 
 /****
  * This class can be used to tokenize an iterator of characters.
@@ -53,7 +54,8 @@ public class Scanner {
      * This field stores characters that were found during a looking-forward action,
      * but can not be processed yet.
      */
-    private Optional<Character> charBuffer;
+    @Nullable
+    private Character charBuffer;
 
     // CONSTRUCTORS
     //==============================================================
@@ -65,7 +67,7 @@ public class Scanner {
         this.in = in;
         id = "";
         num = "";
-        charBuffer = Optional.empty();
+        charBuffer = null;
         line = 1;
         position = 0;
         filename = "";
@@ -119,9 +121,9 @@ public class Scanner {
      * After sym is TokenType.EOF, this Scanner is done processing the iterator.
      */
     public void processToken() {
-        if (charBuffer.isPresent()) {
-            ch = charBuffer.get();
-            charBuffer = Optional.empty();
+        if (charBuffer != null) {
+            ch = charBuffer;
+            charBuffer = null;
         }
         while (ch <= ' ') {
             // This `true` argument is necessary since `loadNextCharSuccessfully` sets `ch` to 0 in case there is no
@@ -300,7 +302,7 @@ public class Scanner {
                     loadNextCharSuccessfully();
                     processToken();
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case '=':
@@ -314,7 +316,7 @@ public class Scanner {
                         return;
                     }
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case '<':
@@ -328,7 +330,7 @@ public class Scanner {
                         return;
                     }
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case '>':
@@ -342,7 +344,7 @@ public class Scanner {
                         return;
                     }
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case ',':
