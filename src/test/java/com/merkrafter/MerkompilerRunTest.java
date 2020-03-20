@@ -30,6 +30,7 @@ class MerkompilerRunTest {
     /**
      * Temporary directory for the compiler to write to
      */
+    @SuppressWarnings("unused")
     @TempDir
     static Path tempDir; // access must NOT be private; otherwise JUnit could not create it
 
