@@ -1,6 +1,7 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +18,9 @@ import java.util.Objects;
 public class ConstantNode<T> implements Expression {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final Type type;
+    @NotNull
     private final T value;
 
     // CONSTRUCTORS
@@ -28,7 +31,7 @@ public class ConstantNode<T> implements Expression {
      * Currently, it is not checked whether either of the arguments are null or whether
      * their types match.
      ***************************************************************/
-    public ConstantNode(final Type type, final T value) {
+    public ConstantNode(@NotNull final Type type, @NotNull final T value) {
         this.type = type;
         this.value = value;
     }
@@ -41,6 +44,7 @@ public class ConstantNode<T> implements Expression {
      *
      * @return the return type of this node
      */
+    @NotNull
     @Override
     public Type getReturnedType() {
         return type;
@@ -49,6 +53,7 @@ public class ConstantNode<T> implements Expression {
     /**
      * @return empty list
      */
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         return new LinkedList<>();
@@ -59,6 +64,7 @@ public class ConstantNode<T> implements Expression {
      *
      * @return value stored by this constant node
      */
+    @NotNull
     public T getValue() {
         return value;
     }
@@ -76,11 +82,11 @@ public class ConstantNode<T> implements Expression {
      * @return whether this is equal to o
      */
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@NotNull final Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (getClass() != o.getClass()) {
             return false;
         }
         final ConstantNode<?> that = (ConstantNode<?>) o;
@@ -110,6 +116,7 @@ public class ConstantNode<T> implements Expression {
     /**
      * @return an empty list
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return new LinkedList<>();

@@ -5,6 +5,7 @@ import com.merkrafter.representation.ObjectDescription;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
 public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final ClassDescription classDescription;
 
     // CONSTRUCTORS
@@ -28,19 +30,29 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     /****
      * Creates a new ClassNode from a ClassDescription.
      ***************************************************************/
-    public ClassNode(final ClassDescription classDescription) {
+    public ClassNode(@NotNull final ClassDescription classDescription) {
         this.classDescription = classDescription;
     }
 
     // GETTER
     //==============================================================
 
+    @NotNull
     public ClassDescription getClassDescription() {
         return classDescription;
     }
 
+    @NotNull
     protected List<ObjectDescription> getDefinedObjects() {
         return getClassDescription().getSymbolTable().getDescriptions();
+    }
+
+    /**
+     * @return the hashCode of this GraphicalClassNode
+     */
+    @Override
+    public int getID() {
+        return hashCode();
     }
 
     // METHODS
@@ -53,8 +65,8 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
      */
     @Override
     public boolean hasSemanticsError() {
-        return classDescription == null || classDescription.getEntryPoint() == null
-               || classDescription.getEntryPoint().hasSemanticsError();
+        return classDescription.getEntryPoint() == null || classDescription.getEntryPoint()
+                                                                           .hasSemanticsError();
     }
 
     /**
@@ -63,27 +75,24 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     @Override
     public boolean hasSyntaxError() {
         // it is syntactically correct to not have an entry point
-        return classDescription == null
-               || classDescription.getEntryPoint() != null && classDescription.getEntryPoint()
-                                                                              .hasSyntaxError();
+        return classDescription.getEntryPoint() != null && classDescription.getEntryPoint()
+                                                                           .hasSyntaxError();
     }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = new LinkedList<>();
-        if (classDescription == null) {
-            errors.add("No class was defined");
-        } else {
-            errors.addAll(collectErrorsFrom(classDescription.getEntryPoint()));
-            errors.addAll(getErrorsFromProcedures());
-            errors.addAll(getErrorsFromExpressions());
-        }
+        errors.addAll(collectErrorsFrom(classDescription.getEntryPoint()));
+        errors.addAll(getErrorsFromProcedures());
+        errors.addAll(getErrorsFromExpressions());
         return errors;
     }
 
+    @NotNull
     private List<String> getErrorsFromExpressions() {
         final List<String> errors = new LinkedList<>();
         for (final ObjectDescription obj : getClassDescription().getSymbolTable()
@@ -100,13 +109,12 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
      * equal to each other.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof ClassNode)) {
             return false;
         }
         final ClassNode other = (ClassNode) obj;
-        return classDescription != null && other.classDescription != null
-               && classDescription.equals(other.classDescription);
+        return classDescription.equals(other.classDescription);
     }
 
     /**
@@ -114,6 +122,8 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
      *
      * @return a dot/graphviz representation of this AST
      */
+    @NotNull
+    @Override
     public String getDotRepresentation() {
         final ClassDescription clazz = getClassDescription();
         final List<ObjectDescription> descriptions = getDefinedObjects();
@@ -144,6 +154,7 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         return dotRepr.toString();
     }
 
+    @NotNull
     private List<String> getErrorsFromProcedures() {
         final List<String> errors = new LinkedList<>();
         for (final ObjectDescription obj : getClassDescription().getSymbolTable()
@@ -155,10 +166,12 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         return errors;
     }
 
-    private static List<String> findErrorsInProcedure(final ProcedureDescription proc) {
+    @NotNull
+    private static List<String> findErrorsInProcedure(@NotNull final ProcedureDescription proc) {
         final List<String> errors = new LinkedList<>();
         final Type returnType = proc.getReturnType();
-        if (!proc.getEntryPoint().hasReturnType(returnType)) {
+        final Statement stmt = proc.getEntryPoint();
+        if (stmt == null || returnType == null || !stmt.hasReturnType(returnType)) {
             errors.add(String.format("Return type mismatch in procedure %s", proc.getName()));
         }
         errors.addAll(collectErrorsFrom(proc.getEntryPoint()));
@@ -166,10 +179,4 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         return errors;
     }
 
-    /**
-     * @return the hashCode of this GraphicalClassNode
-     */
-    public int getID() {
-        return hashCode();
-    }
 }

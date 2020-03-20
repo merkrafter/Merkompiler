@@ -2,6 +2,8 @@ package com.merkrafter.representation;
 
 import com.merkrafter.representation.ast.Statement;
 import com.merkrafter.representation.graphical.GraphicalComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -12,16 +14,16 @@ import java.util.List;
  * @author merkrafter
  ***************************************************************/
 public interface ProcedureDescription extends GraphicalComponent {
-    SymbolTable getSymbols();
+    @NotNull SymbolTable getSymbols();
 
-    String getName();
+    @NotNull String getName();
 
-    List<VariableDescription> getParamList();
+    @Nullable List<VariableDescription> getParamList();
 
-    Type getReturnType();
+    @Nullable Type getReturnType();
 
-    Statement getEntryPoint();
+    @Nullable Statement getEntryPoint();
 
     @Override
-    boolean equals(Object o);
+    boolean equals(@NotNull Object o);
 }

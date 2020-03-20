@@ -10,6 +10,7 @@ import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ClassNode;
 import com.merkrafter.representation.graphical.GraphicalClassNode;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +21,7 @@ public class Merkompiler {
 
     // META-INFORMATION
     //==============================================================
-    public static final String VERSION = "v0.4.0";
+    @NotNull public static final String VERSION = "v0.4.0";
 
     /**
      * The main function of this compiler reads in the filename and handles other possible command line
@@ -47,7 +48,7 @@ public class Merkompiler {
      * @param config configuration data for this program call
      * @throws FileNotFoundException if the input or output file could not be found
      */
-    static void run(final Config config) throws FileNotFoundException {
+    static void run(@NotNull final Config config) throws FileNotFoundException {
         if (config.isVerbose()) {
             System.out.println(config);
         }

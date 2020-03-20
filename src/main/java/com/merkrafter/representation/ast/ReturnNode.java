@@ -1,8 +1,11 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 /****
  * This class represents a return statement.
@@ -13,6 +16,7 @@ import java.util.List;
 public class ReturnNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
+    @Nullable
     private final Expression expression;
 
     // CONSTRUCTORS
@@ -28,7 +32,7 @@ public class ReturnNode extends AbstractStatementNode {
     /****
      * Creates a new return node with the given expression as its value.
      ***************************************************************/
-    public ReturnNode(final Expression expression) {
+    public ReturnNode(@Nullable final Expression expression) {
         this.expression = expression;
     }
 
@@ -38,6 +42,7 @@ public class ReturnNode extends AbstractStatementNode {
     /**
      * @return the type of the expression or VOID if this return does not have an expression
      */
+    @NotNull
     public Type getReturnedType() {
         if (expression == null) {
             return Type.VOID;
@@ -68,6 +73,7 @@ public class ReturnNode extends AbstractStatementNode {
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return collectErrorsFrom(expression, getNext());
@@ -77,17 +83,18 @@ public class ReturnNode extends AbstractStatementNode {
      * Two ReturnNodes are considered equal if their expressions are equal to each other.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof ReturnNode)) {
             return false;
         }
         final ReturnNode other = (ReturnNode) obj;
-        return expression.equals(other.expression);
+        return Objects.equals(expression, other.expression);
     }
 
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
@@ -120,10 +127,11 @@ public class ReturnNode extends AbstractStatementNode {
      * @return the type that is returned by this statement sequence
      */
     @Override
-    public boolean hasReturnType(final Type type) {
+    public boolean hasReturnType(@NotNull final Type type) {
         return getReturnedType().equals(type);
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         final List<String> errors = super.getTypingErrors();

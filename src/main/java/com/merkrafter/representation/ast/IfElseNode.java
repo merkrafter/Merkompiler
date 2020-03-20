@@ -1,6 +1,7 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +16,9 @@ import java.util.List;
 public class IfElseNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final IfNode ifBranch;
+    @NotNull
     private final Statement elseBranch;
 
     // CONSTRUCTORS
@@ -26,7 +29,7 @@ public class IfElseNode extends AbstractStatementNode {
      * if the condition does not hold.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfElseNode(final IfNode ifBranch, final Statement elseBranch) {
+    public IfElseNode(@NotNull final IfNode ifBranch, @NotNull final Statement elseBranch) {
         this.ifBranch = ifBranch;
         this.elseBranch = elseBranch;
     }
@@ -41,8 +44,7 @@ public class IfElseNode extends AbstractStatementNode {
      */
     @Override
     public boolean hasSemanticsError() {
-        return ifBranch == null || elseBranch == null || ifBranch.hasSemanticsError()
-               || elseBranch.hasSemanticsError();
+        return ifBranch.hasSemanticsError() || elseBranch.hasSemanticsError();
     }
 
     /**
@@ -52,13 +54,13 @@ public class IfElseNode extends AbstractStatementNode {
      */
     @Override
     public boolean hasSyntaxError() {
-        return ifBranch == null || elseBranch == null || ifBranch.hasSyntaxError()
-               || elseBranch.hasSyntaxError();
+        return ifBranch.hasSyntaxError() || elseBranch.hasSyntaxError();
     }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return collectErrorsFrom(ifBranch, elseBranch, getNext());
@@ -69,19 +71,18 @@ public class IfElseNode extends AbstractStatementNode {
      * equal to each other respectively.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof IfElseNode)) {
             return false;
         }
         final IfElseNode other = (IfElseNode) obj;
-        return elseBranch != null && other.elseBranch != null && ifBranch != null
-               && other.ifBranch != null && elseBranch.equals(other.elseBranch) && ifBranch.equals(
-                other.ifBranch);
+        return elseBranch.equals(other.elseBranch) && ifBranch.equals(other.ifBranch);
     }
 
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
@@ -115,11 +116,12 @@ public class IfElseNode extends AbstractStatementNode {
      * sequence or with both branches of this IfElseNode.
      */
     @Override
-    public boolean hasReturnType(Type type) {
+    public boolean hasReturnType(@NotNull Type type) {
         return super.hasReturnType(type)
                || ifBranch.hasReturnType(type) && elseBranch.hasReturnType(type);
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         final List<String> errors = new LinkedList<>();

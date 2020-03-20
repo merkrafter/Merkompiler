@@ -1,6 +1,8 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 public class ErrorNode implements Expression, Statement {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final String message;
 
     // CONSTRUCTORS
@@ -25,7 +28,7 @@ public class ErrorNode implements Expression, Statement {
     /****
      * Creates a new ErrorNode with a given error message.
      ***************************************************************/
-    public ErrorNode(final String message) {
+    public ErrorNode(@NotNull final String message) {
         this.message = message;
     }
 
@@ -33,25 +36,18 @@ public class ErrorNode implements Expression, Statement {
     //==============================================================
 
     /**
-     * Returns the error message.
-     *
-     * @return the error message
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    /**
      * This method is only here to fulfill the requirements for implementing Statement. It does not
      * have any meaningful implementation.
      *
      * @return Type.VOID
      */
+    @NotNull
     @Override
     public Type getReturnedType() {
         return Type.VOID;
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         return new LinkedList<>();
@@ -80,6 +76,7 @@ public class ErrorNode implements Expression, Statement {
     /**
      * @return a list containing the error message of this node
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = new LinkedList<>();
@@ -88,12 +85,12 @@ public class ErrorNode implements Expression, Statement {
     }
 
     /**
-     * <<<<<<< HEAD
      * This method is only here to fulfill the requirements for implementing Statement. It does not
      * have any meaningful implementation.
      *
      * @return null
      */
+    @Nullable
     @Override
     public Statement getNext() {
         return null;
@@ -106,7 +103,7 @@ public class ErrorNode implements Expression, Statement {
      * @param next does not matter
      */
     @Override
-    public void setNext(final Statement next) {
+    public void setNext(@Nullable final Statement next) {
     }
 
     /**
@@ -120,6 +117,7 @@ public class ErrorNode implements Expression, Statement {
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         return String.format("%d[label=\"ERROR\"]", getID());
@@ -129,7 +127,7 @@ public class ErrorNode implements Expression, Statement {
      * @return false
      */
     @Override
-    public boolean hasReturnType(final Type type) {
+    public boolean hasReturnType(@NotNull final Type type) {
         return false;
     }
 }

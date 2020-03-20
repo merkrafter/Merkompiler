@@ -1,6 +1,8 @@
 package com.merkrafter.representation;
 
 import com.merkrafter.representation.ast.ProcedureCallNode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /****
  * This class stores information on a JavaSST class.
@@ -11,7 +13,9 @@ import com.merkrafter.representation.ast.ProcedureCallNode;
 public class ClassDescription extends ObjectDescription {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final SymbolTable symbolTable;
+    // TODO remove this entry point
     private ProcedureCallNode entryPoint;
 
     // CONSTRUCTORS
@@ -20,7 +24,7 @@ public class ClassDescription extends ObjectDescription {
     /****
      * Creates a new ClassDescription from a name and with a symbol table from the outer scope.
      ***************************************************************/
-    public ClassDescription(final String name, final SymbolTable outerScope) {
+    public ClassDescription(@NotNull final String name, @Nullable final SymbolTable outerScope) {
         super(name);
         symbolTable = new SymbolTable(outerScope);
     }
@@ -31,6 +35,7 @@ public class ClassDescription extends ObjectDescription {
     /**
      * @return table of all variables and methods that are defined in this class
      */
+    @NotNull
     public SymbolTable getSymbolTable() {
         return symbolTable;
     }
@@ -63,6 +68,7 @@ public class ClassDescription extends ObjectDescription {
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         return "";

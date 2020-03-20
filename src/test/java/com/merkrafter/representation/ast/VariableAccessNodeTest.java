@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -16,7 +17,7 @@ class VariableAccessNodeTest {
      */
     @ParameterizedTest
     @EnumSource(Type.class)
-    void returnsTypeOfStoredVariable(final Type type) {
+    void returnsTypeOfStoredVariable(@NotNull final Type type) {
         final VariableDescription variableDescription =
                 new VariableDescription("var", type, 5, true);
         final VariableAccessNode node = new VariableAccessNode(variableDescription);

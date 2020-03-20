@@ -4,6 +4,8 @@ import com.merkrafter.representation.ActualProcedureDescription;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
@@ -22,8 +24,10 @@ public class TypeCheckTest {
 
     private final VariableDescription var1 = new VariableDescription("var1", Type.INT, 0, false);
     private final VariableDescription var2 = new VariableDescription("var2", Type.INT, 0, false);
+    @NotNull
     private final ProcedureDescription voidFunc =
             new ActualProcedureDescription(Type.VOID, "voidFunc", new LinkedList<>(), null);
+    @NotNull
     private final ProcedureCallNode voidFuncCall =
             new ProcedureCallNode(voidFunc, new ParameterListNode(new LinkedList<>()));
 

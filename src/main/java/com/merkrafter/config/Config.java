@@ -6,6 +6,8 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class holds configuration data for this program.
@@ -17,16 +19,19 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class Config {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final String inputFile;
+    @Nullable
     private final String outputFile;
     private final boolean verbose;
+    @Nullable
     private final CompilerStage stage;
     private final boolean graphical;
 
     // CONSTRUCTORS
     //==============================================================
-    private Config(final String inputFile, final String outputFile, boolean verbose,
-                   final CompilerStage stage, final boolean graphical) {
+    private Config(@NotNull final String inputFile, @Nullable final String outputFile,
+                   boolean verbose, @Nullable final CompilerStage stage, final boolean graphical) {
         this.inputFile = inputFile;
         this.outputFile = outputFile;
         this.verbose = verbose;
@@ -36,10 +41,12 @@ public class Config {
 
     // GETTER
     //==============================================================
+    @NotNull
     public String getInputFile() {
         return inputFile;
     }
 
+    @Nullable
     public String getOutputFile() {
         return outputFile;
     }
@@ -48,6 +55,7 @@ public class Config {
         return verbose;
     }
 
+    @Nullable
     public CompilerStage getStage() {
         return stage;
     }
@@ -60,11 +68,14 @@ public class Config {
     //==============================================================
     // public methods
     //--------------------------------------------------------------
-    public static Config fromArgs(final String args) throws ArgumentParserException {
+    @NotNull
+    public static Config fromArgs(@NotNull final String args) throws ArgumentParserException {
+        // only called from test code
         return fromArgs(fromString(args));
     }
 
-    public static Config fromArgs(final String[] args) throws ArgumentParserException {
+    @NotNull
+    public static Config fromArgs(@NotNull final String[] args) throws ArgumentParserException {
         // define the parser
         final ArgumentParser parser = ArgumentParsers.newFor("Merkompiler")
                                                      .build()
@@ -114,6 +125,7 @@ public class Config {
             graphical = namespace.get("graphical");
         }
 
+        assert inputFileName != null; // because it is required and thus handled by Argparse
         return new Config(inputFileName, outputFileName, verbose, stage, graphical);
     }
 
@@ -123,13 +135,15 @@ public class Config {
      * @param argsAsString string of arguments as written on the command line
      * @return an array of arguments
      */
-    public static String[] fromString(final String argsAsString) {
+    @NotNull
+    public static String[] fromString(@NotNull final String argsAsString) {
         return argsAsString.split("\\s+");
     }
 
     /**
      * @return a String representation of this Config class
      */
+    @NotNull
     @Override
     public String toString() {
         return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, stage=%s, graphical=%b)",

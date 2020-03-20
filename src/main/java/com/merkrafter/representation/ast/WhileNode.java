@@ -1,8 +1,8 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /****
@@ -15,7 +15,9 @@ import java.util.List;
 public class WhileNode extends AbstractStatementNode {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final Expression condition;
+    @NotNull
     private final Statement loopBody;
 
     // CONSTRUCTORS
@@ -26,7 +28,7 @@ public class WhileNode extends AbstractStatementNode {
      * while the condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public WhileNode(final Expression condition, final Statement loopBody) {
+    public WhileNode(@NotNull final Expression condition, @NotNull final Statement loopBody) {
         this.condition = condition;
         this.loopBody = loopBody;
     }
@@ -41,8 +43,7 @@ public class WhileNode extends AbstractStatementNode {
      */
     @Override
     public boolean hasSemanticsError() {
-        return condition == null || loopBody == null || condition.hasSemanticsError()
-               || loopBody.hasSemanticsError();
+        return condition.hasSemanticsError() || loopBody.hasSemanticsError();
     }
 
     /**
@@ -52,13 +53,13 @@ public class WhileNode extends AbstractStatementNode {
      */
     @Override
     public boolean hasSyntaxError() {
-        return condition == null || loopBody == null || condition.hasSyntaxError()
-               || loopBody.hasSyntaxError();
+        return condition.hasSyntaxError() || loopBody.hasSyntaxError();
     }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return collectErrorsFrom(condition, loopBody, getNext());
@@ -69,19 +70,18 @@ public class WhileNode extends AbstractStatementNode {
      * equal to each other respectively.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof WhileNode)) {
             return false;
         }
         final WhileNode other = (WhileNode) obj;
-        return condition != null && other.condition != null && loopBody != null
-               && other.loopBody != null && condition.equals(other.condition) && loopBody.equals(
-                other.loopBody);
+        return condition.equals(other.condition) && loopBody.equals(other.loopBody);
     }
 
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());
@@ -111,6 +111,7 @@ public class WhileNode extends AbstractStatementNode {
         return dotRepr.toString();
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         final List<String> errors = super.getTypingErrors();

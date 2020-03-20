@@ -2,7 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
-import com.merkrafter.representation.VariableDescription;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,8 +16,9 @@ import java.util.List;
 public class ProcedureCallNode extends AbstractStatementNode implements Expression {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final ProcedureDescription procedure;
-
+    @NotNull
     private final ParameterListNode args;
 
     // CONSTRUCTORS
@@ -27,7 +28,8 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
      * Creates a new node that represents a procedure call with the
      * given arguments.
      ***************************************************************/
-    public ProcedureCallNode(final ProcedureDescription procedure, final ParameterListNode args) {
+    public ProcedureCallNode(@NotNull final ProcedureDescription procedure,
+                             @NotNull final ParameterListNode args) {
         this.procedure = procedure;
         this.args = args;
     }
@@ -40,11 +42,16 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
      *
      * @return the return type of this node
      */
+    @NotNull
     @Override
     public Type getReturnedType() {
-        return procedure.getReturnType();
+        final Type returnedType = procedure.getReturnType();
+        // this can only happen if procedure is an unresolved proxy which should be handled before
+        assert returnedType != null;
+        return returnedType;
     }
 
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         final List<String> errors = new LinkedList<>();
@@ -75,35 +82,25 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     }
 
     /**
-     * @return the arguments of this procedure call
-     */
-    ParameterListNode getArgs() {
-        return args;
-    }
-
-    /**
-     * A ProcedureCallNode has a semantics error if the underlying ProcedureDescription is null.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
+     * @return false
      */
     @Override
     public boolean hasSemanticsError() {
-        return procedure == null;
+        return false;
     }
 
     /**
-     * A ProcedureCallNode has a syntax error if the underlying ProcedureDescription is null.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
+     * @return false
      */
     @Override
     public boolean hasSyntaxError() {
-        return procedure == null;
+        return false;
     }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return collectErrorsFrom(args, getNext());
@@ -114,13 +111,12 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
      * equal to each other respectively.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof ProcedureCallNode)) {
             return false;
         }
         final ProcedureCallNode other = (ProcedureCallNode) obj;
-        return procedure != null && other.procedure != null && args != null && other.args != null
-               && procedure.equals(other.procedure) && args.equals(other.args);
+        return procedure.equals(other.procedure) && args.equals(other.args);
     }
 
     @Override
@@ -131,6 +127,7 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         final StringBuilder dotRepr = new StringBuilder(super.getDotRepresentation());

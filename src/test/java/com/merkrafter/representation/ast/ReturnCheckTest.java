@@ -1,6 +1,7 @@
 package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,13 +18,17 @@ class ReturnCheckTest {
     Statement mockStmt;
     @Mock
     ReturnNode retNode;
+    @Mock
+    Expression condition;
 
     @ExtendWith(MockitoExtension.class)
     @Test
     void testIfElseWithoutReturnForVoid() {
         final Type expectedType = Type.VOID;
         Mockito.lenient().when(mockStmt.hasReturnType(expectedType)).thenReturn(true);
-        final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(null, mockStmt), mockStmt);
+        Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
+
+        final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(condition, mockStmt), mockStmt);
         final boolean returnedTypeCorrect = nodeUnderTest.hasReturnType(expectedType);
         assertTrue(returnedTypeCorrect);
     }
@@ -31,10 +36,11 @@ class ReturnCheckTest {
     @ExtendWith(MockitoExtension.class)
     @ParameterizedTest
     @EnumSource(Type.class)
-    void testIfElseSingleType(final Type type) {
-
+    void testIfElseSingleType(@NotNull final Type type) {
         Mockito.lenient().when(retNode.hasReturnType(type)).thenReturn(true);
-        final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(null, retNode), retNode);
+        Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
+
+        final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(condition, retNode), retNode);
         final boolean returnedTypeCorrect = nodeUnderTest.hasReturnType(type);
         assertTrue(returnedTypeCorrect);
     }

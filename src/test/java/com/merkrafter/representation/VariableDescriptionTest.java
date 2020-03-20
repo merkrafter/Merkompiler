@@ -167,20 +167,6 @@ class VariableDescriptionTest {
     }
 
     /**
-     * A VariableDescription should not be considered equal to null.
-     */
-    @ParameterizedTest
-    @NullSource
-    void testNotEqualsToNull(final Object other) {
-        final String name = "myVar";
-        final Type type = Type.INT;
-        final int value = 5;
-        final boolean constant = false;
-        final VariableDescription varDesc = new VariableDescription(name, type, value, constant);
-        assertNotEquals(varDesc, other);
-    }
-
-    /**
      * A VariableDescription should not be considered equal to objects that are no instances of
      * VariableDescription.
      */

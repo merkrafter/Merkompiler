@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 public class VariableAccessNode implements Expression {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final VariableDescription variableDescription;
 
     // CONSTRUCTORS
@@ -23,7 +25,7 @@ public class VariableAccessNode implements Expression {
     /****
      * Creates a new node that represents an access to a variable.
      ***************************************************************/
-    public VariableAccessNode(final VariableDescription variableDescription) {
+    public VariableAccessNode(@NotNull final VariableDescription variableDescription) {
         this.variableDescription = variableDescription;
     }
 
@@ -35,6 +37,7 @@ public class VariableAccessNode implements Expression {
      *
      * @return the return type of this node
      */
+    @NotNull
     @Override
     public Type getReturnedType() {
         return variableDescription.getType();
@@ -43,6 +46,7 @@ public class VariableAccessNode implements Expression {
     /**
      * @return empty list
      */
+    @NotNull
     @Override
     public List<String> getTypingErrors() {
         return new LinkedList<>();
@@ -55,26 +59,20 @@ public class VariableAccessNode implements Expression {
         return variableDescription.isConstant();
     }
 
+    @NotNull
     public String getName() {
-        if (variableDescription == null) {
-            return "";
-        }
         return variableDescription.getName();
     }
 
     /**
-     * A VariableAccessNode has a semantics error if the underlying VariableDescription is null.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
+     * @return false
      */
     @Override
     public boolean hasSemanticsError() {
-        return variableDescription == null;
+        return false;
     }
 
     /**
-     * A VariableAccessNode can not have any syntax errors.
-     *
      * @return false
      */
     @Override
@@ -83,15 +81,12 @@ public class VariableAccessNode implements Expression {
     }
 
     /**
-     * @return a list of all errors, both semantic and syntactical ones.
+     * @return empty list
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
-        final List<String> errors = new LinkedList<>();
-        if (variableDescription == null) {
-            errors.add("Missing variable");
-        }
-        return errors;
+        return new LinkedList<>();
     }
 
     /**
@@ -99,13 +94,12 @@ public class VariableAccessNode implements Expression {
      * equal to each other.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!(obj instanceof VariableAccessNode)) {
             return false;
         }
         final VariableAccessNode other = (VariableAccessNode) obj;
-        return variableDescription != null && other.variableDescription != null
-               && variableDescription.equals(other.variableDescription);
+        return variableDescription.equals(other.variableDescription);
     }
 
     /**
@@ -119,6 +113,7 @@ public class VariableAccessNode implements Expression {
     /**
      * @return dot/graphviz declarations of this component's children
      */
+    @NotNull
     @Override
     public String getDotRepresentation() {
         return String.format("%d[label=\"VAR%s%s\"];", getID(), System.lineSeparator(), getName());

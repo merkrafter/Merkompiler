@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /****
@@ -28,7 +30,7 @@ public interface AbstractSyntaxTree {
     /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
-    List<String> getAllErrors();
+    @NotNull List<String> getAllErrors();
 
     /**
      * @param other the object to compare with
