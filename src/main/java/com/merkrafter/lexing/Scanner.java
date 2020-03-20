@@ -19,10 +19,12 @@ public class Scanner {
     /**
      * This is the character input stream that this Scanner tokenizes.
      */
+    @NotNull
     private final Iterator<Character> in;
     /**
      * This field stores the kind of the character that was read last.
      */
+    @NotNull
     private Token sym;
     /**
      * This field stores the character that was read last.
@@ -31,10 +33,12 @@ public class Scanner {
     /**
      * This field stores the name of the last identifier that this scanner found.
      */
+    @NotNull
     private String id;
     /**
      * This field stores the name of the last number that this scanner found.
      */
+    @NotNull
     private String num;
     /**
      * This field stores the current filename.
@@ -63,7 +67,7 @@ public class Scanner {
     /****
      * Creates a new Scanner that is ready to tokenize the given character iterator.
      ***************************************************************/
-    public Scanner(final Iterator<Character> in) {
+    public Scanner(@NotNull final Iterator<Character> in) {
         this.in = in;
         id = "";
         num = "";
@@ -71,14 +75,17 @@ public class Scanner {
         line = 1;
         position = 0;
         filename = "";
+        sym = new OtherToken("start", filename, 0, -1);
     }
 
     // GETTER
     //==============================================================
+    @NotNull
     public Token getSym() {
         return sym;
     }
 
+    @NotNull
     public String getId() {
         return id;
     }
@@ -90,7 +97,7 @@ public class Scanner {
      * @return the last read number
      */
     public long getNum() {
-        if (num == null || num.isEmpty()) {
+        if (num.isEmpty()) {
             return 0;
         }
         return Long.parseLong(num);

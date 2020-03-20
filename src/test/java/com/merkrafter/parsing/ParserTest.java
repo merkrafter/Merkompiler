@@ -730,6 +730,7 @@ class ParserTest {
         /**
          * @return the token at the current index or TokenType.EOF if index is out of bounds
          */
+        @NotNull
         @Override
         public Token getSym() {
             if (index == tokens.length) {
