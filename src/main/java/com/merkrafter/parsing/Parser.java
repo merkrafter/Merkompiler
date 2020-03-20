@@ -95,7 +95,12 @@ public class Parser {
         symbolTable = clazz.getSymbolTable();
 
         // reads all methods and variables into the symbol table
-        final boolean success = parseClassBody();
+        final boolean success;
+        try {
+            success = parseClassBody();
+        } catch (@NotNull final ParserException e) {
+            return new ErrorNode(e.getMessage());
+        }
 
         // find parameterless main method
         final ProcedureDescription mainProcedure =
@@ -111,7 +116,7 @@ public class Parser {
         }
     }
 
-    boolean parseClassBody() {
+    boolean parseClassBody() throws ParserException {
         if (scanner.getSym().getType() == L_BRACE) {
             scanner.processToken();
             if (parseDeclarations()) {
@@ -125,7 +130,7 @@ public class Parser {
         return false;
     }
 
-    boolean parseDeclarations() {
+    boolean parseDeclarations() throws ParserException {
         // final declaration
         while (parseFinalDeclaration()) ;
         // type declaration
@@ -144,7 +149,7 @@ public class Parser {
      * @return whether the next tokens represent a final declaration
      */
     // this method is final because it is not an official rule of the grammar but only a helper
-    private boolean parseFinalDeclaration() {
+    private boolean parseFinalDeclaration() throws ParserException {
         final Token sym = scanner.getSym();
         if (!(sym instanceof KeywordToken && ((KeywordToken) sym).getKeyword() == Keyword.FINAL)) {
             return false;
@@ -168,13 +173,16 @@ public class Parser {
         if (scanner.getSym().getType() != SEMICOLON) {
             return false;
         }
+        scanner.processToken();
 
         // TODO evaluate the expression to set the value correctly
         final VariableDescription var = new VariableDescription(identifier, type, 0, true);
-        // TODO check whether this is successful
-        symbolTable.insert(var);
+        final boolean wasInserted = symbolTable.insert(var);
+        if (!wasInserted) {
+            throw new ParserException(String.format("Variable %s was declared multiple times",
+                                                    identifier));
+        }
 
-        scanner.processToken();
         return true;
     }
 
@@ -184,7 +192,7 @@ public class Parser {
      *
      * @return whether the method could be parsed completely and was stored in the symbol table
      */
-    boolean parseMethodDeclaration() {
+    boolean parseMethodDeclaration() throws ParserException {
         // get procedure prototype
         final ActualProcedureDescription procedureDescription = parseMethodHead();
         if (procedureDescription == null) {
@@ -194,6 +202,15 @@ public class Parser {
         // set a new scope of the symbol table
         final SymbolTable prevSymbolTable = symbolTable;
         symbolTable = procedureDescription.getSymbols();
+        for (final VariableDescription varDesc : procedureDescription.getParamList()) {
+            final boolean wasInserted = symbolTable.insert(varDesc);
+            if (!wasInserted) {
+                throw new ParserException(String.format(
+                        "Formal parameter %s was declared multiple times in procedure %s",
+                        varDesc.getName(),
+                        procedureDescription.getName()));
+            }
+        }
 
         final Statement statements = parseMethodBody();
         procedureDescription.setEntrypoint(statements);
@@ -205,8 +222,13 @@ public class Parser {
             return false; // TODO propagate the error message
         }
 
-        // returns whether the operation was successful
-        return symbolTable.insert(procedureDescription);
+        final boolean wasInserted = symbolTable.insert(procedureDescription);
+        if (!wasInserted) {
+            throw new ParserException(String.format("Procedure %s was declared multiple times",
+                                                    procedureDescription.getName()));
+        }
+
+        return true;
     }
 
     /**
@@ -324,7 +346,7 @@ public class Parser {
      *
      * @return whether this operation was successful
      */
-    @NotNull Statement parseMethodBody() {
+    @NotNull Statement parseMethodBody() throws ParserException {
         Token sym = scanner.getSym();
         if (sym.getType() != L_BRACE) {
             return new ErrorNode(generateErrorMessage("{"));
@@ -353,7 +375,7 @@ public class Parser {
      *
      * @return whether the next tokens represent a local declaration
      */
-    boolean parseLocalDeclaration() {
+    boolean parseLocalDeclaration() throws ParserException {
         final Type type = parseType();
         if (type == null) {
             return false;
@@ -370,9 +392,11 @@ public class Parser {
         // FIXME this line assumes that only int values exist and therefore sets the value to 0
         // if more types come into play, a map of default values should be maintained somewhere
         final VariableDescription var = new VariableDescription(identifier, type, 0, false);
-        // TODO detect multi-declarations as a part of the semantics analysis
-        symbolTable.insert(var);
-
+        final boolean wasInserted = symbolTable.insert(var);
+        if (!wasInserted) {
+            throw new ParserException(String.format("Variable %s was declared multiple times",
+                                                    identifier));
+        }
         return true;
     }
 
