@@ -76,7 +76,7 @@ class ParserTest {
      */
     @ParameterizedTest
     @EnumSource(value = Keyword.class, names = {"VOID", "INT"})
-    void parseMethodDeclaration(@NotNull final Keyword methodType) {
+    void parseMethodDeclaration(@NotNull final Keyword methodType) throws ParserException {
         final Scanner scanner = new TestScanner(new Token[]{
                 // method head
                 new KeywordToken(Keyword.PUBLIC, "", 1, 1),
@@ -581,6 +581,37 @@ class ParserTest {
                 new Token(TokenType.ASSIGN, "", 0, 0),
                 new NumberToken(0, "", 0, 0),
                 new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertThrows(ParserException.class, parser::parseDeclarations);
+    }
+
+    /**
+     * The scanner should indicate an error if two procedures with the same names were declared.
+     */
+    @Test
+    void testTwoProceduresWithSameNames() {
+        final String name = "a";
+        final Scanner scanner = new TestScanner(new Token[]{
+                // public void a(){return;}
+                new KeywordToken(Keyword.PUBLIC, "", 0, 0),
+                new KeywordToken(Keyword.VOID, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.L_BRACE, "", 0, 0),
+                new KeywordToken(Keyword.RETURN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new Token(TokenType.R_BRACE, "", 0, 0),
+                // public void a(){return;}
+                new KeywordToken(Keyword.PUBLIC, "", 0, 0),
+                new KeywordToken(Keyword.VOID, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.L_BRACE, "", 0, 0),
+                new KeywordToken(Keyword.RETURN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new Token(TokenType.R_BRACE, "", 0, 0)});
         final Parser parser = new Parser(scanner);
         assertThrows(ParserException.class, parser::parseDeclarations);
     }

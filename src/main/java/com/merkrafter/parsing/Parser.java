@@ -192,7 +192,7 @@ public class Parser {
      *
      * @return whether the method could be parsed completely and was stored in the symbol table
      */
-    boolean parseMethodDeclaration() {
+    boolean parseMethodDeclaration() throws ParserException {
         // get procedure prototype
         final ActualProcedureDescription procedureDescription = parseMethodHead();
         if (procedureDescription == null) {
@@ -213,8 +213,13 @@ public class Parser {
             return false; // TODO propagate the error message
         }
 
-        // returns whether the operation was successful
-        return symbolTable.insert(procedureDescription);
+        final boolean wasInserted = symbolTable.insert(procedureDescription);
+        if (!wasInserted) {
+            throw new ParserException(String.format("Procedure %s was declared multiple times",
+                                                    procedureDescription.getName()));
+        }
+
+        return true;
     }
 
     /**
