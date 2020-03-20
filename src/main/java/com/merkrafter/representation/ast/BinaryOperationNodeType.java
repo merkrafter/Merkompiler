@@ -18,5 +18,5 @@ public enum BinaryOperationNodeType {
     LOWER_EQUAL,
     GREATER_EQUAL,
     LOWER,
-    GREATER;
+    GREATER
 }

@@ -9,5 +9,5 @@ package com.merkrafter.representation;
 public enum Type {
     INT,
     BOOLEAN,
-    VOID;
+    VOID
 }
