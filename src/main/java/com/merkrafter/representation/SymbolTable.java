@@ -112,7 +112,9 @@ public class SymbolTable {
             final List<VariableDescription> paramList = new LinkedList<>();
             for (final Type type : signature) {
                 // for the parameters only the types are relevant
-                paramList.add(new VariableDescription("", type, 0, false));
+                if (type != null) {
+                    paramList.add(new VariableDescription("", type, 0, false));
+                }
             }
             prototype = new ActualProcedureDescription(Type.VOID, name, paramList, null);
         }
