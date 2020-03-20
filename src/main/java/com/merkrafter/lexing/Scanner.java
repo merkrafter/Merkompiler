@@ -34,12 +34,12 @@ public class Scanner {
      * This field stores the name of the last identifier that this scanner found.
      */
     @NotNull
-    private String id;
+    private StringBuilder id;
     /**
      * This field stores the name of the last number that this scanner found.
      */
     @NotNull
-    private String num;
+    private StringBuilder num;
     /**
      * This field stores the current filename.
      */
@@ -69,8 +69,8 @@ public class Scanner {
      ***************************************************************/
     public Scanner(@NotNull final Iterator<Character> in) {
         this.in = in;
-        id = "";
-        num = "";
+        id = new StringBuilder();
+        num = new StringBuilder();
         charBuffer = null;
         line = 1;
         position = 0;
@@ -87,7 +87,7 @@ public class Scanner {
 
     @NotNull
     public String getId() {
-        return id;
+        return id.toString();
     }
 
     /**
@@ -97,10 +97,10 @@ public class Scanner {
      * @return the last read number
      */
     public long getNum() {
-        if (num.isEmpty()) {
+        if (num.length() == 0) {
             return 0;
         }
-        return Long.parseLong(num);
+        return Long.parseLong(num.toString());
     }
 
     // SETTER
@@ -151,9 +151,9 @@ public class Scanner {
             case '8':
             case '9':
                 sym = new Token(TokenType.NUMBER, filename, line, position);
-                num = "";
+                num = new StringBuilder();
                 do {
-                    num += ch;
+                    num.append(ch);
                     if (!this.loadNextCharSuccessfully()) {
                         setNumber(); // parse the num attribute to a NumberToken
                         return;
@@ -216,9 +216,9 @@ public class Scanner {
                 // will be replaced in `setIdentOrKeyword` in a few lines, but this token is needed
                 // in order to store the starting position of this token
                 sym = new Token(TokenType.IDENT, filename, line, position);
-                id = "";
+                id = new StringBuilder();
                 do {
-                    id += ch;
+                    id.append(ch);
                     if (!this.loadNextCharSuccessfully()) {
                         setIdentOrKeyword();
                         return;
@@ -426,12 +426,15 @@ public class Scanner {
      */
     private void setIdentOrKeyword() {
         try {
-            final Keyword keyword = Keyword.valueOf(id.toUpperCase());
+            final Keyword keyword = Keyword.valueOf(id.toString().toUpperCase());
             // if this actually is a keyword:
             sym = new KeywordToken(keyword, sym.getFilename(), sym.getLine(), sym.getPosition());
         } catch (IllegalArgumentException ignored) {
             // id is not a keyword
-            sym = new IdentToken(id, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new IdentToken(id.toString(),
+                                 sym.getFilename(),
+                                 sym.getLine(),
+                                 sym.getPosition());
         }
     }
 
@@ -441,7 +444,7 @@ public class Scanner {
      */
     private void setNumber() {
         try {
-            final long number = Long.parseLong(num);
+            final long number = Long.parseLong(num.toString());
             // if this actually is a number:
             sym = new NumberToken(number, sym.getFilename(), sym.getLine(), sym.getPosition());
         } catch (NumberFormatException ignored) {
