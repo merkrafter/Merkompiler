@@ -202,6 +202,15 @@ public class Parser {
         // set a new scope of the symbol table
         final SymbolTable prevSymbolTable = symbolTable;
         symbolTable = procedureDescription.getSymbols();
+        for (final VariableDescription varDesc : procedureDescription.getParamList()) {
+            final boolean wasInserted = symbolTable.insert(varDesc);
+            if (!wasInserted) {
+                throw new ParserException(String.format(
+                        "Formal parameter %s was declared multiple times in procedure %s",
+                        varDesc.getName(),
+                        procedureDescription.getName()));
+            }
+        }
 
         final Statement statements = parseMethodBody();
         procedureDescription.setEntrypoint(statements);
@@ -337,7 +346,7 @@ public class Parser {
      *
      * @return whether this operation was successful
      */
-    @NotNull Statement parseMethodBody() {
+    @NotNull Statement parseMethodBody() throws ParserException {
         Token sym = scanner.getSym();
         if (sym.getType() != L_BRACE) {
             return new ErrorNode(generateErrorMessage("{"));
@@ -345,12 +354,7 @@ public class Parser {
         scanner.processToken();
 
         // only iterate through them; they're stored in the symbolTable
-        try {
-            while (parseLocalDeclaration()) ;
-        } catch (@NotNull final ParserException e) {
-            // for now, the exception is translated to an error node
-            return new ErrorNode(e.getMessage());
-        }
+        while (parseLocalDeclaration()) ;
 
         final Statement statements = parseStatementSequence();
 

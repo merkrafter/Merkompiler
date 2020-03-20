@@ -151,7 +151,7 @@ class ParserTest {
      * The parser should accept a method body with only one return statement.
      */
     @Test
-    void parseMethodBody() {
+    void parseMethodBody() throws ParserException {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.L_BRACE, "", 1, 1),
                 new KeywordToken(Keyword.RETURN, "", 1, 1),
@@ -614,6 +614,60 @@ class ParserTest {
                 new Token(TokenType.R_BRACE, "", 0, 0)});
         final Parser parser = new Parser(scanner);
         assertThrows(ParserException.class, parser::parseDeclarations);
+    }
+
+    /**
+     * The scanner should indicate an error if two formal parameters with the same names were
+     * declared in the same procedure.
+     */
+    @Test
+    void testTwoFormalParametersWithSameNames() {
+        final String name = "a";
+        final Scanner scanner = new TestScanner(new Token[]{
+                // public void func(int a, int a){return;}
+                new KeywordToken(Keyword.PUBLIC, "", 0, 0),
+                new KeywordToken(Keyword.VOID, "", 0, 0),
+                new IdentToken("func", "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.COMMA, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.L_BRACE, "", 0, 0),
+                new KeywordToken(Keyword.RETURN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new Token(TokenType.R_BRACE, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertThrows(ParserException.class, parser::parseMethodDeclaration);
+    }
+
+    /**
+     * The scanner should indicate an error if a local variable with the same name as a formal
+     * parameter was declared in the same procedure.
+     */
+    @Test
+    void testLocalVariableAndFormalParameterWithSameNames() {
+        final String name = "a";
+        final Scanner scanner = new TestScanner(new Token[]{
+                // public void func(int a){int a; return;}
+                new KeywordToken(Keyword.PUBLIC, "", 0, 0),
+                new KeywordToken(Keyword.VOID, "", 0, 0),
+                new IdentToken("func", "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.L_BRACE, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new KeywordToken(Keyword.RETURN, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new Token(TokenType.R_BRACE, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertThrows(ParserException.class, parser::parseMethodDeclaration);
     }
 
     /**
