@@ -43,13 +43,16 @@ class ParserBuildingIntegrationTest {
         final String program = "5+3*8";
         stringIterator.setString(program);
         scanner = new Scanner(stringIterator);
+        scanner.setFilename(""); // avoid setting it to null
         parser = new Parser(scanner);
         final AbstractSyntaxTree multTree = new BinaryOperationNode(new ConstantNode<Long>(INT, 3L),
                                                                     BinaryOperationNodeType.TIMES,
-                                                                    new ConstantNode<Long>(INT, 8L));
-        final AbstractSyntaxTree expectedAST = new BinaryOperationNode(new ConstantNode<Long>(INT, 5L),
-                                                                BinaryOperationNodeType.PLUS,
-                                                                       (Expression) multTree);
+                                                                    new ConstantNode<Long>(INT,
+                                                                                           8L));
+        final AbstractSyntaxTree expectedAST =
+                new BinaryOperationNode(new ConstantNode<Long>(INT, 5L),
+                                        BinaryOperationNodeType.PLUS,
+                                        (Expression) multTree);
 
         final AbstractSyntaxTree actualAST = parser.parseExpression();
 

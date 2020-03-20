@@ -39,6 +39,7 @@ class ParserTestDataProvider {
         TEST_SYMBOLS.insert(new VariableDescription("ab", Type.INT, 0, false));
         TEST_SYMBOLS.insert(new VariableDescription("b", Type.INT, 0, false));
         TEST_SYMBOLS.insert(new VariableDescription("c", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("d", Type.INT, 0, false));
         TEST_SYMBOLS.insert(new VariableDescription("n", Type.INT, 0, false));
     }
 
