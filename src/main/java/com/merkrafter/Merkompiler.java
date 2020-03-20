@@ -8,7 +8,6 @@ import com.merkrafter.lexing.TokenType;
 import com.merkrafter.parsing.Parser;
 import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ClassNode;
-import com.merkrafter.representation.graphical.GraphicalClassNode;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.jetbrains.annotations.NotNull;
 

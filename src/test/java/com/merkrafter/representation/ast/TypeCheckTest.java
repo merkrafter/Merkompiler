@@ -5,7 +5,6 @@ import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
