@@ -431,7 +431,7 @@ class ParserTestDataProvider {
      * stream of Tokens.
      */
     static class TokenWrapper {
-        private List<Token> tokenList;
+        private final List<Token> tokenList;
 
         TokenWrapper() {
             tokenList = new LinkedList<>();
