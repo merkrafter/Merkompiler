@@ -1,6 +1,9 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
+import com.merkrafter.representation.SymbolTable;
+import com.merkrafter.representation.Type;
+import com.merkrafter.representation.VariableDescription;
 import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ConstantNode;
 import com.merkrafter.representation.ast.ErrorNode;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 
@@ -42,7 +46,7 @@ class ParserTest {
      * The parser should accept a single "{int {@value #VAR_IDENT};}" as a class body.
      */
     @Test
-    void parseClassBody() {
+    void parseClassBody() throws ParserException {
         final Scanner scanner = new TestScanner(new Token[]{
                 new Token(TokenType.L_BRACE, "", 1, 1),
                 new KeywordToken(Keyword.INT, "", 1, 1),
@@ -57,7 +61,7 @@ class ParserTest {
      * The parser should accept a single "int {@value #VAR_IDENT}" as a declaration.
      */
     @Test
-    void parseDeclarations() {
+    void parseDeclarations() throws ParserException {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.INT, "", 1, 1),
                 new IdentToken(VAR_IDENT, "", 1, 1),
@@ -162,7 +166,7 @@ class ParserTest {
      * The parser should accept a single "int {@value #VAR_IDENT}" as a local declaration.
      */
     @Test
-    void parseLocalDeclaration() {
+    void parseLocalDeclaration() throws ParserException {
         final Scanner scanner = new TestScanner(new Token[]{
                 new KeywordToken(Keyword.INT, "", 1, 1),
                 new IdentToken(VAR_IDENT, "", 1, 1),
@@ -493,6 +497,92 @@ class ParserTest {
         final Scanner scanner = new TestScanner(new Token[]{new Token(tokenType, "", 0, 0)});
         final Parser parser = new Parser(scanner);
         assertNull(parser.parseIdentifier());
+    }
+
+    /**
+     * The scanner should accept two variables with the same names if they are in different scopes.
+     * It does not matter whether the outer variable is constant or not.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"true", "false"})
+    void testTwoVariablesWithSameNamesInDifferentScopes(@NotNull final String constant) {
+        final String name = "a";
+        final SymbolTable outerScope = new SymbolTable();
+        outerScope.insert(new VariableDescription(name, Type.INT, 0, Boolean.getBoolean(constant)));
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner, outerScope);
+        assertDoesNotThrow(parser::parseLocalDeclaration);
+    }
+
+    /**
+     * The scanner should indicate an error if two variables with the same names were declared
+     * in the same scope.
+     */
+    @Test
+    void testTwoVariablesWithSameNames() throws ParserException {
+        final String name = "a";
+        final Scanner scanner = new TestScanner(new Token[]{
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        parser.parseLocalDeclaration(); // parse first variable and store it in the symbol table
+        assertThrows(ParserException.class, parser::parseLocalDeclaration);
+    }
+
+    /**
+     * The scanner should indicate an error if two variables with the same names were declared
+     * in the same scope (class level).
+     */
+    @Test
+    void testTwoVariablesWithSameNamesInClass() {
+        final String name = "a";
+        final Scanner scanner = new TestScanner(new Token[]{
+                //final int a = 0;
+                new KeywordToken(Keyword.FINAL, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new NumberToken(0, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                // int a;
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertThrows(ParserException.class, parser::parseDeclarations);
+    }
+
+    /**
+     * The scanner should indicate an error if two variables with the same names were declared
+     * in the same scope when both are final (class level).
+     */
+    @Test
+    void testTwoFinalVariablesWithSameNamesInClass() {
+        final String name = "a";
+        final Scanner scanner = new TestScanner(new Token[]{
+                // final int a = 0;
+                new KeywordToken(Keyword.FINAL, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new NumberToken(0, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0),
+                // final int a = 0;
+                new KeywordToken(Keyword.FINAL, "", 0, 0),
+                new KeywordToken(Keyword.INT, "", 0, 0),
+                new IdentToken(name, "", 0, 0),
+                new Token(TokenType.ASSIGN, "", 0, 0),
+                new NumberToken(0, "", 0, 0),
+                new Token(TokenType.SEMICOLON, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertThrows(ParserException.class, parser::parseDeclarations);
     }
 
     /**
