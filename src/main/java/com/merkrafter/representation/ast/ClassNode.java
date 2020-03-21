@@ -69,7 +69,6 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     @Override
     public List<String> getAllErrors() {
         final List<String> errors = new LinkedList<>();
-        errors.addAll(collectErrorsFrom(classDescription.getEntryPoint()));
         errors.addAll(getErrorsFromProcedures());
         errors.addAll(getErrorsFromExpressions());
         return errors;

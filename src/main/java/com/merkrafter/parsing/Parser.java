@@ -104,17 +104,6 @@ public class Parser {
             return new ErrorNode(e.getMessage());
         }
 
-        // find parameterless main method
-        // TODO remove this section
-        final Position dummyPosition = new Position("", 0, 0);
-        final ProcedureDescription mainProcedure = new ProcedureDescriptionProxy("main",
-                                                                                 new ParameterListNode(),
-                                                                                 symbolTable,
-                                                                                 dummyPosition);
-        clazz.setEntryPoint(new ProcedureCallNode(mainProcedure,
-                                                  new ParameterListNode(),
-                                                  dummyPosition));
-
         // do not return immediately in case of errors, because the symbol table scope must be reset
         symbolTable = prevSymbolTable;
         if (success) {

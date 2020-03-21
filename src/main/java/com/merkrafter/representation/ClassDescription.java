@@ -15,8 +15,6 @@ public class ClassDescription extends ObjectDescription {
     //==============================================================
     @NotNull
     private final SymbolTable symbolTable;
-    // TODO remove this entry point
-    private ProcedureCallNode entryPoint;
 
     // CONSTRUCTORS
     //==============================================================
@@ -40,22 +38,8 @@ public class ClassDescription extends ObjectDescription {
         return symbolTable;
     }
 
-    /**
-     * @return the entry point of this class
-     */
-    public ProcedureCallNode getEntryPoint() {
-        return entryPoint;
-    }
-
     // SETTER
     //==============================================================
-
-    /**
-     * @param entryPoint a procedure that will be called when the program starts
-     */
-    public void setEntryPoint(final ProcedureCallNode entryPoint) {
-        this.entryPoint = entryPoint;
-    }
 
     /**
      * @return an identifier unique in the whole AST
