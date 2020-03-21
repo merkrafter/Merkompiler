@@ -678,6 +678,24 @@ class ParserTest {
     }
 
     /**
+     * The scanner should indicate an error if procedure has an empty body.
+     */
+    @Test
+    void testEmptyProcedureBody() {
+        final Scanner scanner = new TestScanner(new Token[]{
+                // public void func(){}
+                new KeywordToken(Keyword.PUBLIC, "", 0, 0),
+                new KeywordToken(Keyword.VOID, "", 0, 0),
+                new IdentToken("func", "", 0, 0),
+                new Token(TokenType.L_PAREN, "", 0, 0),
+                new Token(TokenType.R_PAREN, "", 0, 0),
+                new Token(TokenType.L_BRACE, "", 0, 0),
+                new Token(TokenType.R_BRACE, "", 0, 0)});
+        final Parser parser = new Parser(scanner);
+        assertThrows(ParserException.class, parser::parseMethodDeclaration);
+    }
+
+    /**
      * The scanner should indicate an error if a local variable with the same name as a formal
      * parameter was declared in the same procedure.
      */

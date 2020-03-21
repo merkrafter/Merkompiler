@@ -127,4 +127,10 @@ public class ErrorNode implements Expression, Statement {
     public boolean hasReturnType(@NotNull final Type type) {
         return false;
     }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return message;
+    }
 }

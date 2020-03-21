@@ -228,7 +228,7 @@ public class Parser {
         symbolTable = prevSymbolTable;
 
         if (statements instanceof ErrorNode) {
-            return false; // TODO propagate the error message
+            throw new ParserException(statements.toString());
         }
 
         final boolean wasInserted = symbolTable.insert(procedureDescription);
