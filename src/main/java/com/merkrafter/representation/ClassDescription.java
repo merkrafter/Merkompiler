@@ -1,6 +1,5 @@
 package com.merkrafter.representation;
 
-import com.merkrafter.representation.ast.ProcedureCallNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
