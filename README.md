@@ -27,6 +27,17 @@ $ mvn package
 Merkompiler comes as a standalone jar, hence you don't need to do anything other than
 building or downloading it from the github repository's releases tab.
 
+### Running
+Merkompiler can be run with:
+```bash
+java -jar path/to/Merkompiler.jar
+```
+
+An overview over all available options of your version can be obtained with:
+```bash
+java -jar path/to/Merkompiler.jar --help
+```
+
 ## Running the tests
 Assuming you downloaded the sources via git clone or equivalent, you only have to run:
 ```bash
