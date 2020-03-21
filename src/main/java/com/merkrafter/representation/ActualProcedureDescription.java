@@ -1,5 +1,6 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ast.Statement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,8 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     private final SymbolTable symbols;
     @Nullable
     private Statement statements;
+    @NotNull
+    private final Position position;
 
 
     // CONSTRUCTORS
@@ -35,11 +38,13 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
      ***************************************************************/
     public ActualProcedureDescription(@NotNull final Type returnType, @NotNull final String name,
                                       @NotNull final List<VariableDescription> paramList,
-                                      @Nullable final SymbolTable enclosingSymbolTable) {
+                                      @Nullable final SymbolTable enclosingSymbolTable,
+                                      @NotNull final Position position) {
         super(name);
         this.returnType = returnType;
         this.paramList = paramList;
         this.symbols = new SymbolTable(enclosingSymbolTable);
+        this.position = position;
     }
 
     // GETTER
@@ -85,6 +90,12 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     @Override
     public Statement getEntryPoint() {
         return statements;
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
     }
 
     // SETTER

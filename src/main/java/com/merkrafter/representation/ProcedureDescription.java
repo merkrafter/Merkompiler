@@ -1,5 +1,6 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.lexing.Locatable;
 import com.merkrafter.representation.ast.Statement;
 import com.merkrafter.representation.graphical.GraphicalComponent;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public interface ProcedureDescription extends GraphicalComponent {
+public interface ProcedureDescription extends GraphicalComponent, Locatable {
     @NotNull SymbolTable getSymbols();
 
     @NotNull String getName();

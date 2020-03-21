@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReturnCheckTest {
+
+    private final Position p = new Position("", 0, 0); // just a dummy position
 
     @Mock
     Statement mockStmt;
@@ -28,7 +31,8 @@ class ReturnCheckTest {
         Mockito.lenient().when(mockStmt.hasReturnType(expectedType)).thenReturn(true);
         Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
 
-        final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(condition, mockStmt), mockStmt);
+        final IfElseNode nodeUnderTest =
+                new IfElseNode(new IfNode(condition, mockStmt, p), mockStmt);
         final boolean returnedTypeCorrect = nodeUnderTest.hasReturnType(expectedType);
         assertTrue(returnedTypeCorrect);
     }
@@ -40,7 +44,7 @@ class ReturnCheckTest {
         Mockito.lenient().when(retNode.hasReturnType(type)).thenReturn(true);
         Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
 
-        final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(condition, retNode), retNode);
+        final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(condition, retNode, p), retNode);
         final boolean returnedTypeCorrect = nodeUnderTest.hasReturnType(type);
         assertTrue(returnedTypeCorrect);
     }

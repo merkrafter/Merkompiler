@@ -428,13 +428,16 @@ public class Scanner {
         try {
             final Keyword keyword = Keyword.valueOf(id.toString().toUpperCase());
             // if this actually is a keyword:
-            sym = new KeywordToken(keyword, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new KeywordToken(keyword,
+                                   sym.getPosition().getFilename(),
+                                   sym.getPosition().getLine(),
+                                   sym.getPosition().getColumn());
         } catch (IllegalArgumentException ignored) {
             // id is not a keyword
             sym = new IdentToken(id.toString(),
-                                 sym.getFilename(),
-                                 sym.getLine(),
-                                 sym.getPosition());
+                                 sym.getPosition().getFilename(),
+                                 sym.getPosition().getLine(),
+                                 sym.getPosition().getColumn());
         }
     }
 
@@ -446,10 +449,16 @@ public class Scanner {
         try {
             final long number = Long.parseLong(num.toString());
             // if this actually is a number:
-            sym = new NumberToken(number, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new NumberToken(number,
+                                  sym.getPosition().getFilename(),
+                                  sym.getPosition().getLine(),
+                                  sym.getPosition().getColumn());
         } catch (NumberFormatException ignored) {
             // id is not a number
-            sym = new Token(TokenType.OTHER, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new Token(TokenType.OTHER,
+                            sym.getPosition().getFilename(),
+                            sym.getPosition().getLine(),
+                            sym.getPosition().getColumn());
         }
     }
 

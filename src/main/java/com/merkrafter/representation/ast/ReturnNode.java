@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,8 @@ public class ReturnNode extends AbstractStatementNode {
     //==============================================================
     @Nullable
     private final Expression expression;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -25,15 +28,16 @@ public class ReturnNode extends AbstractStatementNode {
     /****
      * Creates a new return node without an expression.
      ***************************************************************/
-    public ReturnNode() {
-        this(null);
+    public ReturnNode(@NotNull final Position position) {
+        this(null, position);
     }
 
     /****
      * Creates a new return node with the given expression as its value.
      ***************************************************************/
-    public ReturnNode(@Nullable final Expression expression) {
+    public ReturnNode(@Nullable final Expression expression, @NotNull final Position position) {
         this.expression = expression;
+        this.position = position;
     }
 
     // GETTER
@@ -48,26 +52,6 @@ public class ReturnNode extends AbstractStatementNode {
             return Type.VOID;
         }
         return expression.getReturnedType();
-    }
-
-    /**
-     * A ReturnNode has a semantics error if the return value exists but has an error.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return expression != null && expression.hasSemanticsError();
-    }
-
-    /**
-     * A ReturnNode can not have a syntax error.
-     *
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
     }
 
     /**
@@ -136,8 +120,15 @@ public class ReturnNode extends AbstractStatementNode {
     public List<String> getTypingErrors() {
         final List<String> errors = super.getTypingErrors();
         if (expression != null && expression.getReturnedType().equals(Type.VOID)) {
-            errors.add("Returning void value is not allowed");
+            errors.add(String.format("%s: Returning void value is not allowed",
+                                     expression.getPosition()));
         }
         return errors;
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
     }
 }

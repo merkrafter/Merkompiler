@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,35 +82,31 @@ public class BinaryOperationNode implements Expression {
         errors.addAll(leftOperand.getTypingErrors());
         errors.addAll(rightOperand.getTypingErrors());
         if (!leftOperand.getReturnedType().equals(rightOperand.getReturnedType())) {
-            errors.add(String.format("Type mismatch in expression: %s and %s",
+            errors.add(String.format("%s: Type mismatch in expression: %s and %s",
+                                     leftOperand.getPosition(),
                                      leftOperand.getReturnedType(),
                                      rightOperand.getReturnedType()));
         }
-        if (leftOperand.getReturnedType().equals(Type.VOID) || rightOperand.getReturnedType()
-                                                                           .equals(Type.VOID)) {
-            errors.add("Type mismatch in expression: void must not occur in expression");
+        if (leftOperand.getReturnedType().equals(Type.VOID)) {
+            errors.add(String.format("%s: Type mismatch: void must not occur in expression",
+                                     leftOperand.getPosition()));
+        }
+        if (rightOperand.getReturnedType().equals(Type.VOID)) {
+            errors.add(String.format("%s: Type mismatch: void must not occur in expression",
+                                     rightOperand.getPosition()));
         }
         return errors;
     }
 
     /**
-     * A BinaryOperationNode has a semantics error if any child node is null or has an error itself.
+     * An operation is located at the leftmost operand.
      *
-     * @return whether the tree represented by this node has a semantics error somewhere
+     * @return Position of the left operand
      */
+    @NotNull
     @Override
-    public boolean hasSemanticsError() {
-        return leftOperand.hasSemanticsError() || rightOperand.hasSemanticsError();
-    }
-
-    /**
-     * A BinaryOperationNode has a syntax error if any child node is null or has an error itself.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return leftOperand.hasSyntaxError() || rightOperand.hasSyntaxError();
+    public Position getPosition() {
+        return leftOperand.getPosition();
     }
 
     /**

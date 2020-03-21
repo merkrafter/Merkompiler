@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,8 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     private final ProcedureDescription procedure;
     @NotNull
     private final ParameterListNode args;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -29,9 +32,11 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
      * given arguments.
      ***************************************************************/
     public ProcedureCallNode(@NotNull final ProcedureDescription procedure,
-                             @NotNull final ParameterListNode args) {
+                             @NotNull final ParameterListNode args,
+                             @NotNull final Position position) {
         this.procedure = procedure;
         this.args = args;
+        this.position = position;
     }
 
     // GETTER
@@ -57,14 +62,16 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
         final List<String> errors = new LinkedList<>();
         if (procedure.getParamList() == null) {
             errors.add(String.format(
-                    "Could not verify the arguments in call to unknown procedure %s",
+                    "%s: Could not verify the arguments in call to unknown procedure %s",
+                    getPosition(),
                     procedure.getName()));
         }
         // this case should never happen because the procedure call should only be created when
         // the types of call arguments and formal parameters match, but better check this twice
         // in case something changes in the other parts of the program
         else if (args.getParameters().size() != procedure.getParamList().size()) {
-            errors.add(String.format("Incorrect number of arguments in call to procedure %s",
+            errors.add(String.format("%s: Incorrect number of arguments in call to procedure %s",
+                                     getPosition(),
                                      procedure.getName()));
         } else {
             for (int i = 0; i < args.getParameters().size(); i++) {
@@ -72,29 +79,14 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
                          .get(i)
                          .getReturnedType()
                          .equals(procedure.getParamList().get(i).getType())) {
-                    errors.add(String.format("Type mismatch in arg #%d in call to procedure %s",
+                    errors.add(String.format("%s: Type mismatch in arg #%d in call to procedure %s",
+                                             args.getParameters().get(i).getPosition(),
                                              i + 1,
                                              procedure.getName()));
                 }
             }
         }
         return errors;
-    }
-
-    /**
-     * @return false
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return false;
-    }
-
-    /**
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
     }
 
     /**
@@ -143,5 +135,11 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
         }
 
         return dotRepr.toString();
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
     }
 }

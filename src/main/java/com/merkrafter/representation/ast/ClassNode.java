@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ClassDescription;
 import com.merkrafter.representation.ObjectDescription;
 import com.merkrafter.representation.ProcedureDescription;
@@ -30,7 +31,8 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     /****
      * Creates a new ClassNode from a ClassDescription.
      ***************************************************************/
-    public ClassNode(@NotNull final ClassDescription classDescription) {
+    public ClassNode(@NotNull final ClassDescription classDescription,
+                     @NotNull final Position position) {
         this.classDescription = classDescription;
     }
 
@@ -59,25 +61,6 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     //==============================================================
     // public methods
     //--------------------------------------------------------------
-
-    /**
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return classDescription.getEntryPoint() == null || classDescription.getEntryPoint()
-                                                                           .hasSemanticsError();
-    }
-
-    /**
-     * @return a class node has an error if the class was not defined or the class had an error
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        // it is syntactically correct to not have an entry point
-        return classDescription.getEntryPoint() != null && classDescription.getEntryPoint()
-                                                                           .hasSyntaxError();
-    }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
@@ -172,7 +155,9 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         final Type returnType = proc.getReturnType();
         final Statement stmt = proc.getEntryPoint();
         if (stmt == null || returnType == null || !stmt.hasReturnType(returnType)) {
-            errors.add(String.format("Return type mismatch in procedure %s", proc.getName()));
+            errors.add(String.format("%s: Return type mismatch in procedure %s",
+                                     proc.getPosition(),
+                                     proc.getName()));
         }
         errors.addAll(collectErrorsFrom(proc.getEntryPoint()));
         errors.addAll(proc.getEntryPoint().getTypingErrors());

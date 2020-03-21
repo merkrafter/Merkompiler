@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Locatable;
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,13 +15,15 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class IfNode implements AbstractSyntaxTree {
+public class IfNode implements AbstractSyntaxTree, Locatable {
     // ATTRIBUTES
     //==============================================================
     @NotNull
     private final Expression condition;
     @NotNull
     private final Statement ifBranch;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -29,32 +33,20 @@ public class IfNode implements AbstractSyntaxTree {
      * condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfNode(@NotNull final Expression condition, @NotNull final Statement ifBranch) {
+    public IfNode(@NotNull final Expression condition, @NotNull final Statement ifBranch,
+                  @NotNull final Position position) {
         this.condition = condition;
         this.ifBranch = ifBranch;
+        this.position = position;
     }
 
     // GETTER
     //==============================================================
 
-    /**
-     * An IfNode has a semantics error if any of its child nodes is null or has an error itself.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
+    @NotNull
     @Override
-    public boolean hasSemanticsError() {
-        return condition.hasSemanticsError() || ifBranch.hasSemanticsError();
-    }
-
-    /**
-     * An IfNode has a syntax error if any of its child nodes is null or has an error itself.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return condition.hasSyntaxError() || ifBranch.hasSyntaxError();
+    public Position getPosition() {
+        return position;
     }
 
     /**
@@ -113,7 +105,8 @@ public class IfNode implements AbstractSyntaxTree {
     public List<String> getTypingErrors() {
         final List<String> errors = condition.getTypingErrors();
         if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
-            errors.add("Condition does not evaluate to boolean in if statement");
+            errors.add(String.format("%s: Condition does not evaluate to boolean in if statement",
+                                     condition.getPosition()));
         }
         errors.addAll(ifBranch.getTypingErrors());
         return errors;

@@ -1,5 +1,6 @@
 package com.merkrafter.parsing;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.lexing.Scanner;
 import com.merkrafter.lexing.StringIteratorTestUtility;
 import com.merkrafter.representation.ast.*;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class ParserBuildingIntegrationTest {
 
+    private final Position p = new Position("", 0, 0); // just a dummy position
     /**
      * This field enables iterating over Strings.
      */
@@ -45,11 +47,11 @@ class ParserBuildingIntegrationTest {
         scanner = new Scanner(stringIterator);
         scanner.setFilename(""); // avoid setting it to null
         parser = new Parser(scanner);
-        final Expression multTree = new BinaryOperationNode(new ConstantNode<>(INT, 3L),
+        final Expression multTree = new BinaryOperationNode(new ConstantNode<>(INT, 3L, p),
                                                             BinaryOperationNodeType.TIMES,
-                                                            new ConstantNode<>(INT, 8L));
+                                                            new ConstantNode<>(INT, 8L, p));
         final AbstractSyntaxTree expectedAST =
-                new BinaryOperationNode(new ConstantNode<>(INT, 5L),
+                new BinaryOperationNode(new ConstantNode<>(INT, 5L, p),
                                         BinaryOperationNodeType.PLUS,
                                         multTree);
 

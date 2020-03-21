@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,8 @@ public class WhileNode extends AbstractStatementNode {
     private final Expression condition;
     @NotNull
     private final Statement loopBody;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -28,32 +31,20 @@ public class WhileNode extends AbstractStatementNode {
      * while the condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public WhileNode(@NotNull final Expression condition, @NotNull final Statement loopBody) {
+    public WhileNode(@NotNull final Expression condition, @NotNull final Statement loopBody,
+                     @NotNull final Position position) {
         this.condition = condition;
         this.loopBody = loopBody;
+        this.position = position;
     }
 
     // GETTER
     //==============================================================
 
-    /**
-     * A WhileNode has a semantics error if the child nodes are null or have errors themselves.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
+    @NotNull
     @Override
-    public boolean hasSemanticsError() {
-        return condition.hasSemanticsError() || loopBody.hasSemanticsError();
-    }
-
-    /**
-     * A WhileNode has a syntax error if the child nodes are null or have errors themselves.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return condition.hasSyntaxError() || loopBody.hasSyntaxError();
+    public Position getPosition() {
+        return position;
     }
 
     /**
@@ -117,7 +108,8 @@ public class WhileNode extends AbstractStatementNode {
         final List<String> errors = super.getTypingErrors();
         errors.addAll(condition.getTypingErrors());
         if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
-            errors.add("Condition does not evaluate to boolean in while loop");
+            errors.add(String.format("%s: Condition does not evaluate to boolean in if statement",
+                                     condition.getPosition()));
         }
         errors.addAll(loopBody.getTypingErrors());
         return errors;

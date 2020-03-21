@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,8 @@ public class VariableAccessNode implements Expression {
     //==============================================================
     @NotNull
     private final VariableDescription variableDescription;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -25,8 +28,10 @@ public class VariableAccessNode implements Expression {
     /****
      * Creates a new node that represents an access to a variable.
      ***************************************************************/
-    public VariableAccessNode(@NotNull final VariableDescription variableDescription) {
+    public VariableAccessNode(@NotNull final VariableDescription variableDescription,
+                              @NotNull final Position position) {
         this.variableDescription = variableDescription;
+        this.position = position;
     }
 
     // GETTER
@@ -62,22 +67,6 @@ public class VariableAccessNode implements Expression {
     @NotNull
     public String getName() {
         return variableDescription.getName();
-    }
-
-    /**
-     * @return false
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return false;
-    }
-
-    /**
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
     }
 
     /**
@@ -117,5 +106,11 @@ public class VariableAccessNode implements Expression {
     @Override
     public String getDotRepresentation() {
         return String.format("%d[label=\"VAR%s%s\"];", getID(), System.lineSeparator(), getName());
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
     }
 }

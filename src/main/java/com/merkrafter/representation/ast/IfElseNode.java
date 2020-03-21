@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,24 +38,10 @@ public class IfElseNode extends AbstractStatementNode {
     // GETTER
     //==============================================================
 
-    /**
-     * An IfElseNode has a semantics error if the child nodes are null or have an error themselves.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
+    @NotNull
     @Override
-    public boolean hasSemanticsError() {
-        return ifBranch.hasSemanticsError() || elseBranch.hasSemanticsError();
-    }
-
-    /**
-     * An IfElseNode has a syntax error if the child nodes are null or have an error themselves.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return ifBranch.hasSyntaxError() || elseBranch.hasSyntaxError();
+    public Position getPosition() {
+        return ifBranch.getPosition();
     }
 
     /**

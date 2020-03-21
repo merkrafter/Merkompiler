@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,28 +37,6 @@ public class AssignmentNode extends AbstractStatementNode {
     //==============================================================
 
     /**
-     * An AssignmentNode has a semantics error if the variable or expression is null or has an error
-     * itself.
-     *
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return variable.hasSemanticsError() || value.hasSemanticsError();
-    }
-
-    /**
-     * An AssignmentNode has a syntax error if the variable or expression is null or has an error
-     * itself.
-     *
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return variable.hasSyntaxError() || value.hasSyntaxError();
-    }
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
     @NotNull
@@ -65,9 +44,16 @@ public class AssignmentNode extends AbstractStatementNode {
     public List<String> getAllErrors() {
         final List<String> errors = collectErrorsFrom(variable, value, getNext());
         if (variable.isConstant()) {
-            errors.add("Can not assign a value to a constant after initialization");
+            errors.add(String.format("%s: Can not assign a value to a constant after initialization",
+                                     getPosition()));
         }
         return errors;
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return variable.getPosition();
     }
 
     /**
@@ -122,7 +108,9 @@ public class AssignmentNode extends AbstractStatementNode {
         final List<String> errors = super.getTypingErrors();
         errors.addAll(value.getTypingErrors());
         if (!variable.getReturnedType().equals(value.getReturnedType())) {
-            errors.add("Type mismatch in assignment to " + variable.getName());
+            errors.add(String.format("%s: Type mismatch in assignment to %s",
+                                     getPosition(),
+                                     variable.getName()));
         }
         return errors;
     }
