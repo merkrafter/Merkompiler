@@ -84,12 +84,13 @@ public class Parser {
         }
         scanner.processToken();
 
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
             return new ErrorNode(generateErrorMessage("class name"));
         }
 
-        final ClassDescription clazz = new ClassDescription(identifier, symbolTable);
+        final ClassDescription clazz =
+                new ClassDescription(identifier.getIdentifier(), symbolTable);
 
         final SymbolTable prevSymbolTable = symbolTable;
         symbolTable = clazz.getSymbolTable();
@@ -160,7 +161,7 @@ public class Parser {
         if (type == null) {
             return false;
         }
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
             return false;
         }
@@ -176,7 +177,8 @@ public class Parser {
         scanner.processToken();
 
         // TODO evaluate the expression to set the value correctly
-        final VariableDescription var = new VariableDescription(identifier, type, 0, true);
+        final VariableDescription var =
+                new VariableDescription(identifier.getIdentifier(), type, 0, true);
         final boolean wasInserted = symbolTable.insert(var);
         if (!wasInserted) {
             throw new ParserException(String.format("Variable %s was declared multiple times",
@@ -249,7 +251,7 @@ public class Parser {
             return null;
         }
 
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
             return null;
         }
@@ -258,7 +260,10 @@ public class Parser {
         if (formalParameters == null) {
             return null;
         }
-        return new ActualProcedureDescription(type, identifier, formalParameters, symbolTable);
+        return new ActualProcedureDescription(type,
+                                              identifier.getIdentifier(),
+                                              formalParameters,
+                                              symbolTable);
     }
 
     /**
@@ -332,13 +337,13 @@ public class Parser {
             return null;
         }
 
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
             return null;
         }
 
         // assumes that variables can only be integers
-        return new VariableDescription(identifier, type, 0, false);
+        return new VariableDescription(identifier.getIdentifier(), type, 0, false);
     }
 
     /**
@@ -380,7 +385,7 @@ public class Parser {
         if (type == null) {
             return false;
         }
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
             return false;
         }
@@ -391,7 +396,8 @@ public class Parser {
 
         // FIXME this line assumes that only int values exist and therefore sets the value to 0
         // if more types come into play, a map of default values should be maintained somewhere
-        final VariableDescription var = new VariableDescription(identifier, type, 0, false);
+        final VariableDescription var =
+                new VariableDescription(identifier.getIdentifier(), type, 0, false);
         final boolean wasInserted = symbolTable.insert(var);
         if (!wasInserted) {
             throw new ParserException(String.format("Variable %s was declared multiple times",
@@ -454,7 +460,7 @@ public class Parser {
      */
     @NotNull
     private Statement parseStatementForAssignmentOrProcedureCall() {
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
             // both an assignment and a procedure call need an identifier first
             return new ErrorNode(generateErrorMessage("identifier"));
@@ -464,7 +470,8 @@ public class Parser {
         final Expression expression = parseAssignmentWithoutIdent();
         if (!(expression instanceof ErrorNode)) {
             final VariableDescription var =
-                    (VariableDescription) symbolTable.find(identifier, (Type[]) null);
+                    (VariableDescription) symbolTable.find(identifier.getIdentifier(),
+                                                           (Type[]) null);
             if (var == null) {
                 return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
             }
@@ -484,7 +491,7 @@ public class Parser {
         // this actually is a procedure call
         scanner.processToken();
 
-        return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier,
+        return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier.getIdentifier(),
                                                                    parameters,
                                                                    symbolTable), parameters);
     }
@@ -513,12 +520,12 @@ public class Parser {
      * @return AssignmentNode representing this assignment statement or ErrorNode
      */
     @NotNull AbstractSyntaxTree parseAssignment() {
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
             return new ErrorNode(generateErrorMessage("identifier"));
         }
         final VariableDescription var =
-                (VariableDescription) symbolTable.find(identifier, (Type[]) null);
+                (VariableDescription) symbolTable.find(identifier.getIdentifier(), (Type[]) null);
         if (var == null) {
             return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
         }
@@ -863,7 +870,7 @@ public class Parser {
      * @return syntax tree for this factor
      */
     @NotNull Expression parseFactor() {
-        final String identifier = parseIdentifier();
+        final IdentNode identifier = parseIdentifier();
         if (identifier != null) {
             final ParameterListNode parameters = parseActualParameters();
 
@@ -873,7 +880,7 @@ public class Parser {
             if (parameters != null) {
                 // Finds the procedure lazily after the whole file was parsed.
                 // This avoids evaluating the tree `parameters` multiple times and directly here.
-                return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier,
+                return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier.getIdentifier(),
                                                                            parameters,
                                                                            symbolTable),
                                              parameters);
@@ -883,7 +890,8 @@ public class Parser {
              * Parse a variable access
              */
             final VariableDescription var =
-                    (VariableDescription) symbolTable.find(identifier, (Type[]) null);
+                    (VariableDescription) symbolTable.find(identifier.getIdentifier(),
+                                                           (Type[]) null);
 
             if (var == null) {
                 return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
@@ -944,7 +952,7 @@ public class Parser {
      *
      * @return an identifier of a single IDENT token that comes next
      */
-    @Nullable String parseIdentifier() {
+    @Nullable IdentNode parseIdentifier() {
         // this method does not return a Node yet as it does not know enough context
         // this could be a declaration, a variable or a procedure, for instance
         final Token sym = scanner.getSym();
@@ -956,7 +964,7 @@ public class Parser {
                 identifier = scanner.getId();
             }
             scanner.processToken();
-            return identifier;
+            return new IdentNode(identifier, sym.getPosition());
         } else {
             return null;
         }
