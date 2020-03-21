@@ -4,8 +4,10 @@ import com.merkrafter.config.CompilerStage;
 import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayOutputStream;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  *
  * @author merkrafter
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MerkompilerRunTest {
 
     /**
@@ -153,8 +156,14 @@ class MerkompilerRunTest {
         }
     }
 
+    public File[] getFaultyFiles() {
+        final File errorCaseFolder = getFileFromResource("error_cases");
+        assert errorCaseFolder.isDirectory();
+        return errorCaseFolder.listFiles();
+    }
+
     /**
-     * This test case runs the lexer and parser on the faulty file(s) given by ValueSource.
+     * This test case runs the lexer and parser on the faulty file(s) given by MethodSource.
      * Since there are syntax errors, the program should write some error message(s) to stderr.
      * This test assumes that there is <code>baseFileName</code>{@value INPUT_FILE_SUFFIX} present
      * under <code>src/test/resources</code> in the project.
@@ -162,23 +171,20 @@ class MerkompilerRunTest {
      * This method resets System.err in order to test the output written to it.
      * If this method throws an exception, System.err might still be unavailable.
      *
-     * @param baseFileName is used to find the source file name
+     * @param inputFile source file
      * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
      * @throws IOException if there is a read/write error in the input file
      */
     @ParameterizedTest
-    @ValueSource(strings = "EmptyClass")
-    void parseFaultyFile(@NotNull final String baseFileName)
+    @MethodSource("getFaultyFiles")
+    void parseFaultyFile(@NotNull final File inputFile)
     throws ArgumentParserException, IOException {
         final PrintStream originalErr = System.err;
         try { // will reset System.err in case of crashes
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-            // java source file to read
-            final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
             // set stderr to testable output stream
             System.setErr(new PrintStream(output));
-
             // run main program without specifying output
             final Config config = Config.fromArgs(String.format("--skip-after %s %s",
                                                                 CompilerStage.PARSING.toString(),
