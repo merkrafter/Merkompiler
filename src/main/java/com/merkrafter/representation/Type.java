@@ -1,5 +1,7 @@
 package com.merkrafter.representation;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This class stores information on a type in JavaSST.
  *
@@ -7,7 +9,19 @@ package com.merkrafter.representation;
  * @author merkrafter
  ***************************************************************/
 public enum Type {
-    INT,
-    BOOLEAN,
-    VOID
+    INT(0),
+    BOOLEAN(false),
+    VOID(0);
+
+    @NotNull
+    private final Object defaultValue;
+
+    Type(@NotNull final Object defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    @NotNull
+    public Object getDefaultValue() {
+        return defaultValue;
+    }
 }

@@ -391,10 +391,10 @@ public class Parser {
         }
         scanner.processToken();
 
-        // FIXME this line assumes that only int values exist and therefore sets the value to 0
-        // if more types come into play, a map of default values should be maintained somewhere
-        final VariableDescription var =
-                new VariableDescription(identifier.getIdentifier(), type, 0, false);
+        final VariableDescription var = new VariableDescription(identifier.getIdentifier(),
+                                                                type,
+                                                                type.getDefaultValue(),
+                                                                false);
         final boolean wasInserted = symbolTable.insert(var);
         if (!wasInserted) {
             throw new ParserException(String.format("Variable %s was declared multiple times",
