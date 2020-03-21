@@ -165,16 +165,15 @@ public class Parser {
             return false;
         }
         scanner.processToken();
-        parseExpression(); // FIXME why is this statement alone?
+        final Expression value = parseExpression();
 
         if (scanner.getSym().getType() != SEMICOLON) {
             return false;
         }
         scanner.processToken();
 
-        // TODO evaluate the expression to set the value correctly
         final VariableDescription var =
-                new VariableDescription(identifier.getIdentifier(), type, 0, true);
+                new VariableDescription(identifier.getIdentifier(), type, value, true);
         final boolean wasInserted = symbolTable.insert(var);
         if (!wasInserted) {
             throw new ParserException(String.format("Variable %s was declared multiple times",
