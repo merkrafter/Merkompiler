@@ -133,4 +133,12 @@ public class ErrorNode implements Expression, Statement {
     public String toString() {
         return message;
     }
+
+    /**
+     * @return whether there is a return statement in this statement sequence
+     */
+    @Override
+    public boolean hasReturnStatement() {
+        return false;
+    }
 }

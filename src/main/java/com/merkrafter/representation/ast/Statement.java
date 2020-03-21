@@ -31,10 +31,12 @@ public interface Statement extends AbstractSyntaxTree, GraphicalComponent, Locat
     void setNext(@Nullable Statement next);
 
     /**
-     * If this Statement sequence has a return statement, this method returns its type.
-     * If not, null is returned.
-     *
-     * @return the type that is returned by this statement sequence
+     * @return whether there is a return statement in this statement sequence
+     */
+    boolean hasReturnStatement();
+
+    /**
+     * @return whether this statement sequence can legally occur in a procedure with the given type
      */
     boolean isCompatibleToType(@NotNull Type type);
 

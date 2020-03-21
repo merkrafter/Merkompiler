@@ -114,4 +114,19 @@ public class WhileNode extends AbstractStatementNode {
         errors.addAll(loopBody.getTypingErrors());
         return errors;
     }
+
+    /**
+     * @return whether statements inside AND after the loop comply
+     */
+    @Override
+    public boolean isCompatibleToType(final @NotNull Type type) {
+        /*
+         * As it is not certain that the loop body will be executed, the next statements after the
+         * loop must comply either way.
+         * If the loop body does not comply, this could mean it lacks a return statement (which
+         * would be okay) or has a return statement with an incompatible type, which must be caught.
+         */
+        return super.isCompatibleToType(type) && (loopBody.isCompatibleToType(type)
+                                                  || !loopBody.hasReturnStatement());
+    }
 }

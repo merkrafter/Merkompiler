@@ -48,4 +48,55 @@ class ReturnCheckTest {
         final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
         assertTrue(returnedTypeCorrect);
     }
+
+    /**
+     * A WhileNode should indicate an error if a return statement inside the loop violates the
+     * typing, even if following statements comply.
+     */
+    @ExtendWith(MockitoExtension.class)
+    @Test
+    void testWhileWithIncompatibleType() {
+        final Type type = Type.VOID;
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(false);
+        Mockito.lenient().when(retNode.hasReturnStatement()).thenReturn(true);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(true);
+
+        final WhileNode nodeUnderTest = new WhileNode(condition, retNode, p);
+        nodeUnderTest.setNext(mockStmt);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
+        assertFalse(returnedTypeCorrect);
+    }
+
+    /**
+     * int func () {while(...){a=1;} return 1;}
+     */
+    @ExtendWith(MockitoExtension.class)
+    @Test
+    void testWhileWithoutReturnInLoopBody() {
+        final Type type = Type.INT;
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(true);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(false);
+        Mockito.lenient().when(mockStmt.hasReturnStatement()).thenReturn(false);
+
+        final WhileNode nodeUnderTest = new WhileNode(condition, mockStmt, p);
+        nodeUnderTest.setNext(retNode);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
+        assertTrue(returnedTypeCorrect);
+    }
+
+    /**
+     * void func () {while(...){a=1;} return 1;}
+     */
+    @ExtendWith(MockitoExtension.class)
+    @Test
+    void testWhileWithoutReturnTypeMismatchAfterBody() {
+        final Type type = Type.INT;
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(false);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(true);
+
+        final WhileNode nodeUnderTest = new WhileNode(condition, mockStmt, p);
+        nodeUnderTest.setNext(retNode);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
+        assertFalse(returnedTypeCorrect);
+    }
 }

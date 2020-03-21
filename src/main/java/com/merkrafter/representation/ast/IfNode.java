@@ -111,4 +111,8 @@ public class IfNode implements AbstractSyntaxTree, Locatable {
         errors.addAll(ifBranch.getTypingErrors());
         return errors;
     }
+
+    public boolean hasReturnStatement() {
+        return ifBranch.hasReturnStatement();
+    }
 }

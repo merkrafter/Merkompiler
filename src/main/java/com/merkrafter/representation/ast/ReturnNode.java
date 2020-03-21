@@ -105,6 +105,14 @@ public class ReturnNode extends AbstractStatementNode {
     }
 
     /**
+     * @return true
+     */
+    @Override
+    public boolean hasReturnStatement() {
+        return true;
+    }
+
+    /**
      * If this Statement sequence has a return statement, this method returns its type.
      * If not, null is returned.
      *

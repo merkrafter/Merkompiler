@@ -99,6 +99,15 @@ public class IfElseNode extends AbstractStatementNode {
     }
 
     /**
+     * @return whether there is a return statement in this statement sequence
+     */
+    @Override
+    public boolean hasReturnStatement() {
+        return super.hasReturnStatement()
+               || ifBranch.hasReturnStatement() && elseBranch.hasReturnStatement();
+    }
+
+    /**
      * Returns whether this given return type is compatible with the next statements in this
      * sequence or with both branches of this IfElseNode.
      */

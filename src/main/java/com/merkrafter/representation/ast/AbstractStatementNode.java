@@ -98,6 +98,17 @@ public abstract class AbstractStatementNode implements Statement {
     }
 
     /**
+     * @return whether there is a return statement in this statement sequence
+     */
+    @Override
+    public boolean hasReturnStatement() {
+        if (getNext() == null) {
+            return false;
+        }
+        return getNext().hasReturnStatement();
+    }
+
+    /**
      * @return the type of the next statement in this sequence
      */
     @Override
