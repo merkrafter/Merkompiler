@@ -85,10 +85,6 @@ public class Token {
     @NotNull
     @Override
     public String toString() {
-        return String.format("%s(%d,%d): %s",
-                             position.getFilename(),
-                             position.getLine(),
-                             position.getColumn(),
-                             type);
+        return String.format("%s: %s", position, type);
     }
 }
