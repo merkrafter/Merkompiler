@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,8 @@ public class ConstantNode<T> implements Expression {
     private final Type type;
     @NotNull
     private final T value;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -31,9 +34,11 @@ public class ConstantNode<T> implements Expression {
      * Currently, it is not checked whether either of the arguments are null or whether
      * their types match.
      ***************************************************************/
-    public ConstantNode(@NotNull final Type type, @NotNull final T value) {
+    public ConstantNode(@NotNull final Type type, @NotNull final T value,
+                        @NotNull final Position position) {
         this.type = type;
         this.value = value;
+        this.position = position;
     }
 
     // GETTER
@@ -48,6 +53,12 @@ public class ConstantNode<T> implements Expression {
     @Override
     public Type getReturnedType() {
         return type;
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
     }
 
     /**

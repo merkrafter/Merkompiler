@@ -1,5 +1,6 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ast.ParameterListNode;
 import com.merkrafter.representation.ast.Statement;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,8 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
     private final ParameterListNode parameters;
     @Nullable
     private ProcedureDescription procedureDescription;
+    @NotNull
+    private final Position position;
     /**
      * this is managed by the findProcedureDescription method
      */
@@ -45,10 +48,12 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
      ***************************************************************/
     public ProcedureDescriptionProxy(@NotNull final String name,
                                      @NotNull final ParameterListNode parameters,
-                                     @NotNull final SymbolTable symbolTable) {
+                                     @NotNull final SymbolTable symbolTable,
+                                     @NotNull final Position position) {
         this.name = name;
         this.symbolTable = symbolTable;
         this.parameters = parameters;
+        this.position = position;
     }
 
     // GETTER
@@ -109,6 +114,12 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
             return procedureDescription.getEntryPoint();
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
     }
 
     // METHODS

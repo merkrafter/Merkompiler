@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,15 +82,31 @@ public class BinaryOperationNode implements Expression {
         errors.addAll(leftOperand.getTypingErrors());
         errors.addAll(rightOperand.getTypingErrors());
         if (!leftOperand.getReturnedType().equals(rightOperand.getReturnedType())) {
-            errors.add(String.format("Type mismatch in expression: %s and %s",
+            errors.add(String.format("%s: Type mismatch in expression: %s and %s",
+                                     leftOperand.getPosition(),
                                      leftOperand.getReturnedType(),
                                      rightOperand.getReturnedType()));
         }
-        if (leftOperand.getReturnedType().equals(Type.VOID) || rightOperand.getReturnedType()
-                                                                           .equals(Type.VOID)) {
-            errors.add("Type mismatch in expression: void must not occur in expression");
+        if (leftOperand.getReturnedType().equals(Type.VOID)) {
+            errors.add(String.format("%s: Type mismatch: void must not occur in expression",
+                                     leftOperand.getPosition()));
+        }
+        if (rightOperand.getReturnedType().equals(Type.VOID)) {
+            errors.add(String.format("%s: Type mismatch: void must not occur in expression",
+                                     rightOperand.getPosition()));
         }
         return errors;
+    }
+
+    /**
+     * An operation is located at the leftmost operand.
+     *
+     * @return Position of the left operand
+     */
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return leftOperand.getPosition();
     }
 
     /**

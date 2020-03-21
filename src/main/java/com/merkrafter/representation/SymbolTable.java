@@ -1,5 +1,6 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.lexing.Position;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,7 +117,9 @@ public class SymbolTable {
                     paramList.add(new VariableDescription("", type, 0, false));
                 }
             }
-            prototype = new ActualProcedureDescription(Type.VOID, name, paramList, null);
+            final Position dummyPosition = new Position("", 0, 0);
+            prototype =
+                    new ActualProcedureDescription(Type.VOID, name, paramList, null, dummyPosition);
         }
         return find(prototype);
     }

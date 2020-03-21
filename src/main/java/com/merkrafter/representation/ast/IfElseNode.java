@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,12 @@ public class IfElseNode extends AbstractStatementNode {
 
     // GETTER
     //==============================================================
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return ifBranch.getPosition();
+    }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.

@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,9 +44,16 @@ public class AssignmentNode extends AbstractStatementNode {
     public List<String> getAllErrors() {
         final List<String> errors = collectErrorsFrom(variable, value, getNext());
         if (variable.isConstant()) {
-            errors.add("Can not assign a value to a constant after initialization");
+            errors.add(String.format("%s: Can not assign a value to a constant after initialization",
+                                     getPosition()));
         }
         return errors;
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return variable.getPosition();
     }
 
     /**
@@ -100,7 +108,9 @@ public class AssignmentNode extends AbstractStatementNode {
         final List<String> errors = super.getTypingErrors();
         errors.addAll(value.getTypingErrors());
         if (!variable.getReturnedType().equals(value.getReturnedType())) {
-            errors.add("Type mismatch in assignment to " + variable.getName());
+            errors.add(String.format("%s: Type mismatch in assignment to %s",
+                                     getPosition(),
+                                     variable.getName()));
         }
         return errors;
     }

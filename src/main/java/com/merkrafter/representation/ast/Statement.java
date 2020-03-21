@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Locatable;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import java.util.List;
  * @since v0.4.0
  * @author merkrafter
  ***************************************************************/
-public interface Statement extends AbstractSyntaxTree, GraphicalComponent {
+public interface Statement extends AbstractSyntaxTree, GraphicalComponent, Locatable {
     // METHODS
     //==============================================================
     // public methods
@@ -32,10 +33,10 @@ public interface Statement extends AbstractSyntaxTree, GraphicalComponent {
     /**
      * If this Statement sequence has a return statement, this method returns its type.
      * If not, null is returned.
+     *
      * @return the type that is returned by this statement sequence
      */
     boolean hasReturnType(@NotNull Type type);
 
-    @NotNull
-    List<String> getTypingErrors();
+    @NotNull List<String> getTypingErrors();
 }

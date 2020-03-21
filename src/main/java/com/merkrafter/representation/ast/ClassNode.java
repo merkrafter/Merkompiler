@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ClassDescription;
 import com.merkrafter.representation.ObjectDescription;
 import com.merkrafter.representation.ProcedureDescription;
@@ -30,7 +31,8 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
     /****
      * Creates a new ClassNode from a ClassDescription.
      ***************************************************************/
-    public ClassNode(@NotNull final ClassDescription classDescription) {
+    public ClassNode(@NotNull final ClassDescription classDescription,
+                     @NotNull final Position position) {
         this.classDescription = classDescription;
     }
 
@@ -153,7 +155,9 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         final Type returnType = proc.getReturnType();
         final Statement stmt = proc.getEntryPoint();
         if (stmt == null || returnType == null || !stmt.hasReturnType(returnType)) {
-            errors.add(String.format("Return type mismatch in procedure %s", proc.getName()));
+            errors.add(String.format("%s: Return type mismatch in procedure %s",
+                                     proc.getPosition(),
+                                     proc.getName()));
         }
         errors.addAll(collectErrorsFrom(proc.getEntryPoint()));
         errors.addAll(proc.getEntryPoint().getTypingErrors());

@@ -83,6 +83,7 @@ public class Parser {
             return new ErrorNode(generateErrorMessage("'class' keyword"));
         }
         scanner.processToken();
+        final Position position = sym.getPosition();
 
         final IdentNode identifier = parseIdentifier();
         if (identifier == null) {
@@ -104,14 +105,20 @@ public class Parser {
         }
 
         // find parameterless main method
-        final ProcedureDescription mainProcedure =
-                new ProcedureDescriptionProxy("main", new ParameterListNode(), symbolTable);
-        clazz.setEntryPoint(new ProcedureCallNode(mainProcedure, new ParameterListNode()));
+        // TODO remove this section
+        final Position dummyPosition = new Position("", 0, 0);
+        final ProcedureDescription mainProcedure = new ProcedureDescriptionProxy("main",
+                                                                                 new ParameterListNode(),
+                                                                                 symbolTable,
+                                                                                 dummyPosition);
+        clazz.setEntryPoint(new ProcedureCallNode(mainProcedure,
+                                                  new ParameterListNode(),
+                                                  dummyPosition));
 
         // do not return immediately in case of errors, because the symbol table scope must be reset
         symbolTable = prevSymbolTable;
         if (success) {
-            return new ClassNode(clazz);
+            return new ClassNode(clazz, position);
         } else {
             return new ErrorNode("Error while parsing the class body");
         }
@@ -245,6 +252,7 @@ public class Parser {
             return null;
         }
         scanner.processToken();
+        final Position position = sym.getPosition();
 
         final Type type = parseMethodType();
         if (type == null) {
@@ -263,7 +271,8 @@ public class Parser {
         return new ActualProcedureDescription(type,
                                               identifier.getIdentifier(),
                                               formalParameters,
-                                              symbolTable);
+                                              symbolTable,
+                                              position);
     }
 
     /**
@@ -475,7 +484,8 @@ public class Parser {
             if (var == null) {
                 return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
             }
-            final VariableAccessNode varNode = new VariableAccessNode(var);
+            final VariableAccessNode varNode =
+                    new VariableAccessNode(var, identifier.getPosition());
             return new AssignmentNode(varNode, expression);
         }
 
@@ -493,7 +503,10 @@ public class Parser {
 
         return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier.getIdentifier(),
                                                                    parameters,
-                                                                   symbolTable), parameters);
+                                                                   symbolTable,
+                                                                   identifier.getPosition()),
+                                     parameters,
+                                     identifier.getPosition());
     }
 
     /**
@@ -529,7 +542,8 @@ public class Parser {
         if (var == null) {
             return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
         }
-        return new AssignmentNode(new VariableAccessNode(var), parseAssignmentWithoutIdent());
+        return new AssignmentNode(new VariableAccessNode(var, identifier.getPosition()),
+                                  parseAssignmentWithoutIdent());
     }
 
     /**
@@ -576,6 +590,8 @@ public class Parser {
             return new ErrorNode(generateErrorMessage("'if' keyword"));
         }
         scanner.processToken();
+
+        final Position positionOfIfKeyword = sym.getPosition();
 
         sym = scanner.getSym();
         if (sym.getType() != L_PAREN) {
@@ -631,7 +647,7 @@ public class Parser {
         }
         scanner.processToken();
 
-        final IfNode ifNode = new IfNode(condition, ifBranch);
+        final IfNode ifNode = new IfNode(condition, ifBranch, positionOfIfKeyword);
         return new IfElseNode(ifNode, elseBranch);
     }
 
@@ -651,6 +667,7 @@ public class Parser {
             return new ErrorNode(generateErrorMessage("'while' keyword"));
         }
         scanner.processToken();
+        final Position position = sym.getPosition();
 
         sym = scanner.getSym();
         if (sym.getType() != L_PAREN) {
@@ -685,7 +702,7 @@ public class Parser {
         }
         scanner.processToken();
 
-        return new WhileNode(condition, statements);
+        return new WhileNode(condition, statements, position);
     }
 
     /**
@@ -702,12 +719,13 @@ public class Parser {
             return new ErrorNode(generateErrorMessage("'return' keyword"));
         }
         scanner.processToken();
+        final Position position = sym.getPosition();
 
         // TODO is this extra if branch even needed?
         if (scanner.getSym().getType() == SEMICOLON) {
             // there is no simple expression in between
             scanner.processToken();
-            return new ReturnNode();
+            return new ReturnNode(position);
         }
 
         final Expression expression = parseSimpleExpression();
@@ -722,7 +740,7 @@ public class Parser {
         }
         scanner.processToken();
 
-        return new ReturnNode(expression);
+        return new ReturnNode(expression, position);
     }
 
     /**
@@ -882,8 +900,10 @@ public class Parser {
                 // This avoids evaluating the tree `parameters` multiple times and directly here.
                 return new ProcedureCallNode(new ProcedureDescriptionProxy(identifier.getIdentifier(),
                                                                            parameters,
-                                                                           symbolTable),
-                                             parameters);
+                                                                           symbolTable,
+                                                                           identifier.getPosition()),
+                                             parameters,
+                                             identifier.getPosition());
             }
 
             /*
@@ -896,7 +916,7 @@ public class Parser {
             if (var == null) {
                 return new ErrorNode(String.format("Reference to unknown variable %s", identifier));
             }
-            return new VariableAccessNode(var);
+            return new VariableAccessNode(var, identifier.getPosition());
         }
 
         /*
@@ -931,12 +951,13 @@ public class Parser {
      */
     @NotNull Expression parseNumber() {
         final Token sym = scanner.getSym();
+        final Position pos = sym.getPosition();
         if (sym.getType() == NUMBER) {
             ConstantNode<Long> node;
             if (sym instanceof NumberToken) {
-                node = new ConstantNode<>(Type.INT, ((NumberToken) sym).getNumber());
+                node = new ConstantNode<>(Type.INT, ((NumberToken) sym).getNumber(), pos);
             } else {
-                node = new ConstantNode<>(Type.INT, scanner.getNum());
+                node = new ConstantNode<>(Type.INT, scanner.getNum(), pos);
             }
             scanner.processToken();
             return node;

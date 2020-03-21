@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,8 @@ public class WhileNode extends AbstractStatementNode {
     private final Expression condition;
     @NotNull
     private final Statement loopBody;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -28,13 +31,21 @@ public class WhileNode extends AbstractStatementNode {
      * while the condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public WhileNode(@NotNull final Expression condition, @NotNull final Statement loopBody) {
+    public WhileNode(@NotNull final Expression condition, @NotNull final Statement loopBody,
+                     @NotNull final Position position) {
         this.condition = condition;
         this.loopBody = loopBody;
+        this.position = position;
     }
 
     // GETTER
     //==============================================================
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
+    }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
@@ -97,7 +108,8 @@ public class WhileNode extends AbstractStatementNode {
         final List<String> errors = super.getTypingErrors();
         errors.addAll(condition.getTypingErrors());
         if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
-            errors.add("Condition does not evaluate to boolean in while loop");
+            errors.add(String.format("%s: Condition does not evaluate to boolean in if statement",
+                                     condition.getPosition()));
         }
         errors.addAll(loopBody.getTypingErrors());
         return errors;

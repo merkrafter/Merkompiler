@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Locatable;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,7 @@ import java.util.List;
  * @since v0.4.0
  * @author merkrafter
  ***************************************************************/
-public interface Expression extends AbstractSyntaxTree, GraphicalComponent {
+public interface Expression extends AbstractSyntaxTree, GraphicalComponent, Locatable {
     // METHODS
     //==============================================================
     // public methods

@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Locatable;
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,13 +15,15 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class IfNode implements AbstractSyntaxTree {
+public class IfNode implements AbstractSyntaxTree, Locatable {
     // ATTRIBUTES
     //==============================================================
     @NotNull
     private final Expression condition;
     @NotNull
     private final Statement ifBranch;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -29,13 +33,21 @@ public class IfNode implements AbstractSyntaxTree {
      * condition holds.
      * The constructor does not perform a type check.
      ***************************************************************/
-    public IfNode(@NotNull final Expression condition, @NotNull final Statement ifBranch) {
+    public IfNode(@NotNull final Expression condition, @NotNull final Statement ifBranch,
+                  @NotNull final Position position) {
         this.condition = condition;
         this.ifBranch = ifBranch;
+        this.position = position;
     }
 
     // GETTER
     //==============================================================
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
+    }
 
     /**
      * @return a list of all errors, both semantic and syntactical ones.
@@ -93,7 +105,8 @@ public class IfNode implements AbstractSyntaxTree {
     public List<String> getTypingErrors() {
         final List<String> errors = condition.getTypingErrors();
         if (!condition.getReturnedType().equals(Type.BOOLEAN)) {
-            errors.add("Condition does not evaluate to boolean in if statement");
+            errors.add(String.format("%s: Condition does not evaluate to boolean in if statement",
+                                     condition.getPosition()));
         }
         errors.addAll(ifBranch.getTypingErrors());
         return errors;

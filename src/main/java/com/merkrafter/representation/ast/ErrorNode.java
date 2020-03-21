@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,19 +22,35 @@ public class ErrorNode implements Expression, Statement {
     //==============================================================
     @NotNull
     private final String message;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
 
     /****
-     * Creates a new ErrorNode with a given error message.
+     * Creates a new ErrorNode with a given error message and a dummy position.
      ***************************************************************/
     public ErrorNode(@NotNull final String message) {
+        this(message, new Position("", 0, 0));
+    }
+
+    /****
+     * Creates a new ErrorNode with a given error message.
+     ***************************************************************/
+    public ErrorNode(@NotNull final String message, @NotNull final Position position) {
         this.message = message;
+        this.position = position;
     }
 
     // GETTER
     //==============================================================
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
+    }
 
     /**
      * This method is only here to fulfill the requirements for implementing Statement. It does not
