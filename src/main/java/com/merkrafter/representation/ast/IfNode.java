@@ -98,7 +98,7 @@ public class IfNode implements AbstractSyntaxTree, Locatable {
      * @return the type of the if branch
      */
     boolean hasReturnType(@NotNull final Type type) {
-        return ifBranch.hasReturnType(type);
+        return ifBranch.isCompatibleToType(type);
     }
 
     @NotNull

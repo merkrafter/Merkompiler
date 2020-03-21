@@ -103,9 +103,9 @@ public class IfElseNode extends AbstractStatementNode {
      * sequence or with both branches of this IfElseNode.
      */
     @Override
-    public boolean hasReturnType(@NotNull Type type) {
-        return super.hasReturnType(type)
-               || ifBranch.hasReturnType(type) && elseBranch.hasReturnType(type);
+    public boolean isCompatibleToType(@NotNull Type type) {
+        return super.isCompatibleToType(type)
+               || ifBranch.hasReturnType(type) && elseBranch.isCompatibleToType(type);
     }
 
     @NotNull

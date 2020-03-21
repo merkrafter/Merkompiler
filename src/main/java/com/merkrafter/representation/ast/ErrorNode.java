@@ -124,7 +124,7 @@ public class ErrorNode implements Expression, Statement {
      * @return false
      */
     @Override
-    public boolean hasReturnType(@NotNull final Type type) {
+    public boolean isCompatibleToType(@NotNull final Type type) {
         return false;
     }
 

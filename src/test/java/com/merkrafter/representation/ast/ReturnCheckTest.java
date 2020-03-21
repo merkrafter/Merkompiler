@@ -28,12 +28,12 @@ class ReturnCheckTest {
     @Test
     void testIfElseWithoutReturnForVoid() {
         final Type expectedType = Type.VOID;
-        Mockito.lenient().when(mockStmt.hasReturnType(expectedType)).thenReturn(true);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(expectedType)).thenReturn(true);
         Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
 
         final IfElseNode nodeUnderTest =
                 new IfElseNode(new IfNode(condition, mockStmt, p), mockStmt);
-        final boolean returnedTypeCorrect = nodeUnderTest.hasReturnType(expectedType);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(expectedType);
         assertTrue(returnedTypeCorrect);
     }
 
@@ -41,11 +41,11 @@ class ReturnCheckTest {
     @ParameterizedTest
     @EnumSource(Type.class)
     void testIfElseSingleType(@NotNull final Type type) {
-        Mockito.lenient().when(retNode.hasReturnType(type)).thenReturn(true);
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(true);
         Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
 
         final IfElseNode nodeUnderTest = new IfElseNode(new IfNode(condition, retNode, p), retNode);
-        final boolean returnedTypeCorrect = nodeUnderTest.hasReturnType(type);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
         assertTrue(returnedTypeCorrect);
     }
 }

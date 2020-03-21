@@ -154,7 +154,7 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         final List<String> errors = new LinkedList<>();
         final Type returnType = proc.getReturnType();
         final Statement stmt = proc.getEntryPoint();
-        if (stmt == null || returnType == null || !stmt.hasReturnType(returnType)) {
+        if (stmt == null || returnType == null || !stmt.isCompatibleToType(returnType)) {
             errors.add(String.format("%s: Return type mismatch in procedure %s",
                                      proc.getPosition(),
                                      proc.getName()));

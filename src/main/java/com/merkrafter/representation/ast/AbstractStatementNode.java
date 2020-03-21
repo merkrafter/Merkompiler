@@ -101,11 +101,11 @@ public abstract class AbstractStatementNode implements Statement {
      * @return the type of the next statement in this sequence
      */
     @Override
-    public boolean hasReturnType(@NotNull final Type type) {
+    public boolean isCompatibleToType(@NotNull final Type type) {
         if (getNext() == null) {
             return type == Type.VOID;
         }
-        return getNext().hasReturnType(type);
+        return getNext().isCompatibleToType(type);
     }
 
     @NotNull

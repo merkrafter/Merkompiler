@@ -111,7 +111,7 @@ public class ReturnNode extends AbstractStatementNode {
      * @return the type that is returned by this statement sequence
      */
     @Override
-    public boolean hasReturnType(@NotNull final Type type) {
+    public boolean isCompatibleToType(@NotNull final Type type) {
         return getReturnedType().equals(type);
     }
 

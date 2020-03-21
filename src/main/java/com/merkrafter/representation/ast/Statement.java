@@ -36,7 +36,7 @@ public interface Statement extends AbstractSyntaxTree, GraphicalComponent, Locat
      *
      * @return the type that is returned by this statement sequence
      */
-    boolean hasReturnType(@NotNull Type type);
+    boolean isCompatibleToType(@NotNull Type type);
 
     @NotNull List<String> getTypingErrors();
 }
