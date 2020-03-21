@@ -709,7 +709,6 @@ public class Parser {
         scanner.processToken();
         final Position position = sym.getPosition();
 
-        // TODO is this extra if branch even needed?
         if (scanner.getSym().getType() == SEMICOLON) {
             // there is no simple expression in between
             scanner.processToken();
