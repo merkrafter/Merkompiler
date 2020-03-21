@@ -50,6 +50,64 @@ class ReturnCheckTest {
     }
 
     /**
+     * void func() {if(..){a=1;} else {return 1;}}
+     * ....................................^^^^^ error
+     */
+    @ExtendWith(MockitoExtension.class)
+    @Test
+    void testIfWithRightIncorrectBranch() {
+        final Type type = Type.VOID;
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(false);
+        Mockito.lenient().when(retNode.hasReturnStatement()).thenReturn(true);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(true);
+        Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
+
+        final IfElseNode nodeUnderTest =
+                new IfElseNode(new IfNode(condition, mockStmt, p), retNode);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
+        assertFalse(returnedTypeCorrect);
+    }
+
+    /**
+     * void func() {if(..){return 1;} else{a=1;} }
+     * .....................^^^^^ error
+     */
+    @ExtendWith(MockitoExtension.class)
+    @Test
+    void testIfWithLeftIncorrectBranch() {
+        final Type type = Type.VOID;
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(false);
+        Mockito.lenient().when(retNode.hasReturnStatement()).thenReturn(true);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(true);
+        Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
+
+        final IfElseNode nodeUnderTest =
+                new IfElseNode(new IfNode(condition, mockStmt, p), retNode);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
+        assertFalse(returnedTypeCorrect);
+    }
+
+    /**
+     * void func() {if(..){a=1;} else{a=1;}return 1; }
+     * ......................................^^^^^ error
+     */
+    @ExtendWith(MockitoExtension.class)
+    @Test
+    void testIfWithIncorrectNextStatements() {
+        final Type type = Type.VOID;
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(false);
+        Mockito.lenient().when(retNode.hasReturnStatement()).thenReturn(true);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(true);
+        Mockito.lenient().when(condition.getReturnedType()).thenReturn(Type.BOOLEAN);
+
+        final IfElseNode nodeUnderTest =
+                new IfElseNode(new IfNode(condition, mockStmt, p), mockStmt);
+        nodeUnderTest.setNext(retNode);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
+        assertFalse(returnedTypeCorrect);
+    }
+
+    /**
      * A WhileNode should indicate an error if a return statement inside the loop violates the
      * typing, even if following statements comply.
      */
@@ -90,6 +148,22 @@ class ReturnCheckTest {
     @ExtendWith(MockitoExtension.class)
     @Test
     void testWhileWithoutReturnTypeMismatchAfterBody() {
+        final Type type = Type.INT;
+        Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(false);
+        Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(true);
+
+        final WhileNode nodeUnderTest = new WhileNode(condition, mockStmt, p);
+        nodeUnderTest.setNext(retNode);
+        final boolean returnedTypeCorrect = nodeUnderTest.isCompatibleToType(type);
+        assertFalse(returnedTypeCorrect);
+    }
+
+    /**
+     * void func () {while(...){a=1;} return 1;}
+     */
+    @ExtendWith(MockitoExtension.class)
+    @Test
+    void testIfWithoutReturnInBranches() {
         final Type type = Type.INT;
         Mockito.lenient().when(retNode.isCompatibleToType(type)).thenReturn(false);
         Mockito.lenient().when(mockStmt.isCompatibleToType(type)).thenReturn(true);

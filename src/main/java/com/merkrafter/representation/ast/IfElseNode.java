@@ -113,8 +113,15 @@ public class IfElseNode extends AbstractStatementNode {
      */
     @Override
     public boolean isCompatibleToType(@NotNull Type type) {
-        return super.isCompatibleToType(type)
-               || ifBranch.hasReturnType(type) && elseBranch.isCompatibleToType(type);
+        final boolean afterCorrect = super.isCompatibleToType(type);
+        final boolean afterNoConflict = afterCorrect || !super.hasReturnStatement();
+        final boolean ifBranchCorrect = ifBranch.hasReturnType(type);
+        final boolean elseBranchCorrect = elseBranch.isCompatibleToType(type);
+        final boolean ifBranchNoConflict = ifBranchCorrect || !ifBranch.hasReturnStatement();
+        final boolean elseBranchNoConflict = elseBranchCorrect || !elseBranch.hasReturnStatement();
+
+        return afterCorrect && ifBranchNoConflict && elseBranchNoConflict
+               || ifBranchCorrect && elseBranchCorrect && afterNoConflict;
     }
 
     @NotNull
