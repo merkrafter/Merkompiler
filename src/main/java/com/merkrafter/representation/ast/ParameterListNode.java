@@ -1,28 +1,37 @@
 package com.merkrafter.representation.ast;
 
-import com.merkrafter.representation.Type;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /****
  * This class is used to store values that can be passed to a procedure call.
+ * It is basically an AbstractSyntaxTree-implementing List
  *
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ParameterListNode extends ASTBaseNode {
+public class ParameterListNode implements AbstractSyntaxTree {
     // ATTRIBUTES
     //==============================================================
-    private final List<ASTBaseNode> parameters;
+    @NotNull
+    private final List<Expression> parameters;
 
     // CONSTRUCTORS
     //==============================================================
 
     /****
+     * Creates a new empty ParameterListNode.
+     ***************************************************************/
+    public ParameterListNode() {
+        this(new LinkedList<>());
+    }
+
+    /****
      * Creates a new ParameterListNode.
      ***************************************************************/
-    public ParameterListNode(final List<ASTBaseNode> parameters) {
+    public ParameterListNode(@NotNull final List<Expression> parameters) {
         this.parameters = parameters;
     }
 
@@ -30,49 +39,32 @@ public class ParameterListNode extends ASTBaseNode {
     //==============================================================
 
     /**
-     * ParameterListNodes do not have a meaningful return type and hence return VOID.
-     *
-     * @return Type.VOID
-     */
-    @Override
-    public Type getReturnedType() {
-        return Type.VOID;
-    }
-
-    /**
      * @return a list of expressions
      */
-    public List<ASTBaseNode> getParameters() {
+    @NotNull
+    public List<Expression> getParameters() {
         return parameters;
     }
 
     /**
-     * A ParameterListNode can have an error if the underlying parameter list is null.
-     *
-     * @return whether a semantics error occurred
+     * @return empty list
      */
-    @Override
-    public boolean hasSemanticsError() {
-        return parameters == null;
-    }
-
-    /**
-     * A ParameterListNode can have an error if the underlying parameter list is null.
-     *
-     * @return whether a syntax error occurred
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return parameters == null;
-    }
-
-    /**
-     * @return a list of all errors, both semantic and syntactical ones.
-     */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
-        final List<String> errors = new LinkedList<>();
-        errors.add("Missing parameters");
-        return errors;
+        return new LinkedList<>();
+    }
+
+    /**
+     * Two ParameterListNodes are considered equal if their parameter lists are non-null and are
+     * equal to each other.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof ParameterListNode)) {
+            return false;
+        }
+        final ParameterListNode other = (ParameterListNode) obj;
+        return parameters.equals(other.parameters);
     }
 }

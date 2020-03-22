@@ -1,7 +1,8 @@
 package com.merkrafter.representation.ast;
 
+import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
-import com.merkrafter.representation.VariableDescription;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,11 +16,15 @@ import java.util.Objects;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ConstantNode<T> extends ASTBaseNode {
+public class ConstantNode<T> implements Expression {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final Type type;
+    @NotNull
     private final T value;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -29,9 +34,11 @@ public class ConstantNode<T> extends ASTBaseNode {
      * Currently, it is not checked whether either of the arguments are null or whether
      * their types match.
      ***************************************************************/
-    public ConstantNode(final Type type, final T value) {
+    public ConstantNode(@NotNull final Type type, @NotNull final T value,
+                        @NotNull final Position position) {
         this.type = type;
         this.value = value;
+        this.position = position;
     }
 
     // GETTER
@@ -42,9 +49,25 @@ public class ConstantNode<T> extends ASTBaseNode {
      *
      * @return the return type of this node
      */
+    @NotNull
     @Override
     public Type getReturnedType() {
         return type;
+    }
+
+    @NotNull
+    @Override
+    public Position getPosition() {
+        return position;
+    }
+
+    /**
+     * @return empty list
+     */
+    @NotNull
+    @Override
+    public List<String> getTypingErrors() {
+        return new LinkedList<>();
     }
 
     /**
@@ -52,6 +75,7 @@ public class ConstantNode<T> extends ASTBaseNode {
      *
      * @return value stored by this constant node
      */
+    @NotNull
     public T getValue() {
         return value;
     }
@@ -69,11 +93,11 @@ public class ConstantNode<T> extends ASTBaseNode {
      * @return whether this is equal to o
      */
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@NotNull final Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (getClass() != o.getClass()) {
             return false;
         }
         final ConstantNode<?> that = (ConstantNode<?>) o;
@@ -81,30 +105,31 @@ public class ConstantNode<T> extends ASTBaseNode {
     }
 
     /**
-     * A ConstantNode can not have a semantics error.
-     *
-     * @return false
-     */
-    @Override
-    public boolean hasSemanticsError() {
-        return false;
-    }
-
-    /**
-     * A ConstantNode can not have a syntax error.
-     *
-     * @return false
-     */
-    @Override
-    public boolean hasSyntaxError() {
-        return false;
-    }
-
-    /**
      * @return an empty list
      */
+    @NotNull
     @Override
     public List<String> getAllErrors() {
         return new LinkedList<>();
+    }
+
+    /**
+     * @return an identifier unique in the whole AST
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @Override
+    public String getDotRepresentation() {
+        return String.format("%d[label=\"%s%s%s\"];",
+                             getID(),
+                             type.name(),
+                             System.lineSeparator(),
+                             value.toString());
     }
 }

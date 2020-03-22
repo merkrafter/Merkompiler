@@ -1,6 +1,7 @@
 package com.merkrafter.representation;
 
-import com.merkrafter.representation.ast.ProcedureCallNode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /****
  * This class stores information on a JavaSST class.
@@ -11,8 +12,8 @@ import com.merkrafter.representation.ast.ProcedureCallNode;
 public class ClassDescription extends ObjectDescription {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final SymbolTable symbolTable;
-    private ProcedureCallNode entryPoint;
 
     // CONSTRUCTORS
     //==============================================================
@@ -20,7 +21,7 @@ public class ClassDescription extends ObjectDescription {
     /****
      * Creates a new ClassDescription from a name and with a symbol table from the outer scope.
      ***************************************************************/
-    public ClassDescription(final String name, final SymbolTable outerScope) {
+    public ClassDescription(@NotNull final String name, @Nullable final SymbolTable outerScope) {
         super(name);
         symbolTable = new SymbolTable(outerScope);
     }
@@ -31,24 +32,28 @@ public class ClassDescription extends ObjectDescription {
     /**
      * @return table of all variables and methods that are defined in this class
      */
+    @NotNull
     public SymbolTable getSymbolTable() {
         return symbolTable;
-    }
-
-    /**
-     * @return the entry point of this class
-     */
-    public ProcedureCallNode getEntryPoint() {
-        return entryPoint;
     }
 
     // SETTER
     //==============================================================
 
     /**
-     * @param entryPoint a procedure that will be called when the program starts
+     * @return an identifier unique in the whole AST
      */
-    public void setEntryPoint(final ProcedureCallNode entryPoint) {
-        this.entryPoint = entryPoint;
+    @Override
+    public int getID() {
+        return 0;
+    }
+
+    /**
+     * @return dot/graphviz declarations of this component's children
+     */
+    @NotNull
+    @Override
+    public String getDotRepresentation() {
+        return "";
     }
 }

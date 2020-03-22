@@ -1,5 +1,7 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This class serves as a token and stores a keyword.
  *
@@ -12,6 +14,7 @@ public class KeywordToken extends Token {
     /**
      * the keyword this token stands for
      */
+    @NotNull
     private final Keyword keyword;
 
     // CONSTRUCTORS
@@ -20,8 +23,8 @@ public class KeywordToken extends Token {
     /****
      * Creates a new KeywordToken from a keyword and position data.
      ***************************************************************/
-    public KeywordToken(final Keyword keyword, final String filename, final long line,
-                        final int position) {
+    public KeywordToken(@NotNull final Keyword keyword, @NotNull final String filename,
+                        final long line, final int position) {
         super(TokenType.KEYWORD, filename, line, position);
         this.keyword = keyword;
     }
@@ -32,6 +35,7 @@ public class KeywordToken extends Token {
     /**
      * @return the keyword this token stands for
      */
+    @NotNull
     public Keyword getKeyword() {
         return keyword;
     }
@@ -49,7 +53,7 @@ public class KeywordToken extends Token {
      * @return whether this is equal to obj
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!super.equals(obj)) {
             return false;
         }
@@ -62,6 +66,7 @@ public class KeywordToken extends Token {
      *
      * @return a String representation of this KeywordToken
      */
+    @NotNull
     @Override
     public String toString() {
         return super.toString() + String.format("(%s)", keyword.name().toLowerCase());

@@ -1,9 +1,6 @@
 package com.merkrafter.representation;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -150,7 +147,7 @@ class VariableDescriptionTest {
     }
 
     /**
-     * A variable description should NOT be considered equal to another one if they have
+     * A variable description should be considered equal to another one even if they have
      * different types.
      */
     @Test
@@ -162,22 +159,8 @@ class VariableDescriptionTest {
         final boolean constant = false;
         final VariableDescription varDesc1 = new VariableDescription(name, type1, value, constant);
         final VariableDescription varDesc2 = new VariableDescription(name, type2, value, constant);
-        assertNotEquals(varDesc1, varDesc2);
-        assertNotEquals(varDesc2, varDesc1);
-    }
-
-    /**
-     * A VariableDescription should not be considered equal to null.
-     */
-    @ParameterizedTest
-    @NullSource
-    void testNotEqualsToNull(final Object other) {
-        final String name = "myVar";
-        final Type type = Type.INT;
-        final int value = 5;
-        final boolean constant = false;
-        final VariableDescription varDesc = new VariableDescription(name, type, value, constant);
-        assertNotEquals(varDesc, other);
+        assertEquals(varDesc1, varDesc2);
+        assertEquals(varDesc2, varDesc1);
     }
 
     /**

@@ -3,14 +3,18 @@ package com.merkrafter;
 import com.merkrafter.config.CompilerStage;
 import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -23,17 +27,22 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  *
  * @author merkrafter
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MerkompilerRunTest {
 
     /**
      * Temporary directory for the compiler to write to
      */
+    @SuppressWarnings("unused")
     @TempDir
     static Path tempDir; // access must NOT be private; otherwise JUnit could not create it
 
     // access can not be private; otherwise javadoc could not find the values
+    @NotNull
     public static final String INPUT_FILE_SUFFIX = ".java";
+    @NotNull
     public static final String OUTPUT_FILE_SUFFIX = ".output";
+    @NotNull
     public static final String EXPECTED_FILE_SUFFIX = ".expected";
 
     /**
@@ -50,7 +59,7 @@ class MerkompilerRunTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"EmptyClass", "SmokeClass"})
-    void scanWithOutputCreatesFile(final String baseFileName)
+    void scanWithOutputCreatesFile(@NotNull final String baseFileName)
     throws ArgumentParserException, IOException {
         // java source file to read
         final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
@@ -84,7 +93,8 @@ class MerkompilerRunTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"EmptyClass", "SmokeClass"})
-    void scanWithoutOutput(final String baseFileName) throws ArgumentParserException, IOException {
+    void scanWithoutOutput(@NotNull final String baseFileName)
+    throws ArgumentParserException, IOException {
         final PrintStream originalOut = System.out;
         try { // will reset System.out in case of errors
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -123,7 +133,8 @@ class MerkompilerRunTest {
      */
     @ParameterizedTest
     @ValueSource(strings = "SmokeClass")
-    void parseCorrectClass(final String baseFileName) throws ArgumentParserException, IOException {
+    void parseCorrectClass(@NotNull final String baseFileName)
+    throws ArgumentParserException, IOException {
         final PrintStream originalErr = System.err;
         try { // will reset System.err in case of crashes
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -145,8 +156,14 @@ class MerkompilerRunTest {
         }
     }
 
+    public File[] getFaultyFiles() {
+        final File errorCaseFolder = getFileFromResource("error_cases");
+        assert errorCaseFolder.isDirectory();
+        return errorCaseFolder.listFiles();
+    }
+
     /**
-     * This test case runs the lexer and parser on the faulty file(s) given by ValueSource.
+     * This test case runs the lexer and parser on the faulty file(s) given by MethodSource.
      * Since there are syntax errors, the program should write some error message(s) to stderr.
      * This test assumes that there is <code>baseFileName</code>{@value INPUT_FILE_SUFFIX} present
      * under <code>src/test/resources</code> in the project.
@@ -154,22 +171,20 @@ class MerkompilerRunTest {
      * This method resets System.err in order to test the output written to it.
      * If this method throws an exception, System.err might still be unavailable.
      *
-     * @param baseFileName is used to find the source file name
+     * @param inputFile source file
      * @throws ArgumentParserException if the arguments in the test case are misconfigured (should not happen)
      * @throws IOException if there is a read/write error in the input file
      */
     @ParameterizedTest
-    @ValueSource(strings = "EmptyClass")
-    void parseFaultyFile(final String baseFileName) throws ArgumentParserException, IOException {
+    @MethodSource("getFaultyFiles")
+    void parseFaultyFile(@NotNull final File inputFile)
+    throws ArgumentParserException, IOException {
         final PrintStream originalErr = System.err;
         try { // will reset System.err in case of crashes
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-            // java source file to read
-            final File inputFile = getFileFromResource(baseFileName + INPUT_FILE_SUFFIX);
             // set stderr to testable output stream
             System.setErr(new PrintStream(output));
-
             // run main program without specifying output
             final Config config = Config.fromArgs(String.format("--skip-after %s %s",
                                                                 CompilerStage.PARSING.toString(),
@@ -190,9 +205,12 @@ class MerkompilerRunTest {
      * @param fileName a file under <code>src/test/resources</code>
      * @return a file under the resource directory as specified by <code>fileName</code>
      */
-    private File getFileFromResource(final String fileName) {
+    @NotNull
+    private File getFileFromResource(@NotNull final String fileName) {
         final ClassLoader classLoader = getClass().getClassLoader();
-        final File file = new File(classLoader.getResource(fileName).getFile());
+        final URL resource = classLoader.getResource(fileName);
+        assert resource != null;
+        final File file = new File(resource.getFile());
 
         assumeTrue(file.exists(),
                    "Misconfigured test environment: Missing file " + file.getAbsolutePath());
@@ -207,8 +225,8 @@ class MerkompilerRunTest {
      * @param actualFile should be equal to <code>expectedFile</code>
      * @throws IOException if there is a read/write error in one of the files
      */
-    private static void assertFilesEqual(final File expectedFile, final File actualFile)
-    throws IOException {
+    private static void assertFilesEqual(@NotNull final File expectedFile,
+                                         @NotNull final File actualFile) throws IOException {
         assertEquals(Files.readAllLines(expectedFile.toPath()),
                      Files.readAllLines(actualFile.toPath()));
     }
@@ -221,7 +239,8 @@ class MerkompilerRunTest {
      *
      * @throws IOException if a read/write error occurs
      */
-    private static String toString(final File file) throws IOException {
+    @NotNull
+    private static String toString(@NotNull final File file) throws IOException {
         return String.join("\n", Files.readAllLines(file.toPath()));
     }
 }

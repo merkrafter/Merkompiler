@@ -1,5 +1,7 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This class represents a token that is emitted by a Scanner.
  * It holds read-only context information.
@@ -9,10 +11,10 @@ package com.merkrafter.lexing;
 public class Token {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final TokenType type;
-    private final String filename;
-    private final long line;
-    private final int position;
+    @NotNull
+    private final Position position;
 
     // CONSTRUCTORS
     //==============================================================
@@ -21,14 +23,10 @@ public class Token {
      * Creates a new Token that stores important about information
      * for the Parser.
      ***************************************************************/
-    public Token(final TokenType type, final String filename, final long line, final int position) {
-        if (type == null) {
-            throw new IllegalArgumentException("type must not be null");
-        }
+    public Token(@NotNull final TokenType type, @NotNull final String filename, final long line,
+                 final int position) {
         this.type = type;
-        this.filename = filename;
-        this.line = line;
-        this.position = position;
+        this.position = new Position(filename, line, position);
     }
 
     // GETTER
@@ -37,28 +35,16 @@ public class Token {
     /**
      * @return the type of this Token
      */
+    @NotNull
     public TokenType getType() {
         return type;
     }
 
     /**
-     * @return the file this token is located in
+     * @return the position this token is located at
      */
-    public String getFilename() {
-        return filename;
-    }
-
-    /**
-     * @return the line number inside the file this token is located in
-     */
-    public long getLine() {
-        return line;
-    }
-
-    /**
-     * @return the position inside the line this token is located in
-     */
-    public int getPosition() {
+    @NotNull
+    public Position getPosition() {
         return position;
     }
 
@@ -75,10 +61,10 @@ public class Token {
      * @return whether this is equal to obj
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (obj instanceof Token) {
             final Token other = (Token) obj;
-            return eqTypes(other) && eqLines(other) && eqPositions(other) && eqFilenames(other);
+            return eqTypes(other) && position.equals(other.position);
         }
         return false;
     }
@@ -86,46 +72,19 @@ public class Token {
     /**
      * @return whether both types are equal
      */
-    private boolean eqTypes(Token other) {
-        return type == other.type;
-    }
-
-    /**
-     * @return whether both line numbers are equal
-     */
-    private boolean eqLines(Token other) {
-        return line == other.line;
-    }
-
-    /**
-     * @return whether both positions are equal
-     */
-    private boolean eqPositions(Token other) {
-        return position == other.position;
-    }
-
-    /**
-     * @return whether both Token's filenames are null or equal
-     */
-    private boolean eqFilenames(Token other) {
-        if (filename == null) {
-            return other.filename == null;
-        } else { // filename != null
-            if (other.filename == null) {
-                return false;
-            } else { // both have a value
-                return filename.equals(other.filename);
-            }
-        }
+    private boolean eqTypes(@NotNull final Token other) {
+        return type.equals(other.type);
     }
 
     /**
      * Creates a String representation of this Token in the following format:
      * FILENAME(LINE,POSITION): TYPE
-     * @return
+     *
+     * @return a String representation of this Token
      */
+    @NotNull
     @Override
     public String toString() {
-        return String.format("%s(%d,%d): %s", filename, line, position, type);
+        return String.format("%s: %s", position, type);
     }
 }

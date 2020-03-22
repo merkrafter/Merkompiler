@@ -1,5 +1,7 @@
 package com.merkrafter.representation.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /****
@@ -16,17 +18,13 @@ public interface AbstractSyntaxTree {
     //--------------------------------------------------------------
 
     /**
-     * @return whether the tree represented by this node has a semantics error somewhere
-     */
-    boolean hasSemanticsError();
-
-    /**
-     * @return whether the tree represented by this node has a syntax error somewhere
-     */
-    boolean hasSyntaxError();
-
-    /**
      * @return a list of all errors, both semantic and syntactical ones.
      */
-    List<String> getAllErrors();
+    @NotNull List<String> getAllErrors();
+
+    /**
+     * @param other the object to compare with
+     * @return whether the subtree indicated by this node is equal to another tree
+     */
+    boolean equals(Object other);
 }

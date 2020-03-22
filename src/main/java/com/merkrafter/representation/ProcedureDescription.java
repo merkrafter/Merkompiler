@@ -1,5 +1,11 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.lexing.Locatable;
+import com.merkrafter.representation.ast.Statement;
+import com.merkrafter.representation.graphical.GraphicalComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /****
@@ -8,13 +14,17 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public interface ProcedureDescription {
-    SymbolTable getSymbols();
+public interface ProcedureDescription extends GraphicalComponent, Locatable {
+    @NotNull SymbolTable getSymbols();
 
-    List<VariableDescription> getParamList();
+    @NotNull String getName();
 
-    Type getReturnType();
+    @Nullable List<VariableDescription> getParamList();
+
+    @Nullable Type getReturnType();
+
+    @Nullable Statement getEntryPoint();
 
     @Override
-    boolean equals(Object o);
+    boolean equals(@NotNull Object o);
 }

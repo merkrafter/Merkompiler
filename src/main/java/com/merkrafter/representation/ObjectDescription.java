@@ -1,5 +1,8 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.representation.graphical.GraphicalComponent;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /****
@@ -9,9 +12,10 @@ import java.util.Objects;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public abstract class ObjectDescription {
+public abstract class ObjectDescription implements GraphicalComponent {
     // ATTRIBUTES
     //==============================================================
+    @NotNull
     private final String name;
 
     // CONSTRUCTORS
@@ -20,7 +24,7 @@ public abstract class ObjectDescription {
     /****
      * Creates an ObjectDescription with a name.
      ***************************************************************/
-    public ObjectDescription(final String name) {
+    public ObjectDescription(@NotNull final String name) {
         this.name = name;
     }
 
@@ -32,7 +36,8 @@ public abstract class ObjectDescription {
      *
      * @return the name of the object represented by this object description
      */
-    String getName() {
+    @NotNull
+    public String getName() {
         return name;
     }
 
@@ -48,12 +53,12 @@ public abstract class ObjectDescription {
      * @return whether this is equal to other
      */
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(@NotNull final Object other) {
         // auto-generated
         if (this == other) {
             return true;
         }
-        if (other == null || getClass() != other.getClass()) {
+        if (getClass() != other.getClass()) {
             return false;
         }
         final ObjectDescription that = (ObjectDescription) other;
