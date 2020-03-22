@@ -20,7 +20,7 @@ public class Merkompiler {
 
     // META-INFORMATION
     //==============================================================
-    @NotNull public static final String VERSION = "v0.4.0";
+    @NotNull public static final String VERSION = "v0.5.0";
 
     /**
      * The main function of this compiler reads in the filename and handles other possible command line
