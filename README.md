@@ -38,6 +38,11 @@ An overview over all available options of your version can be obtained with:
 java -jar path/to/Merkompiler.jar --help
 ```
 
+The `--graphical` argument outputs a `.dot` file that can be translated to a `.png` file via the command
+```bash
+dot -Tpng path/to/file.dot > output.png
+```
+
 ## Running the tests
 Assuming you downloaded the sources via git clone or equivalent, you only have to run:
 ```bash
