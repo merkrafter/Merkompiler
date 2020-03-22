@@ -1,7 +1,11 @@
 # Merkompiler
-`Merkompiler` is a JavaSST compiler written in Java as a study project.
+`Merkompiler` is a JavaSST compiler written in Java (and pieces of Kotlin) as a study project.
 It is not meant to be used in production, but rather as a template and inspiration for others
 that need to solve similar tasks.
+I also don't claim that this is the best or even a good implementation of a compiler.
+
+Please note that Merkompiler is not able to output `.class` files.
+At this point, it can tokenize input files, parse them into an abstract syntax tree, and make it visible.
 
 ## Getting started
 These instructions will help you compiling and running Merkompiler on your system.
