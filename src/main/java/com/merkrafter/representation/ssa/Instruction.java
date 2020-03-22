@@ -27,6 +27,9 @@ abstract class Instruction {
     @Nullable
     private Instruction prev;
 
+    @NotNull
+    private final Operand[] operands;
+
 
     // CONSTRUCTORS
     //==============================================================
@@ -34,8 +37,9 @@ abstract class Instruction {
     /****
      * Default constructor that sets the ID of this instruction.
      ***************************************************************/
-    public Instruction() {
+    public Instruction(@NotNull final Operand[] operands) {
         id = numberOfInstructions++;
+        this.operands = operands;
     }
 
     // GETTER
@@ -52,8 +56,9 @@ abstract class Instruction {
         return prev;
     }
 
-    @NotNull
-    abstract Operand[] getOperands();
+    @NotNull Operand[] getOperands() {
+        return operands;
+    }
 
     // SETTER
     //==============================================================
