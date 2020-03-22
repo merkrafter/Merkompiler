@@ -3,6 +3,8 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -14,7 +16,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ProcedureCallNode extends AbstractStatementNode implements Expression {
+public class ProcedureCallNode extends AbstractStatementNode implements Expression, SSATransformableExpression {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -87,6 +89,11 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
             }
         }
         return errors;
+    }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        throw new UnsupportedOperationException("Implement transformToSSA for ProcedureCallNode");
     }
 
     /**

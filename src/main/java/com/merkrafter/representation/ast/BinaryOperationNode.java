@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -15,7 +17,7 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class BinaryOperationNode implements Expression {
+public class BinaryOperationNode implements Expression, SSATransformableExpression {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -96,6 +98,11 @@ public class BinaryOperationNode implements Expression {
                                      rightOperand.getPosition()));
         }
         return errors;
+    }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        throw new UnsupportedOperationException("Implement transformToSSA for BinaryOperationNode");
     }
 
     /**

@@ -2,6 +2,8 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -16,7 +18,7 @@ import java.util.Objects;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ConstantNode<T> implements Expression {
+public class ConstantNode<T> implements Expression, SSATransformableExpression {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -68,6 +70,11 @@ public class ConstantNode<T> implements Expression {
     @Override
     public List<String> getTypingErrors() {
         return new LinkedList<>();
+    }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        throw new UnsupportedOperationException("Implement transformToSSA for ConstantNode");
     }
 
     /**
