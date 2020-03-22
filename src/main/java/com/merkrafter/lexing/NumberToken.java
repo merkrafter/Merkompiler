@@ -1,5 +1,7 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This class serves as a token and stores the (integer) number found.
  *
@@ -20,7 +22,7 @@ public class NumberToken extends Token {
     /****
      * Creates a new NumberToken from a number and position data.
      ***************************************************************/
-    public NumberToken(final long number, final String filename, final long line,
+    public NumberToken(final long number, @NotNull final String filename, final long line,
                        final int position) {
         super(TokenType.NUMBER, filename, line, position);
         this.number = number;
@@ -32,7 +34,7 @@ public class NumberToken extends Token {
     /**
      * @return the number this token stands for
      */
-    long getNumber() {
+    public long getNumber() {
         return number;
     }
 
@@ -49,7 +51,7 @@ public class NumberToken extends Token {
      * @return whether this is equal to obj
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!super.equals(obj)) {
             return false;
         }
@@ -62,6 +64,7 @@ public class NumberToken extends Token {
      *
      * @return a String representation of this NumberToken
      */
+    @NotNull
     @Override
     public String toString() {
         return super.toString() + String.format("(%d)", number);

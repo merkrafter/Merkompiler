@@ -1,7 +1,9 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
-import java.util.Optional;
 
 /****
  * This class can be used to tokenize an iterator of characters.
@@ -17,10 +19,12 @@ public class Scanner {
     /**
      * This is the character input stream that this Scanner tokenizes.
      */
+    @NotNull
     private final Iterator<Character> in;
     /**
      * This field stores the kind of the character that was read last.
      */
+    @NotNull
     private Token sym;
     /**
      * This field stores the character that was read last.
@@ -29,14 +33,17 @@ public class Scanner {
     /**
      * This field stores the name of the last identifier that this scanner found.
      */
-    private String id;
+    @NotNull
+    private StringBuilder id;
     /**
      * This field stores the name of the last number that this scanner found.
      */
-    private String num;
+    @NotNull
+    private StringBuilder num;
     /**
      * This field stores the current filename.
      */
+    @NotNull
     private String filename;
     /**
      * This field stores the line inside the current file.
@@ -51,7 +58,8 @@ public class Scanner {
      * This field stores characters that were found during a looking-forward action,
      * but can not be processed yet.
      */
-    private Optional<Character> charBuffer;
+    @Nullable
+    private Character charBuffer;
 
     // CONSTRUCTORS
     //==============================================================
@@ -59,27 +67,40 @@ public class Scanner {
     /****
      * Creates a new Scanner that is ready to tokenize the given character iterator.
      ***************************************************************/
-    public Scanner(final Iterator<Character> in) {
+    public Scanner(@NotNull final Iterator<Character> in) {
         this.in = in;
-        id = "";
-        num = "";
-        charBuffer = Optional.empty();
+        id = new StringBuilder();
+        num = new StringBuilder();
+        charBuffer = null;
         line = 1;
         position = 0;
+        filename = "";
+        sym = new OtherToken("start", filename, 0, -1);
     }
 
     // GETTER
     //==============================================================
+    @NotNull
     public Token getSym() {
         return sym;
     }
 
+    @NotNull
     public String getId() {
-        return id;
+        return id.toString();
     }
 
-    public String getNum() {
-        return num;
+    /**
+     * Returns the last number that this scanner read.
+     * If the scanner did not encounter a number yet, a 0 is returned.
+     *
+     * @return the last read number
+     */
+    public long getNum() {
+        if (num.length() == 0) {
+            return 0;
+        }
+        return Long.parseLong(num.toString());
     }
 
     // SETTER
@@ -92,7 +113,7 @@ public class Scanner {
      *
      * @param filename a String representing a file name
      */
-    public void setFilename(final String filename) {
+    public void setFilename(@NotNull final String filename) {
         this.filename = filename;
     }
 
@@ -107,9 +128,9 @@ public class Scanner {
      * After sym is TokenType.EOF, this Scanner is done processing the iterator.
      */
     public void processToken() {
-        if (charBuffer.isPresent()) {
-            ch = charBuffer.get();
-            charBuffer = Optional.empty();
+        if (charBuffer != null) {
+            ch = charBuffer;
+            charBuffer = null;
         }
         while (ch <= ' ') {
             // This `true` argument is necessary since `loadNextCharSuccessfully` sets `ch` to 0 in case there is no
@@ -125,13 +146,14 @@ public class Scanner {
             case '3':
             case '4':
             case '5':
+            case '6':
             case '7':
             case '8':
             case '9':
                 sym = new Token(TokenType.NUMBER, filename, line, position);
-                num = "";
+                num = new StringBuilder();
                 do {
-                    num += ch;
+                    num.append(ch);
                     if (!this.loadNextCharSuccessfully()) {
                         setNumber(); // parse the num attribute to a NumberToken
                         return;
@@ -194,9 +216,9 @@ public class Scanner {
                 // will be replaced in `setIdentOrKeyword` in a few lines, but this token is needed
                 // in order to store the starting position of this token
                 sym = new Token(TokenType.IDENT, filename, line, position);
-                id = "";
+                id = new StringBuilder();
                 do {
-                    id += ch;
+                    id.append(ch);
                     if (!this.loadNextCharSuccessfully()) {
                         setIdentOrKeyword();
                         return;
@@ -287,7 +309,7 @@ public class Scanner {
                     loadNextCharSuccessfully();
                     processToken();
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case '=':
@@ -301,7 +323,7 @@ public class Scanner {
                         return;
                     }
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case '<':
@@ -315,7 +337,7 @@ public class Scanner {
                         return;
                     }
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case '>':
@@ -329,7 +351,7 @@ public class Scanner {
                         return;
                     }
                 } else {
-                    charBuffer = Optional.of(ch);
+                    charBuffer = ch;
                 }
                 break;
             case ',':
@@ -404,12 +426,18 @@ public class Scanner {
      */
     private void setIdentOrKeyword() {
         try {
-            final Keyword keyword = Keyword.valueOf(id.toUpperCase());
+            final Keyword keyword = Keyword.valueOf(id.toString().toUpperCase());
             // if this actually is a keyword:
-            sym = new KeywordToken(keyword, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new KeywordToken(keyword,
+                                   sym.getPosition().getFilename(),
+                                   sym.getPosition().getLine(),
+                                   sym.getPosition().getColumn());
         } catch (IllegalArgumentException ignored) {
             // id is not a keyword
-            sym = new IdentToken(id, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new IdentToken(id.toString(),
+                                 sym.getPosition().getFilename(),
+                                 sym.getPosition().getLine(),
+                                 sym.getPosition().getColumn());
         }
     }
 
@@ -419,12 +447,18 @@ public class Scanner {
      */
     private void setNumber() {
         try {
-            final long number = Long.parseLong(num);
+            final long number = Long.parseLong(num.toString());
             // if this actually is a number:
-            sym = new NumberToken(number, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new NumberToken(number,
+                                  sym.getPosition().getFilename(),
+                                  sym.getPosition().getLine(),
+                                  sym.getPosition().getColumn());
         } catch (NumberFormatException ignored) {
             // id is not a number
-            sym = new Token(TokenType.OTHER, sym.getFilename(), sym.getLine(), sym.getPosition());
+            sym = new Token(TokenType.OTHER,
+                            sym.getPosition().getFilename(),
+                            sym.getPosition().getLine(),
+                            sym.getPosition().getColumn());
         }
     }
 

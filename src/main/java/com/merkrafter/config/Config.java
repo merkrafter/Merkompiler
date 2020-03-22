@@ -1,44 +1,52 @@
 package com.merkrafter.config;
 
+import com.merkrafter.Merkompiler;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class holds configuration data for this program.
  * It also contains the description of this program's command line options etc.
  *
  * @author merkrafter
+ * @since v0.1.0
  */
 public class Config {
+    // ATTRIBUTES
+    //==============================================================
+    @NotNull
     private final String inputFile;
+    @Nullable
     private final String outputFile;
-
     private final boolean verbose;
-
+    @Nullable
     private final CompilerStage stage;
+    private final boolean graphical;
 
-    private Config(final String inputFile, final String outputFile, boolean verbose,
-                   final CompilerStage stage) {
+    // CONSTRUCTORS
+    //==============================================================
+    private Config(@NotNull final String inputFile, @Nullable final String outputFile,
+                   boolean verbose, @Nullable final CompilerStage stage, final boolean graphical) {
         this.inputFile = inputFile;
         this.outputFile = outputFile;
         this.verbose = verbose;
         this.stage = stage;
+        this.graphical = graphical;
     }
 
+    // GETTER
+    //==============================================================
+    @NotNull
     public String getInputFile() {
         return inputFile;
     }
 
+    @Nullable
     public String getOutputFile() {
         return outputFile;
     }
@@ -47,25 +55,33 @@ public class Config {
         return verbose;
     }
 
+    @Nullable
     public CompilerStage getStage() {
         return stage;
     }
 
-    public static Config fromArgs(final String args) throws ArgumentParserException {
+    public boolean isGraphical() {
+        return graphical;
+    }
+
+    // METHODS
+    //==============================================================
+    // public methods
+    //--------------------------------------------------------------
+    @NotNull
+    public static Config fromArgs(@NotNull final String args) throws ArgumentParserException {
+        // only called from test code
         return fromArgs(fromString(args));
     }
 
-    public static Config fromArgs(final String[] args) throws ArgumentParserException {
+    @NotNull
+    public static Config fromArgs(@NotNull final String[] args) throws ArgumentParserException {
         // define the parser
         final ArgumentParser parser = ArgumentParsers.newFor("Merkompiler")
                                                      .build()
                                                      .defaultHelp(true)
                                                      .description("Compiles JavaSST files");
-        try {
-            parser.version("${prog} " + getVersion());
-        } catch (XmlPullParserException | IOException ignored) {
-            parser.version("No version information available.");
-        }
+        parser.version("${prog} " + Merkompiler.VERSION);
         parser.addArgument("INPUT")
               .required(true)
               .type(String.class)
@@ -85,6 +101,9 @@ public class Config {
               .dest("compilerStage")
               .setDefault(CompilerStage.latest())
               .help("only process the input file up to the given stage (including)");
+        parser.addArgument("-g", "--graphical")
+              .action(Arguments.storeTrue())
+              .help("output a .dot file showing the abstract syntax tree of the specified source file");
 
 
         // parse the arguments
@@ -96,15 +115,18 @@ public class Config {
         String outputFileName = null;
         boolean verbose = false;
         CompilerStage stage = CompilerStage.latest();
+        boolean graphical = false;
 
         if (namespace != null) {
             inputFileName = namespace.getString("INPUT");
             outputFileName = namespace.getString("output");
             verbose = namespace.getBoolean("verbose");
             stage = namespace.get("compilerStage");
+            graphical = namespace.get("graphical");
         }
 
-        return new Config(inputFileName, outputFileName, verbose, stage);
+        assert inputFileName != null; // because it is required and thus handled by Argparse
+        return new Config(inputFileName, outputFileName, verbose, stage, graphical);
     }
 
     /**
@@ -113,30 +135,22 @@ public class Config {
      * @param argsAsString string of arguments as written on the command line
      * @return an array of arguments
      */
-    public static String[] fromString(final String argsAsString) {
+    @NotNull
+    public static String[] fromString(@NotNull final String argsAsString) {
         return argsAsString.split("\\s+");
     }
 
     /**
      * @return a String representation of this Config class
      */
+    @NotNull
     @Override
     public String toString() {
-        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, stage=%s)",
+        return String.format("Config(INPUT=%s, OUTPUT=%s, verbose=%b, stage=%s, graphical=%b)",
                              inputFile,
                              outputFile,
                              verbose,
-                             stage);
-    }
-
-    /**
-     * Retrieve version information from the pom.xml file.
-     *
-     * @return a String containing the software version
-     */
-    private static String getVersion() throws IOException, XmlPullParserException {
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = reader.read(new FileReader("pom.xml"));
-        return model.getVersion();
+                             stage,
+                             graphical);
     }
 }

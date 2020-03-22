@@ -1,5 +1,7 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This class serves as a token and stores the identifier found.
  *
@@ -12,6 +14,7 @@ public class IdentToken extends Token {
     /**
      * the identifier this token stands for
      */
+    @NotNull
     private final String ident;
 
     // CONSTRUCTORS
@@ -20,7 +23,7 @@ public class IdentToken extends Token {
     /****
      * Creates a new IdentToken from an identifier and position data.
      ***************************************************************/
-    public IdentToken(final String ident, final String filename, final long line,
+    public IdentToken(@NotNull final String ident, @NotNull final String filename, final long line,
                       final int position) {
         super(TokenType.IDENT, filename, line, position);
         this.ident = ident;
@@ -32,7 +35,8 @@ public class IdentToken extends Token {
     /**
      * @return the identifier this token stands for
      */
-    String getIdent() {
+    @NotNull
+    public String getIdent() {
         return ident;
     }
 
@@ -49,7 +53,7 @@ public class IdentToken extends Token {
      * @return whether this is equal to obj
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!super.equals(obj)) {
             return false;
         }
@@ -62,6 +66,7 @@ public class IdentToken extends Token {
      *
      * @return a String representation of this IdentToken
      */
+    @NotNull
     @Override
     public String toString() {
         return super.toString() + String.format("(%s)", ident);

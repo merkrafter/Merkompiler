@@ -1,5 +1,7 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This class serves as a token and stores a string that could not be recognized as another token.
  *
@@ -12,6 +14,7 @@ public class OtherToken extends Token {
     /**
      * the string that could not be recognized as another token
      */
+    @NotNull
     private final String string;
 
     // CONSTRUCTORS
@@ -20,20 +23,10 @@ public class OtherToken extends Token {
     /****
      * Creates a new OtherToken from a string and position data.
      ***************************************************************/
-    public OtherToken(final String string, final String filename, final long line,
+    public OtherToken(@NotNull final String string, @NotNull final String filename, final long line,
                       final int position) {
         super(TokenType.OTHER, filename, line, position);
         this.string = string;
-    }
-
-    // GETTER
-    //==============================================================
-
-    /**
-     * @return the string that could not be recognized as another token
-     */
-    String getString() {
-        return string;
     }
 
     // METHODS
@@ -49,7 +42,7 @@ public class OtherToken extends Token {
      * @return whether this is equal to obj
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@NotNull final Object obj) {
         if (!super.equals(obj)) {
             return false;
         }
@@ -62,6 +55,7 @@ public class OtherToken extends Token {
      *
      * @return a String representation of this OtherToken
      */
+    @NotNull
     @Override
     public String toString() {
         return super.toString() + String.format("(%s)", string);

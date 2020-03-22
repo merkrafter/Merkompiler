@@ -3,6 +3,7 @@ package com.merkrafter;
 import com.merkrafter.config.CompilerStage;
 import com.merkrafter.config.Config;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -48,7 +49,7 @@ class ConfigTest {
     // {short, long} x {before input file, after input file}
     @ValueSource(strings = {
             "-v Test.java", "--verbose Test.java", "Test.java -v", "Test.java --verbose"})
-    void parseInputFileWithVerbosity(final String string) throws ArgumentParserException {
+    void parseInputFileWithVerbosity(@NotNull final String string) throws ArgumentParserException {
         final String[] args = fromString(string);
         final Config actualConfig = Config.fromArgs(args);
 
@@ -75,7 +76,7 @@ class ConfigTest {
             "--output OtherTest.class Test.java",
             "Test.java -o OtherTest.class",
             "Test.java --output OtherTest.class"})
-    void parseInputFileAndOutputFile(final String string) throws ArgumentParserException {
+    void parseInputFileAndOutputFile(@NotNull final String string) throws ArgumentParserException {
         final String[] args = fromString(string);
         final Config actualConfig = Config.fromArgs(args);
 
@@ -155,4 +156,27 @@ class ConfigTest {
 
         assertEquals(expectedStage, actualConfig.getStage());
     }
+
+    /**
+     * The fromArgs method should be able to detect the graphical flag being set, independent of
+     * whether the long or short argument was used or whether it was specified before or after
+     * the input file.
+     *
+     * @throws ArgumentParserException if the arguments can not be parsed; should not happen
+     */
+    @ParameterizedTest
+    // {short, long} x {before input file, after input file}
+    @ValueSource(strings = {
+            "-g Test.java", "--graphical Test.java", "Test.java -g", "Test.java --graphical"})
+    void parseInputFileWithGraphical(@NotNull final String string) throws ArgumentParserException {
+        final String[] args = fromString(string);
+        final Config actualConfig = Config.fromArgs(args);
+
+        final String expectedInputFilename = "Test.java";
+        final boolean expectedGraphical = true;
+
+        assertEquals(expectedInputFilename, actualConfig.getInputFile());
+        assertEquals(expectedGraphical, actualConfig.isGraphical());
+    }
+
 }

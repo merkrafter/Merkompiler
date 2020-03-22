@@ -1,5 +1,7 @@
 package com.merkrafter.config;
 
+import org.jetbrains.annotations.NotNull;
+
 /****
  * This enum represents the steps the compiler goes through in order to convert a JavaSST source
  * code file into actual byte code.
@@ -23,6 +25,7 @@ public enum CompilerStage {
     /**
      * @return the lowercase name of this enum item
      */
+    @NotNull
     @Override
     public String toString() {
         return name().toLowerCase();
@@ -33,6 +36,7 @@ public enum CompilerStage {
      *
      * @return the latest available compiler stage
      */
+    @NotNull
     public static CompilerStage latest() {
         return PARSING;
     }

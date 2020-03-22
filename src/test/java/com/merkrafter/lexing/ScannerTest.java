@@ -1,11 +1,11 @@
 package com.merkrafter.lexing;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ class ScannerTest {
     /**
      * This field enables iterating over Strings.
      */
-    private StringIterator stringIterator;
+    private StringIteratorTestUtility stringIterator;
     /**
      * This field is the test subject.
      */
@@ -35,8 +35,9 @@ class ScannerTest {
      */
     @BeforeEach
     void setUp() {
-        stringIterator = new StringIterator();
+        stringIterator = new StringIteratorTestUtility();
         scanner = new Scanner(stringIterator);
+        scanner.setFilename(""); // avoid null
     }
 
     /**
@@ -45,24 +46,25 @@ class ScannerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"$", "\"", "@", "_", "!", "§", "%", "&", "|", "^", "\\", "?", "~", "#"})
-    void scanOtherTokens(final String string) {
+    void scanOtherTokens(@NotNull final String string) {
         final String programCode = string;
         final Token[] expectedTokenList = {
-                new OtherToken(string, null, 1, 1), new Token(EOF, null, 1, string.length())};
+                new OtherToken(string, "", 1, 1), new Token(EOF, "", 1, string.length())};
         shouldScan(programCode, expectedTokenList);
     }
 
     /**
      * The scanner should be able to detect number arguments.
+     * This test case also makes sure that each digit is recognized.
      */
     @ParameterizedTest
     // edge cases 0 and MAX_VALUE, one, two and three digit numbers
-    @ValueSource(longs = {0, 1, 10, 123, Long.MAX_VALUE})
+    @ValueSource(longs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 123, Long.MAX_VALUE})
     void scanNormalNumbers(final long number) {
         final String programCode = Long.toString(number);
         final Token[] expectedTokenList = {
-                new NumberToken(number, null, 1, 1),
-                new Token(EOF, null, 1, Long.toString(number).length())};
+                new NumberToken(number, "", 1, 1),
+                new Token(EOF, "", 1, Long.toString(number).length())};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -73,11 +75,11 @@ class ScannerTest {
     // all values should be decimal 8's, because in JavaSST there are no octal numbers hence these
     // value source numbers will cause an error when trying to evaluate them as octal.
     @ValueSource(strings = {"08", "008"})
-    void scanSpecialNumbers(final String number) {
+    void scanSpecialNumbers(@NotNull final String number) {
         final long expectedNumber = 8;
         final Token[] expectedTokenList = {
-                new NumberToken(expectedNumber, null, 1, 1),
-                new Token(EOF, null, 1, number.length())};
+                new NumberToken(expectedNumber, "", 1, 1),
+                new Token(EOF, "", 1, number.length())};
         shouldScan(number, expectedTokenList);
     }
 
@@ -86,11 +88,11 @@ class ScannerTest {
      */
     @ParameterizedTest
     @EnumSource(Keyword.class)
-    void scanKeyword(final Keyword keyword) {
+    void scanKeyword(@NotNull final Keyword keyword) {
         final String programCode = keyword.name().toLowerCase();
         final Token[] expectedTokenList = {
-                new KeywordToken(keyword, null, 1, 1),
-                new Token(EOF, null, 1, keyword.name().length())};
+                new KeywordToken(keyword, "", 1, 1),
+                new Token(EOF, "", 1, keyword.name().length())};
         shouldScan(programCode, expectedTokenList);
     }
 
@@ -345,7 +347,7 @@ class ScannerTest {
 
         final long expectedLine = 1;
         final int expectedPosition = 1;
-        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token expectedToken = new Token(IDENT, "", expectedLine, expectedPosition);
         final Token actualToken = getTokenList(scanner).get(0);
 
         assertEquals(expectedToken, actualToken);
@@ -361,7 +363,7 @@ class ScannerTest {
 
         final long expectedLine = 2;
         final int expectedPosition = 1;
-        final Token expectedToken = new Token(IDENT, null, expectedLine, expectedPosition);
+        final Token expectedToken = new Token(IDENT, "", expectedLine, expectedPosition);
         final Token actualToken = getTokenList(scanner).get(1); // second token 'b'
 
         assertEquals(expectedToken, actualToken);
@@ -418,7 +420,8 @@ class ScannerTest {
      * @param scanner the object to get the tokens from
      * @return a list of all tokens found
      */
-    private List<Token> getTokenList(final Scanner scanner) {
+    @NotNull
+    private List<Token> getTokenList(@NotNull final Scanner scanner) {
         LinkedList<Token> tokenList = new LinkedList<>();
         do {
             scanner.processToken();
@@ -434,7 +437,7 @@ class ScannerTest {
      * @param scanner the object to get the tokens from
      * @return a list of all types of tokens found
      */
-    private List<TokenType> getTokenTypeList(final Scanner scanner) {
+    private List<TokenType> getTokenTypeList(@NotNull final Scanner scanner) {
         return getTokenList(scanner).stream().map(Token::getType).collect(Collectors.toList());
     }
 
@@ -466,44 +469,4 @@ class ScannerTest {
         assertArrayEquals(expectedTokenList, actualTokenList.toArray(), actualTokenList.toString());
     }
 
-    /**
-     * This class provides the possibility to iterate over strings.
-     * It can be used as a tool to mock a file as the input to a Scanner.
-     */
-    private class StringIterator implements Iterator<Character> {
-        /**
-         * The string to iterate over. It is not set by the constructor as the input string will not
-         * be known during the setUp method anyway.
-         */
-        private String string = "";
-        /**
-         * Tracks the index in the string.
-         */
-        private int index = 0;
-
-        void setString(String string) {
-            this.string = string;
-        }
-
-        /**
-         * @return true if there are more characters in the string
-         */
-        @Override
-        public boolean hasNext() {
-            return index < string.length();
-        }
-
-        /**
-         * Returns the next character in the string if there is any left. This should be checked via
-         * hasNext() before this method is called in order to avoid an exception.
-         *
-         * @return next character in the string
-         *
-         * @throws IndexOutOfBoundsException if there are no more characters left to read
-         */
-        @Override
-        public Character next() {
-            return string.charAt(index++);
-        }
-    }
 }

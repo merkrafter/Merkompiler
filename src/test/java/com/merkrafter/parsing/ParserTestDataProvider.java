@@ -1,6 +1,10 @@
 package com.merkrafter.parsing;
 
 import com.merkrafter.lexing.*;
+import com.merkrafter.representation.SymbolTable;
+import com.merkrafter.representation.Type;
+import com.merkrafter.representation.VariableDescription;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +27,22 @@ import java.util.stream.Stream;
  ***************************************************************/
 
 class ParserTestDataProvider {
+    // CONSTANTS
+    //==============================================================
+    private static final String FUNC = "func";
+    private static final String VAR = "var";
+    public static final SymbolTable TEST_SYMBOLS = new SymbolTable();
+
+    static {
+        TEST_SYMBOLS.insert(new VariableDescription(VAR, Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("a", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("ab", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("b", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("c", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("d", Type.INT, 0, false));
+        TEST_SYMBOLS.insert(new VariableDescription("n", Type.INT, 0, false));
+    }
+
     // METHODS
     //==============================================================
     // public methods
@@ -87,39 +107,40 @@ class ParserTestDataProvider {
      *
      * @return a stream of TokenWrappers that define the test data
      */
+    @NotNull
     static Stream<TokenWrapper> internProcedureCalls() {
         return Stream.of(
                 // a call of an intern procedure without arguments
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with a single identifier as its argument
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with a single number as its argument
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
                                   .add(tokenFrom(TokenType.NUMBER))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with two identifiers as arguments
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.COMMA))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.R_PAREN)),
 
                 // a call of an intern procedure with an expression like a*b/2 as argument
-                new TokenWrapper().add(tokenFrom(TokenType.IDENT))
+                new TokenWrapper().add(tokenFrom(FUNC))
                                   .add(tokenFrom(TokenType.L_PAREN))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.PLUS))
-                                  .add(tokenFrom(TokenType.IDENT))
+                                  .add(tokenFrom(VAR))
                                   .add(tokenFrom(TokenType.DIVIDE))
                                   .add(tokenFrom(TokenType.NUMBER))
                                   .add(tokenFrom(TokenType.R_PAREN)));
@@ -143,13 +164,13 @@ class ParserTestDataProvider {
                           TokenType.GREATER_EQUAL)
                       .map(cmpOp -> new TokenWrapper().add(tokenFrom(Keyword.IF))
                                                       .add(tokenFrom(TokenType.L_PAREN))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(cmpOp))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.R_PAREN))
 
                                                       .add(tokenFrom(TokenType.L_BRACE))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(TokenType.ASSIGN))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.SEMICOLON))
@@ -157,7 +178,7 @@ class ParserTestDataProvider {
 
                                                       .add(tokenFrom(Keyword.ELSE))
                                                       .add(tokenFrom(TokenType.L_BRACE))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(TokenType.ASSIGN))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.SEMICOLON))
@@ -184,13 +205,13 @@ class ParserTestDataProvider {
                           TokenType.GREATER_EQUAL)
                       .map(cmpOp -> new TokenWrapper().add(tokenFrom(Keyword.WHILE))
                                                       .add(tokenFrom(TokenType.L_PAREN))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(cmpOp))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.R_PAREN))
 
                                                       .add(tokenFrom(TokenType.L_BRACE))
-                                                      .add(tokenFrom(TokenType.IDENT))
+                                                      .add(tokenFrom(VAR))
                                                       .add(tokenFrom(TokenType.ASSIGN))
                                                       .add(tokenFrom(TokenType.NUMBER))
                                                       .add(tokenFrom(TokenType.SEMICOLON))
@@ -362,8 +383,9 @@ class ParserTestDataProvider {
      *
      * @return a basic Token with the given TokenType set
      */
-    static Token tokenFrom(final TokenType type) {
-        return new Token(type, null, 1, 1);
+    @NotNull
+    static Token tokenFrom(@NotNull final TokenType type) {
+        return new Token(type, "", 1, 1);
     }
 
     /**
@@ -372,8 +394,9 @@ class ParserTestDataProvider {
      *
      * @return a KeywordToken with the given Keyword set
      */
-    static Token tokenFrom(final Keyword keyword) {
-        return new KeywordToken(keyword, null, 1, 1);
+    @NotNull
+    static Token tokenFrom(@NotNull final Keyword keyword) {
+        return new KeywordToken(keyword, "", 1, 1);
     }
 
     /**
@@ -382,8 +405,9 @@ class ParserTestDataProvider {
      *
      * @return an IdentToken with the given identifier set
      */
-    static Token tokenFrom(final String identifier) {
-        return new IdentToken(identifier, null, 1, 1);
+    @NotNull
+    static Token tokenFrom(@NotNull final String identifier) {
+        return new IdentToken(identifier, "", 1, 1);
     }
 
     /**
@@ -392,8 +416,9 @@ class ParserTestDataProvider {
      *
      * @return a NumberToken with the given number set
      */
+    @NotNull
     static Token tokenFrom(final long number) {
-        return new NumberToken(number, null, 1, 1);
+        return new NumberToken(number, "", 1, 1);
     }
 
 
@@ -406,7 +431,7 @@ class ParserTestDataProvider {
      * stream of Tokens.
      */
     static class TokenWrapper {
-        private List<Token> tokenList;
+        private final List<Token> tokenList;
 
         TokenWrapper() {
             tokenList = new LinkedList<>();
@@ -418,7 +443,7 @@ class ParserTestDataProvider {
          * @param token a token to append to this token wrapper
          * @return itself in order to allow chaining
          */
-        TokenWrapper add(final Token token) {
+        @NotNull TokenWrapper add(final Token token) {
             tokenList.add(token);
             return this;
         }
@@ -430,7 +455,7 @@ class ParserTestDataProvider {
          * @param tokenWrapper a TokenWrapper to append at the end of this wrapper
          * @return itself in order to allow chaining
          */
-        TokenWrapper add(final TokenWrapper tokenWrapper) {
+        @NotNull TokenWrapper add(@NotNull final TokenWrapper tokenWrapper) {
             tokenList.addAll(tokenWrapper.tokenList);
             return this;
         }
@@ -438,7 +463,7 @@ class ParserTestDataProvider {
         /**
          * @return the stored tokens as an array
          */
-        Token[] getTokens() {
+        @NotNull Token[] getTokens() {
             return tokenList.toArray(new Token[0]);
         }
 
