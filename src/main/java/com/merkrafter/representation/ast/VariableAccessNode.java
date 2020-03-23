@@ -5,6 +5,7 @@ import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
 import com.merkrafter.representation.ssa.BaseBlock;
 import com.merkrafter.representation.ssa.Operand;
+import com.merkrafter.representation.ssa.ParameterOperand;
 import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,8 @@ public class VariableAccessNode implements Expression, SSATransformableExpressio
     private final VariableDescription variableDescription;
     @NotNull
     private final Position position;
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -59,20 +62,6 @@ public class VariableAccessNode implements Expression, SSATransformableExpressio
     @Override
     public List<String> getTypingErrors() {
         return new LinkedList<>();
-    }
-
-    @Override
-    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
-        throw new UnsupportedOperationException("Implement transformToSSA for VariableAccessNode");
-    }
-
-    /**
-     * @return the operand that this expression was transformed to
-     */
-    @Nullable
-    @Override
-    public Operand getOperand() {
-        throw new UnsupportedOperationException("Implement getOperand for VariableAccessNode");
     }
 
     /**
@@ -131,4 +120,25 @@ public class VariableAccessNode implements Expression, SSATransformableExpressio
     public Position getPosition() {
         return position;
     }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        final Operand currentVariableOperand = variableDescription.getOperand();
+        if (currentVariableOperand == null) { // this is a procedure parameter
+            operand = new ParameterOperand(variableDescription);
+        } else {
+            operand = currentVariableOperand.copy();
+        }
+        // TODO implement this for fields
+    }
+
+    /**
+     * @return the operand that this expression was transformed to
+     */
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        return operand;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.representation.ssa.Constant;
 import com.merkrafter.representation.ssa.Operand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,7 @@ public class VariableDescription extends ObjectDescription {
     /**
      * The value of this variable during the SSA form transformation process
      */
-    // TODO make its getter @NotNull by making value an Expression and transform it if needed
+    // TODO make value an Expression and transform it if needed
     @Nullable
     private Operand operand;
 
