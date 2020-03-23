@@ -4,8 +4,10 @@ import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.Operand;
 import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -94,6 +96,15 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     @Override
     public void transformToSSA(final @NotNull BaseBlock baseBlock) {
         throw new UnsupportedOperationException("Implement transformToSSA for ProcedureCallNode");
+    }
+
+    /**
+     * @return the operand that this expression was transformed to
+     */
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        throw new UnsupportedOperationException("Implement getOperand for ProcedureCallNode");
     }
 
     /**

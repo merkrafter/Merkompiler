@@ -3,8 +3,11 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.Constant;
+import com.merkrafter.representation.ssa.Operand;
 import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +30,9 @@ public class ConstantNode<T> implements Expression, SSATransformableExpression {
     private final T value;
     @NotNull
     private final Position position;
+
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -138,5 +144,14 @@ public class ConstantNode<T> implements Expression, SSATransformableExpression {
                              type.name(),
                              System.lineSeparator(),
                              value.toString());
+    }
+
+    /**
+     * @return the operand that this expression was transformed to
+     */
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        return operand;
     }
 }

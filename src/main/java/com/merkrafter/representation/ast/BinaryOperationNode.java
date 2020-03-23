@@ -2,9 +2,9 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
-import com.merkrafter.representation.ssa.BaseBlock;
-import com.merkrafter.representation.ssa.SSATransformableExpression;
+import com.merkrafter.representation.ssa.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +27,9 @@ public class BinaryOperationNode implements Expression, SSATransformableExpressi
 
     @NotNull
     private final BinaryOperationNodeType binOpType;
+
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -176,4 +179,11 @@ public class BinaryOperationNode implements Expression, SSATransformableExpressi
 
         return dotRepr.toString();
     }
+
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        return operand;
+    }
+
 }
