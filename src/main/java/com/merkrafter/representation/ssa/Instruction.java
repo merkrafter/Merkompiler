@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @since v0.5.0
  * @author merkrafter
  ***************************************************************/
-abstract class Instruction {
+public abstract class Instruction {
     // CONSTANTS
     //==============================================================
     private static int numberOfInstructions = 0;
