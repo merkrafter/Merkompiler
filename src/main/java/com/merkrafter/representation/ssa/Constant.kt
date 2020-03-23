@@ -15,4 +15,8 @@ data class Constant(val value: Long) : Operand {
     override fun toString(): String {
         return value.toString()
     }
+
+    override fun copy(): Operand {
+        return Constant(value)
+    }
 }
