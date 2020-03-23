@@ -78,11 +78,6 @@ public class ConstantNode<T> implements Expression, SSATransformableExpression {
         return new LinkedList<>();
     }
 
-    @Override
-    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
-        throw new UnsupportedOperationException("Implement transformToSSA for ConstantNode");
-    }
-
     /**
      * Returns the value stored by this constant node.
      *
@@ -145,6 +140,18 @@ public class ConstantNode<T> implements Expression, SSATransformableExpression {
                              System.lineSeparator(),
                              value.toString());
     }
+
+    /**
+     * Transforms this ConstantNode to a Constant operand and stores it for later use.
+     * @param baseBlock ignored
+     */
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        if(value instanceof Long && operand == null){
+            operand = new Constant((Long) value);
+        }
+    }
+
 
     /**
      * @return the operand that this expression was transformed to
