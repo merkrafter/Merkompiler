@@ -28,6 +28,10 @@ public class BinaryOperationInstruction extends Instruction {
         this.type = type;
     }
 
+    @NotNull BinaryOperationNodeType getType() {
+        return type;
+    }
+
     // METHODS
     //==============================================================
     // public methods
