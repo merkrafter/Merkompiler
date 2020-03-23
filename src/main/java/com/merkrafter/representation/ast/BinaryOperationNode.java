@@ -103,11 +103,6 @@ public class BinaryOperationNode implements Expression, SSATransformableExpressi
         return errors;
     }
 
-    @Override
-    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
-        throw new UnsupportedOperationException("Implement transformToSSA for BinaryOperationNode");
-    }
-
     /**
      * An operation is located at the leftmost operand.
      *
@@ -178,6 +173,30 @@ public class BinaryOperationNode implements Expression, SSATransformableExpressi
         dotRepr.append(System.lineSeparator());
 
         return dotRepr.toString();
+    }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        if (leftOperand instanceof SSATransformableExpression
+            && rightOperand instanceof SSATransformableExpression) {
+
+            final SSATransformableExpression leftOperand =
+                    (SSATransformableExpression) this.leftOperand;
+            final SSATransformableExpression rightOperand =
+                    (SSATransformableExpression) this.rightOperand;
+
+            leftOperand.transformToSSA(baseBlock);
+            rightOperand.transformToSSA(baseBlock);
+            assert leftOperand.getOperand() != null;
+            assert rightOperand.getOperand() != null;
+
+            final Instruction instruction =
+                    new BinaryOperationInstruction(leftOperand.getOperand().copy(),
+                                                   this.binOpType,
+                                                   rightOperand.getOperand().copy());
+            operand = new InstructionOperand(instruction);
+            baseBlock.insert(instruction);
+        }
     }
 
     @Nullable
