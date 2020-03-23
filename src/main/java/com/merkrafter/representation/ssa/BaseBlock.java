@@ -39,7 +39,7 @@ public class BaseBlock {
      *
      * @param instruction a linked list of instructions to insert
      */
-    void insert(@NotNull final Instruction instruction) {
+    public void insert(@NotNull final Instruction instruction) {
 
         if (lastInstruction == null) {
             // this base block is empty
