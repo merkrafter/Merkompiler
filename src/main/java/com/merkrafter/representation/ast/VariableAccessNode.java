@@ -141,4 +141,13 @@ public class VariableAccessNode implements Expression, SSATransformableExpressio
         return operand;
     }
 
+    /**
+     * Sets the operand for the internal VariableDescription
+     *
+     * @param operand the operand that is assigned to the VariableDescription
+     */
+    void setOperand(@NotNull final Operand operand) {
+        variableDescription.setOperand(operand);
+    }
+
 }

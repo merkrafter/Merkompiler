@@ -30,6 +30,12 @@ class SSATransformationTest {
 
     @Test
     void additionOfTwoConstants() {
+        /*
+         * code:
+         * 1 + 1;
+         * expected result:
+         * 0: add 1, 1
+         */
         final ConstantNode<Long> const1 = new ConstantNode<>(INT, 1L, p);
         final ConstantNode<Long> const2 = new ConstantNode<>(INT, 2L, p);
         final SSATransformableExpression expression = new BinaryOperationNode(const1, PLUS, const2);
@@ -49,6 +55,12 @@ class SSATransformationTest {
 
     @Test
     void additionOfConstantAndParameter() {
+        /*
+         * code:
+         * var + 1;
+         * expected result:
+         * 0: add 1, var
+         */
         final ConstantNode<Long> constNode = new ConstantNode<>(INT, 1L, p);
         final VariableAccessNode varNode =
                 new VariableAccessNode(new VariableDescription("var", INT, 0, false), p);
@@ -70,6 +82,13 @@ class SSATransformationTest {
 
     @Test
     void fmaCalculation() {
+        /*
+         * code:
+         * a + b * c
+         * expected result:
+         * 0: mul b, c
+         * 1: add a, (0)
+         */
         final VariableAccessNode a =
                 new VariableAccessNode(new VariableDescription("a", INT, 0, false), p);
         final VariableAccessNode b =
@@ -108,6 +127,12 @@ class SSATransformationTest {
 
     @Test
     void parameterlessProcedure() {
+        /*
+         * code:
+         * proc();
+         * expected result:
+         * 0: DISPATCH CLASS, proc, this
+         */
         final String PROCNAME = "proc";
         final SSATransformableExpression procCall =
                 new ProcedureCallNode(new ActualProcedureDescription(INT,
@@ -137,6 +162,12 @@ class SSATransformationTest {
 
     @Test
     void singleParameterProcedure() {
+        /*
+         * code:
+         * print(2);
+         * expected result:
+         * 0: DISPATCH CLASS, print, this, 2
+         */
         final String PROCNAME = "print";
         final long CALL_VALUE = 2L;
 
@@ -175,6 +206,13 @@ class SSATransformationTest {
 
     @Test
     void expressionAsParameterToProcedure() {
+        /*
+         * code:
+         * print(1+2);
+         * expected result:
+         * 0: add 1, 2
+         * 1: DISPATCH CLASS, print, this, (0)
+         */
         final String PROCNAME = "print";
 
         final List<VariableDescription> params = new LinkedList<>();
@@ -224,6 +262,13 @@ class SSATransformationTest {
 
     @Test
     void nestedProcedureCalls() {
+        /*
+         * code:
+         * quad(quad(3));
+         * expected result:
+         * 0: DISPATCH CLASS, quad, this, 3
+         * 1: DISPATCH CLASS, quad, this, (0)
+         */
         final String PROCNAME = "quad";
         final long CALL_VALUE = 3L;
 
@@ -275,4 +320,39 @@ class SSATransformationTest {
         assertTrue(ops[3] instanceof InstructionOperand);
         assertEquals(firstInstruction, ((InstructionOperand) ops[3]).getInstruction());
     }
+
+    @Test
+    void additionOfTwoAssignedVariables() {
+        /*
+         * code:
+         * a = 1;
+         * b = a;
+         * a + b;
+         * expected result:
+         * 0: add 1, 1
+         */
+        final ConstantNode<Long> const1 = new ConstantNode<>(INT, 1L, p);
+        final VariableAccessNode a =
+                new VariableAccessNode(new VariableDescription("a", INT, 0, false), p);
+        final AssignmentNode aEq1 = new AssignmentNode(a, const1);
+        final VariableAccessNode b =
+                new VariableAccessNode(new VariableDescription("b", INT, 0, false), p);
+        final AssignmentNode bEqa = new AssignmentNode(b, a);
+        aEq1.setNext(bEqa);
+        final BaseBlock baseBlock = new BaseBlock();
+        final SSATransformableExpression expression = new BinaryOperationNode(a, PLUS, b);
+
+        aEq1.transformToSSA(baseBlock);
+        expression.transformToSSA(baseBlock);
+
+        final Instruction resultInstruction = baseBlock.getFirstInstruction();
+        assertTrue(resultInstruction instanceof BinaryOperationInstruction);
+        final Operand operand1 = resultInstruction.getOperands()[0];
+        final Operand operand2 = resultInstruction.getOperands()[1];
+        assertTrue(operand1 instanceof Constant);
+        assertTrue(operand2 instanceof Constant);
+        assertEquals(((Constant) operand1).getValue(), const1.getValue());
+        assertEquals(((Constant) operand2).getValue(), const1.getValue());
+    }
+
 }

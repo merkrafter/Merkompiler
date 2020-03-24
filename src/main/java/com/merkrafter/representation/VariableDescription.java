@@ -1,6 +1,5 @@
 package com.merkrafter.representation;
 
-import com.merkrafter.representation.ssa.Constant;
 import com.merkrafter.representation.ssa.Operand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +95,7 @@ public class VariableDescription extends ObjectDescription {
         return false;
     }
 
-    void setOperand(@NotNull final Operand operand) {
+    public void setOperand(@NotNull final Operand operand) {
         this.operand = operand;
     }
 
