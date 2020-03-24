@@ -322,14 +322,15 @@ class SSATransformationTest {
     }
 
     @Test
-    void additionOfTwoAssignedVariables() {
+    void returnOfTwoAssignedVariables() {
         /*
          * code:
          * a = 1;
          * b = a;
-         * a + b;
+         * return a + b;
          * expected result:
          * 0: add 1, 1
+         * 1: RETURN (0)
          */
         final ConstantNode<Long> const1 = new ConstantNode<>(INT, 1L, p);
         final VariableAccessNode a =
@@ -339,20 +340,31 @@ class SSATransformationTest {
                 new VariableAccessNode(new VariableDescription("b", INT, 0, false), p);
         final AssignmentNode bEqa = new AssignmentNode(b, a);
         aEq1.setNext(bEqa);
-        final BaseBlock baseBlock = new BaseBlock();
         final SSATransformableExpression expression = new BinaryOperationNode(a, PLUS, b);
+        final ReturnNode returnNode = new ReturnNode(expression, p);
+        bEqa.setNext(returnNode);
+        final BaseBlock baseBlock = new BaseBlock();
 
         aEq1.transformToSSA(baseBlock);
         expression.transformToSSA(baseBlock);
 
-        final Instruction resultInstruction = baseBlock.getFirstInstruction();
-        assertTrue(resultInstruction instanceof BinaryOperationInstruction);
-        final Operand operand1 = resultInstruction.getOperands()[0];
-        final Operand operand2 = resultInstruction.getOperands()[1];
+        final Instruction firstInstruction = baseBlock.getFirstInstruction();
+        assertTrue(firstInstruction instanceof BinaryOperationInstruction);
+        final Operand operand1 = firstInstruction.getOperands()[0];
+        final Operand operand2 = firstInstruction.getOperands()[1];
         assertTrue(operand1 instanceof Constant);
         assertTrue(operand2 instanceof Constant);
         assertEquals(((Constant) operand1).getValue(), const1.getValue());
         assertEquals(((Constant) operand2).getValue(), const1.getValue());
+
+        final Instruction secondInstruction = firstInstruction.getNext();
+        assertNotNull(secondInstruction);
+        assertTrue(secondInstruction instanceof SpecialInstruction);
+        assertEquals(SpecialInstruction.Type.RETURN,
+                     ((SpecialInstruction) secondInstruction).getType());
+        final Operand op = secondInstruction.getOperands()[0];
+        assertTrue(op instanceof InstructionOperand);
+        assertEquals(firstInstruction, ((InstructionOperand) op).getInstruction());
     }
 
 }
