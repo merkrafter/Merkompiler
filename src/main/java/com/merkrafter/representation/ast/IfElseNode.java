@@ -144,13 +144,13 @@ public class IfElseNode extends AbstractStatementNode implements SSATransformabl
     @Override
     public void transformToSSA(@NotNull final BaseBlock baseBlock, final JoinBlock outerJoinBlock) {
         final JoinBlock joinBlock = new JoinBlock();
-        final BaseBlock thenBlock = new BaseBlock();
+        final BaseBlock thenBlock = BaseBlock.getInstance();
         thenBlock.setBranch(joinBlock);
         baseBlock.setBranch(thenBlock);
 
         ifBranch.transformToSSA(baseBlock, outerJoinBlock);
         if (elseBranch instanceof SSATransformableStatement) {
-            final BaseBlock failBlock = new BaseBlock();
+            final BaseBlock failBlock = BaseBlock.getInstance();
             failBlock.setBranch(joinBlock);
             baseBlock.setFail(failBlock);
             joinBlock.setUpdatePosition(JoinBlock.Position.SECOND);
@@ -158,7 +158,7 @@ public class IfElseNode extends AbstractStatementNode implements SSATransformabl
             joinBlock.commitPhi();
         }
 
-        final BaseBlock nextBaseBlock = new BaseBlock();
+        final BaseBlock nextBaseBlock = BaseBlock.getInstance();
         joinBlock.setBranch(nextBaseBlock);
         if (getNext() instanceof SSATransformableStatement) {
             ((SSATransformableStatement) getNext()).transformToSSA(nextBaseBlock, outerJoinBlock);

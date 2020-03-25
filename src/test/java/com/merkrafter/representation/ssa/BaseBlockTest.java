@@ -25,7 +25,7 @@ class BaseBlockTest {
     void insertSingleInstructionIntoEmptyBlock() {
         Mockito.lenient().when(instruction.getNext()).thenReturn(null);
 
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
         baseBlock.insert(instruction);
         assertSame(baseBlock.getFirstInstruction(), instruction);
         assertSame(baseBlock.getLastInstruction(), instruction);
@@ -37,7 +37,7 @@ class BaseBlockTest {
         Mockito.lenient().when(instruction.getNext()).thenReturn(null);
         Mockito.lenient().when(instruction2.getNext()).thenReturn(null);
 
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
         baseBlock.insert(instruction);
         baseBlock.insert(instruction2);
         assertSame(baseBlock.getFirstInstruction(), instruction);
@@ -50,7 +50,7 @@ class BaseBlockTest {
         Mockito.lenient().when(instruction.getNext()).thenReturn(instruction2);
         Mockito.lenient().when(instruction2.getNext()).thenReturn(null);
 
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
         baseBlock.insert(instruction);
         assertSame(baseBlock.getFirstInstruction(), instruction);
         assertSame(baseBlock.getLastInstruction(), instruction2);

@@ -27,6 +27,16 @@ public class BaseBlock {
     @Nullable
     private BaseBlock fail;
 
+    // CONSTRUCTION
+    //==============================================================
+    protected BaseBlock() {
+    }
+
+    @NotNull
+    public static BaseBlock getInstance() {
+        return new BaseBlock();
+    }
+
     // GETTER
     //==============================================================
     @Nullable Instruction getFirstInstruction() {

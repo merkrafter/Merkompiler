@@ -39,7 +39,7 @@ class SSATransformationTest {
         final ConstantNode<Long> const1 = new ConstantNode<>(INT, 1L, p);
         final ConstantNode<Long> const2 = new ConstantNode<>(INT, 2L, p);
         final SSATransformableExpression expression = new BinaryOperationNode(const1, PLUS, const2);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         expression.transformToSSA(baseBlock);
 
@@ -63,7 +63,7 @@ class SSATransformationTest {
                 new VariableAccessNode(new VariableDescription("var", INT, 0, false), p);
         final SSATransformableExpression expression =
                 new BinaryOperationNode(constNode, PLUS, varNode);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         expression.transformToSSA(baseBlock);
 
@@ -94,7 +94,7 @@ class SSATransformationTest {
                 new VariableAccessNode(new VariableDescription("c", INT, 0, false), p);
         final BinaryOperationNode bxc = new BinaryOperationNode(b, TIMES, c);
         final SSATransformableExpression expression = new BinaryOperationNode(a, PLUS, bxc);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         expression.transformToSSA(baseBlock);
 
@@ -139,7 +139,7 @@ class SSATransformationTest {
                                                                      p),
                                       new ParameterListNode(),
                                       p);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         procCall.transformToSSA(baseBlock);
 
@@ -181,7 +181,7 @@ class SSATransformationTest {
                                                                      p),
                                       new ParameterListNode(callArgs),
                                       p);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         procCall.transformToSSA(baseBlock);
 
@@ -227,7 +227,7 @@ class SSATransformationTest {
                                                                      p),
                                       new ParameterListNode(callArgs),
                                       p);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         procCall.transformToSSA(baseBlock);
 
@@ -284,7 +284,7 @@ class SSATransformationTest {
                                                                                    Collections.singletonList(
                                                                                            innerCall)),
                                                                            p);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         outerCall.transformToSSA(baseBlock);
 
@@ -340,7 +340,7 @@ class SSATransformationTest {
         final SSATransformableExpression expression = new BinaryOperationNode(a, PLUS, b);
         final ReturnNode returnNode = new ReturnNode(expression, p);
         bEqa.setNext(returnNode);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         aEq1.transformToSSA(baseBlock, null);
         expression.transformToSSA(baseBlock);
@@ -395,7 +395,7 @@ class SSATransformationTest {
                                       new ParameterListNode(callArgs),
                                       p);
         ifStatement.setNext(procCall);
-        final BaseBlock baseBlock = new BaseBlock();
+        final BaseBlock baseBlock = BaseBlock.getInstance();
 
         ifStatement.transformToSSA(baseBlock, null);
 
