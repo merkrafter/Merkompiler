@@ -345,7 +345,7 @@ class SSATransformationTest {
         bEqa.setNext(returnNode);
         final BaseBlock baseBlock = new BaseBlock();
 
-        aEq1.transformToSSA(baseBlock);
+        aEq1.transformToSSA(baseBlock, null);
         expression.transformToSSA(baseBlock);
 
         final Instruction firstInstruction = baseBlock.getFirstInstruction();

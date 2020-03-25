@@ -1,7 +1,7 @@
-
 package com.merkrafter.representation.ssa;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /****
  * This interface can be used to mark statements that can be transformed to SSA form.
@@ -14,5 +14,5 @@ public interface SSATransformableStatement {
     //==============================================================
     // public methods
     //--------------------------------------------------------------
-    void transformToSSA(@NotNull BaseBlock baseBlock);
+    void transformToSSA(@NotNull final BaseBlock baseBlock, @Nullable final JoinBlock joinBlock);
 }

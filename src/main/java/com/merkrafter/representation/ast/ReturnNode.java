@@ -142,7 +142,7 @@ public class ReturnNode extends AbstractStatementNode implements SSATransformabl
     }
 
     @Override
-    public void transformToSSA(@NotNull final BaseBlock baseBlock) {
+    public void transformToSSA(@NotNull final BaseBlock baseBlock, final JoinBlock joinBlock) {
         if (expression instanceof SSATransformableExpression) {
             final SSATransformableExpression ssaExpr = (SSATransformableExpression) expression;
             ssaExpr.transformToSSA(baseBlock);
