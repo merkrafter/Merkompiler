@@ -16,7 +16,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ProcedureCallNode extends AbstractStatementNode implements Expression, SSATransformableExpression {
+public class ProcedureCallNode extends AbstractStatementNode implements Expression, SSATransformableExpression, SSATransformableStatement {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -149,6 +149,12 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
 
     @Override
     public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        transformToSSA(baseBlock, null);
+    }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock,
+                               final @Nullable JoinBlock joinBlock) {
         final List<Expression> parameters = args.getParameters();
         final Operand[] operands = new Operand[3 + parameters.size()];
         operands[0] = new SymbolicOperand("CLASSNAME"); // TODO
@@ -166,6 +172,7 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
                 new SpecialInstruction(SpecialInstruction.Type.DISPATCH, operands);
         baseBlock.insert(instruction);
         this.operand = new InstructionOperand(instruction);
+
     }
 
     /**

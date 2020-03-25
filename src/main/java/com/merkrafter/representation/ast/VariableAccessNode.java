@@ -76,6 +76,10 @@ public class VariableAccessNode implements Expression, SSATransformableExpressio
         return variableDescription.getName();
     }
 
+    @NotNull VariableDescription getVariableDescription() {
+        return variableDescription;
+    }
+
     /**
      * @return empty list
      */

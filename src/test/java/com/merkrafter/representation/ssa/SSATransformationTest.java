@@ -14,8 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.merkrafter.representation.Type.INT;
-import static com.merkrafter.representation.ast.BinaryOperationNodeType.PLUS;
-import static com.merkrafter.representation.ast.BinaryOperationNodeType.TIMES;
+import static com.merkrafter.representation.ast.BinaryOperationNodeType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /****
@@ -363,6 +362,91 @@ class SSATransformationTest {
         assertEquals(firstInstruction, ((InstructionOperand) op).getInstruction());
     }
 
+    @Test
+    void assignmentsInBranch() {
+        /*
+         * code:
+         * if(1==1){a=1+2;}else{a=1-2;}
+         * print(a);
+         * expected result:
+         * 0: eq 1, 1                           [in baseBlock]
+         * 1: add 1, 2                          [in thenBlock]
+         * 2: sub 1, 2                          [in elseBlock]
+         * 3: phi (1), (2)                      [in joinBlock]
+         * 4: DISPATCH CLASS, print, this, (3)  [in lastBlock]
+         */
+
+        final ConstantNode<Long> const1 = new ConstantNode<>(INT, 1L, p);
+        final ConstantNode<Long> const2 = new ConstantNode<>(INT, 2L, p);
+        final VariableAccessNode a =
+                new VariableAccessNode(new VariableDescription("a", INT, 0, false), p);
+        final AssignmentNode aEq1 =
+                new AssignmentNode(a, new BinaryOperationNode(const1, PLUS, const2));
+        final AssignmentNode aEq2 =
+                new AssignmentNode(a, new BinaryOperationNode(const1, MINUS, const2));
+        final BinaryOperationNode condition = new BinaryOperationNode(const1, EQUAL, const1);
+        final IfElseNode ifStatement = new IfElseNode(new IfNode(condition, aEq1, p), aEq2);
+        final List<VariableDescription> params =
+                Collections.singletonList(new VariableDescription("a", INT, 0, false));
+        final List<Expression> callArgs = Collections.singletonList(a);
+
+        final ProcedureCallNode procCall =
+                new ProcedureCallNode(new ActualProcedureDescription(INT, "print", params, null, p),
+                                      new ParameterListNode(callArgs),
+                                      p);
+        ifStatement.setNext(procCall);
+        final BaseBlock baseBlock = new BaseBlock();
+
+        ifStatement.transformToSSA(baseBlock, null);
+
+        // validate condition
+        final Instruction firstInstruction = baseBlock.getFirstInstruction();
+        assertIsBinOpInstructionOfConstants(firstInstruction,
+                                            EQUAL,
+                                            const1.getValue(),
+                                            const1.getValue());
+
+        // check the 'then' branch
+        final BaseBlock thenBlock = baseBlock.getBranch();
+        assertNotNull(thenBlock);
+        final Instruction secondInstruction = thenBlock.getFirstInstruction();
+        assertIsBinOpInstructionOfConstants(secondInstruction,
+                                            PLUS,
+                                            const1.getValue(),
+                                            const2.getValue());
+        // check the 'else' branch
+        final BaseBlock failBlock = baseBlock.getFail();
+        assertNotNull(failBlock);
+        final Instruction thirdInstruction = failBlock.getFirstInstruction();
+        assertIsBinOpInstructionOfConstants(thirdInstruction,
+                                            MINUS,
+                                            const1.getValue(),
+                                            const2.getValue());
+        // check the join block
+        final BaseBlock joinBlock = thenBlock.getBranch();
+        assertTrue(joinBlock instanceof JoinBlock);
+        assertSame(thenBlock.getBranch(), failBlock.getBranch());
+        assertTrue(joinBlock.getFirstInstruction() instanceof SpecialInstruction);
+        final SpecialInstruction phiInstr = (SpecialInstruction) joinBlock.getFirstInstruction();
+        assertEquals(SpecialInstruction.Type.PHI, phiInstr.getType());
+        final Operand[] phiOperands = phiInstr.getOperands();
+        assertEquals(2, phiOperands.length);
+        assertTrue(phiOperands[0] instanceof InstructionOperand);
+        assertTrue(phiOperands[1] instanceof InstructionOperand);
+        assertEquals(secondInstruction, ((InstructionOperand) phiOperands[0]).getInstruction());
+        assertEquals(thirdInstruction, ((InstructionOperand) phiOperands[1]).getInstruction());
+
+        assertNotNull(joinBlock.getBranch());
+        final BaseBlock lastBlock = joinBlock.getBranch();
+        assertTrue(lastBlock.getFirstInstruction() instanceof SpecialInstruction);
+        final SpecialInstruction fifthInstruction =
+                (SpecialInstruction) lastBlock.getFirstInstruction();
+        assertEquals(SpecialInstruction.Type.DISPATCH, fifthInstruction.getType());
+        final Operand[] dispatchOps = fifthInstruction.getOperands();
+        assertEquals(4, dispatchOps.length);
+        assertTrue(dispatchOps[3] instanceof InstructionOperand);
+        assertEquals(phiInstr, ((InstructionOperand) dispatchOps[3]).getInstruction());
+    }
 
     /**
      * Encapsulates all assertions for BinaryOperationInstructions that operate on Constants.

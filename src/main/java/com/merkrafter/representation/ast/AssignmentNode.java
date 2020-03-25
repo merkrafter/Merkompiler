@@ -131,7 +131,10 @@ public class AssignmentNode extends AbstractStatementNode implements SSATransfor
             ssaValue.transformToSSA(baseBlock);
             final Operand op = ssaValue.getOperand();
             if (op != null) {
-                variable.setOperand(ssaValue.getOperand());
+                if (joinBlock != null) {
+                    joinBlock.updatePhi(variable.getVariableDescription(), op);
+                }
+                variable.setOperand(ssaValue.getOperand().copy());
             }
         }
         if (getNext() instanceof SSATransformableStatement) {

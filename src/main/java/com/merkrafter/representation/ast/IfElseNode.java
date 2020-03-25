@@ -2,6 +2,9 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.JoinBlock;
+import com.merkrafter.representation.ssa.SSATransformableStatement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -14,7 +17,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class IfElseNode extends AbstractStatementNode {
+public class IfElseNode extends AbstractStatementNode implements SSATransformableStatement {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -134,4 +137,31 @@ public class IfElseNode extends AbstractStatementNode {
         return errors;
     }
 
+    /**
+     * @param baseBlock the block that all instructions are inserted into
+     * @param outerJoinBlock if this IfNode is part of nested ifs/whiles: JoinBlock from outer scope
+     */
+    @Override
+    public void transformToSSA(@NotNull final BaseBlock baseBlock, final JoinBlock outerJoinBlock) {
+        final JoinBlock joinBlock = new JoinBlock();
+        final BaseBlock thenBlock = new BaseBlock();
+        thenBlock.setBranch(joinBlock);
+        baseBlock.setBranch(thenBlock);
+
+        ifBranch.transformToSSA(baseBlock, outerJoinBlock);
+        if (elseBranch instanceof SSATransformableStatement) {
+            final BaseBlock failBlock = new BaseBlock();
+            failBlock.setBranch(joinBlock);
+            baseBlock.setFail(failBlock);
+            joinBlock.setUpdatePosition(JoinBlock.Position.SECOND);
+            ((SSATransformableStatement) elseBranch).transformToSSA(failBlock, joinBlock);
+            joinBlock.commitPhi();
+        }
+
+        final BaseBlock nextBaseBlock = new BaseBlock();
+        joinBlock.setBranch(nextBaseBlock);
+        if (getNext() instanceof SSATransformableStatement) {
+            ((SSATransformableStatement) getNext()).transformToSSA(nextBaseBlock, outerJoinBlock);
+        }
+    }
 }
