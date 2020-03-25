@@ -6,6 +6,7 @@ import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.VariableDescription;
 import com.merkrafter.representation.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -44,13 +45,10 @@ class SSATransformationTest {
         expression.transformToSSA(baseBlock);
 
         final Instruction resultInstruction = baseBlock.getFirstInstruction();
-        assertTrue(resultInstruction instanceof BinaryOperationInstruction);
-        final Operand operand1 = resultInstruction.getOperands()[0];
-        final Operand operand2 = resultInstruction.getOperands()[1];
-        assertTrue(operand1 instanceof Constant);
-        assertTrue(operand2 instanceof Constant);
-        assertEquals(((Constant) operand1).getValue(), const1.getValue());
-        assertEquals(((Constant) operand2).getValue(), const2.getValue());
+        assertIsBinOpInstructionOfConstants(resultInstruction,
+                                            PLUS,
+                                            const1.getValue(),
+                                            const2.getValue());
     }
 
     @Test
@@ -349,13 +347,11 @@ class SSATransformationTest {
         expression.transformToSSA(baseBlock);
 
         final Instruction firstInstruction = baseBlock.getFirstInstruction();
-        assertTrue(firstInstruction instanceof BinaryOperationInstruction);
-        final Operand operand1 = firstInstruction.getOperands()[0];
-        final Operand operand2 = firstInstruction.getOperands()[1];
-        assertTrue(operand1 instanceof Constant);
-        assertTrue(operand2 instanceof Constant);
-        assertEquals(((Constant) operand1).getValue(), const1.getValue());
-        assertEquals(((Constant) operand2).getValue(), const1.getValue());
+        assertNotNull(firstInstruction);
+        assertIsBinOpInstructionOfConstants(firstInstruction,
+                                            PLUS,
+                                            const1.getValue(),
+                                            const1.getValue());
 
         final Instruction secondInstruction = firstInstruction.getNext();
         assertNotNull(secondInstruction);
@@ -367,4 +363,27 @@ class SSATransformationTest {
         assertEquals(firstInstruction, ((InstructionOperand) op).getInstruction());
     }
 
+
+    /**
+     * Encapsulates all assertions for BinaryOperationInstructions that operate on Constants.
+     *
+     * @param instruction the instruction that is tested
+     * @param type the type the instruction should have
+     * @param firstValue the expected value of the left operand
+     * @param secondValue the expected value of the right operand
+     */
+    private static void assertIsBinOpInstructionOfConstants(@Nullable final Instruction instruction,
+                                                            @NotNull final BinaryOperationNodeType type,
+                                                            final long firstValue,
+                                                            final long secondValue) {
+
+        assertTrue(instruction instanceof BinaryOperationInstruction);
+        assertEquals(type, ((BinaryOperationInstruction) instruction).getType());
+        final Operand[] firstInstrOps = instruction.getOperands();
+        assertEquals(2, firstInstrOps.length);
+        assertTrue(firstInstrOps[0] instanceof Constant);
+        assertTrue(firstInstrOps[1] instanceof Constant);
+        assertEquals(firstValue, ((Constant) firstInstrOps[0]).getValue());
+        assertEquals(secondValue, ((Constant) firstInstrOps[1]).getValue());
+    }
 }
