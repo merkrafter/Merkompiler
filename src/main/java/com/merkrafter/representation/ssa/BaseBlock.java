@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 /****
  * A BaseBlock is a list of connected, sequential Instructions.
  * In particular, this means that it contains no branches.
+ * If a branch instruction occurs inside a BaseBlock, its fields branch and fail
+ * point to the instructions that follow in case of success or failure respectively.
  *
  * @since v0.5.0
  * @author merkrafter
@@ -19,6 +21,12 @@ public class BaseBlock {
     @Nullable
     private Instruction lastInstruction;
 
+    @Nullable
+    private BaseBlock branch;
+
+    @Nullable
+    private BaseBlock fail;
+
     // GETTER
     //==============================================================
     @Nullable Instruction getFirstInstruction() {
@@ -29,9 +37,35 @@ public class BaseBlock {
         return lastInstruction;
     }
 
+    /**
+     * @return a block of instructions that will be executed in case of success of a previous test
+     */
+    @Nullable
+    public BaseBlock getBranch() {
+        return branch;
+    }
+
+    /**
+     * @return a block of instructions that will be executed in case of failure of a previous test
+     */
+    @Nullable
+    public BaseBlock getFail() {
+        return fail;
+    }
+
+    // SETTER
+    //==============================================================
+    public void setBranch(@NotNull final BaseBlock branch) {
+        this.branch = branch;
+    }
+
+    public void setFail(@NotNull final BaseBlock fail) {
+        this.fail = fail;
+    }
+
     // METHODS
     //==============================================================
-    // package-private methods
+    // public methods
     //--------------------------------------------------------------
 
     /**
