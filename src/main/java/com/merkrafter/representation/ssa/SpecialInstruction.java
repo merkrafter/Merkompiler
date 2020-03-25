@@ -15,6 +15,7 @@ public class SpecialInstruction extends Instruction {
      * instead of multiple sub-classes.
      */
     public enum Type {
+        PHI,
         DISPATCH,
         RETURN
     }
