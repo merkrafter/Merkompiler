@@ -6,6 +6,8 @@ import com.merkrafter.representation.ObjectDescription;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
+import com.merkrafter.representation.ssa.SSATransformableClass;
+import com.merkrafter.representation.ssa.SSATransformableProcedure;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -19,7 +21,7 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
+public class ClassNode implements AbstractSyntaxTree, GraphicalComponent, SSATransformableClass {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -163,4 +165,12 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent {
         return errors;
     }
 
+    @Override
+    public void transformToSSA() {
+        for (@NotNull final ObjectDescription obj : getDefinedObjects()) {
+            if (obj instanceof SSATransformableProcedure) {
+                ((SSATransformableProcedure) obj).transformToSSA();
+            }
+        }
+    }
 }
