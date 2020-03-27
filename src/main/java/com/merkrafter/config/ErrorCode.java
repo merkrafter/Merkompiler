@@ -7,7 +7,8 @@ package com.merkrafter.config;
  */
 public enum ErrorCode {
     ARGUMENTS_UNPARSABLE(1),
-    FILE_NOT_FOUND(2);
+    FILE_NOT_FOUND(2),
+    IO_ERROR(3);
 
     public final int id;
 

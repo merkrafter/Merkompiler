@@ -2,10 +2,7 @@ package com.merkrafter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 
 /****
@@ -14,7 +11,7 @@ import java.util.Iterator;
  *
  * @author merkrafter
  ***************************************************************/
-public class Input implements Iterator<Character> {
+public class Input implements Iterator<Character>, Closeable {
     // CONSTANTS
     //==============================================================
     /**
@@ -84,5 +81,11 @@ public class Input implements Iterator<Character> {
             lastRead = ERROR;
         }
         return (char) returnValue;
+    }
+
+
+    @Override
+    public void close() throws IOException {
+        reader.close();
     }
 }
