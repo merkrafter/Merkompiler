@@ -448,6 +448,71 @@ class SSATransformationTest {
         assertEquals(phiInstr, ((InstructionOperand) dispatchOps[3]).getInstruction());
     }
 
+    @Test
+    void assignmentsInWhileLoop() {
+        /*
+         * code:
+         * while(a<=10){a=a*2;}
+         * return a;
+         * expected result:
+         * 0: phi a, (2)    [in baseBlock]
+         * 1: leq (0), 10   [in baseBlock]
+         * 2: mul (0), 2    [in loopBlock]
+         * 3: return (0)    [in lastBlock]
+         */
+        final ConstantNode<Long> const2 = new ConstantNode<>(INT, 2L, p);
+        final ConstantNode<Long> const10 = new ConstantNode<>(INT, 10L, p);
+        final VariableDescription aDescr = new VariableDescription("a", INT, 0, false);
+        final VariableAccessNode a = new VariableAccessNode(aDescr, p);
+        final BinaryOperationNode ax2 = new BinaryOperationNode(a, TIMES, const2);
+        final BinaryOperationNode condition = new BinaryOperationNode(a, LOWER_EQUAL, const10);
+        final AssignmentNode assignment = new AssignmentNode(a, ax2);
+        final WhileNode whileNode = new WhileNode(condition, assignment, p);
+        whileNode.setNext(new ReturnNode(a, p));
+
+        final BaseBlock baseBlock = BaseBlock.getInstance();
+        whileNode.transformToSSA(baseBlock, null);
+
+        // assert first instruction is a phi instruction
+        assertTrue(baseBlock.getFirstInstruction() instanceof SpecialInstruction);
+        final SpecialInstruction phiInstr = (SpecialInstruction) baseBlock.getFirstInstruction();
+        assertEquals(SpecialInstruction.Type.PHI, phiInstr.getType());
+        final Operand[] phiOps = phiInstr.getOperands();
+        assertTrue(phiOps[0] instanceof ParameterOperand);
+        assertEquals(aDescr, ((ParameterOperand) phiOps[0]).getVariable());
+        assertTrue(phiOps[1] instanceof InstructionOperand);
+
+        // assert second instruction is a binary operation instruction between phi and constant
+        assertTrue(phiInstr.getNext() instanceof BinaryOperationInstruction);
+        final BinaryOperationInstruction condInstr =
+                (BinaryOperationInstruction) phiInstr.getNext();
+        assertTrue(condInstr.getOperands()[0] instanceof InstructionOperand);
+        assertEquals(phiInstr, ((InstructionOperand) condInstr.getOperands()[0]).getInstruction());
+        assertTrue(condInstr.getOperands()[1] instanceof Constant);
+        assertEquals(const10.getValue(), ((Constant) condInstr.getOperands()[1]).getValue());
+
+        // assert baseBlock has the loop body as its branch
+        final BaseBlock loopBody = baseBlock.getBranch();
+        assertNotNull(loopBody);
+        assertSame(baseBlock, loopBody.getBranch()); // assert loopback
+        assertTrue(loopBody.getFirstInstruction() instanceof BinaryOperationInstruction);
+        final BinaryOperationInstruction mulInstr =
+                (BinaryOperationInstruction) loopBody.getFirstInstruction();
+        assertTrue(mulInstr.getOperands()[0] instanceof InstructionOperand);
+        assertEquals(phiInstr, ((InstructionOperand) mulInstr.getOperands()[0]).getInstruction());
+        assertTrue(mulInstr.getOperands()[1] instanceof Constant);
+        assertEquals(const2.getValue(), ((Constant) mulInstr.getOperands()[1]).getValue());
+
+        // assert baseBlock has the part after the loop as its fail
+        final BaseBlock followUp = baseBlock.getFail();
+        assertNotNull(followUp);
+        assertTrue(followUp.getFirstInstruction() instanceof SpecialInstruction);
+        final SpecialInstruction retInstr = (SpecialInstruction) followUp.getFirstInstruction();
+        assertEquals(SpecialInstruction.Type.RETURN, retInstr.getType());
+        assertTrue(retInstr.getOperands()[0] instanceof InstructionOperand);
+        assertEquals(phiInstr, ((InstructionOperand) retInstr.getOperands()[0]).getInstruction());
+    }
+
     /**
      * Encapsulates all assertions for BinaryOperationInstructions that operate on Constants.
      *

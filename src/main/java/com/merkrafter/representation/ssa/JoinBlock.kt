@@ -11,24 +11,34 @@ import com.merkrafter.representation.VariableDescription
  */
 class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
     enum class Position { FIRST, SECOND }
+    enum class Environment { NONE, WHILE, IFELSE }
 
     private val phiTable: MutableMap<VariableDescription, SpecialInstruction> = HashMap()
     var updatePosition: Position = Position.FIRST
+    var environment: Environment = Environment.NONE
 
     /**
      * This method ensures that after its invocation there is a phi instruction in the cache of this
      * block that has operand at updatePosition.
      * It can then be committed via the commit() method
      */
-    fun updatePhi(varDesc: VariableDescription, operand: Operand) {
+    private fun updatePhi(varDesc: VariableDescription, operand1: Operand, operand2: Operand) {
         if (varDesc in phiTable) {
             val instruction = phiTable[varDesc]!!
             val instrOperands = instruction.operands
-            instrOperands[updatePosition.ordinal] = operand
+            instrOperands[updatePosition.ordinal] = operand1
         } else {
-            val instruction = SpecialInstruction(SpecialInstruction.Type.PHI, arrayOf(operand, operand))
+            val instruction = SpecialInstruction(SpecialInstruction.Type.PHI, arrayOf(operand2, operand1))
             phiTable[varDesc] = instruction
         }
+    }
+
+    /**
+     * Initializes the second operand with a ParameterOperand pointing to the variable description.
+     */
+    fun updatePhi(varDesc: VariableDescription, operand: Operand) = when (environment) {
+        Environment.WHILE -> updatePhi(varDesc, operand, ParameterOperand(varDesc))
+        else -> updatePhi(varDesc, operand, operand)
     }
 
     /**
@@ -39,7 +49,7 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
     fun commitPhi() {
         for (varDesc in phiTable.keys) {
             val phiInstruction = phiTable[varDesc]!!
-            insert(phiInstruction)
+            insertFirst(phiInstruction)
             varDesc.setOperand(InstructionOperand(phiInstruction))
         }
     }

@@ -145,6 +145,7 @@ public class IfElseNode extends AbstractStatementNode implements SSATransformabl
     public void transformToSSA(@NotNull final BaseBlock baseBlock, final JoinBlock outerJoinBlock) {
         final JoinBlock joinBlock = new JoinBlock();
         final BaseBlock thenBlock = BaseBlock.getInstance();
+        joinBlock.setEnvironment(JoinBlock.Environment.IFELSE);
         thenBlock.setBranch(joinBlock);
         baseBlock.setBranch(thenBlock);
 
