@@ -2,6 +2,8 @@ package com.merkrafter.representation;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ast.Statement;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.SSATransformableStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +28,8 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     private Statement statements;
     @NotNull
     private final Position position;
+    @Nullable
+    private BaseBlock entryBlock;
 
 
     // CONSTRUCTORS
@@ -182,5 +186,22 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
         dotRepr.append(System.lineSeparator());
 
         return dotRepr.toString();
+    }
+
+    /**
+     * After calling this method, getEntryBlock must not return null.
+     */
+    @Override
+    public void transformToSSA() {
+        if (statements instanceof SSATransformableStatement) {
+            entryBlock = BaseBlock.getInstance();
+            ((SSATransformableStatement) statements).transformToSSA(entryBlock, null);
+        }
+    }
+
+    @Nullable
+    @Override
+    public BaseBlock getEntryBlock() {
+        return entryBlock;
     }
 }

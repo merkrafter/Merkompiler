@@ -3,6 +3,8 @@ package com.merkrafter.representation;
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ast.ParameterListNode;
 import com.merkrafter.representation.ast.Statement;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.SSATransformableProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -163,5 +165,26 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         }
         return String.format("%d[shape=box,label=\"extern %s\"];", getID(), name)
                + System.lineSeparator();
+    }
+
+    /**
+     * After calling this method, getEntryBlock must not return null.
+     */
+    @Override
+    public void transformToSSA() {
+        findProcedureDescription();
+        if (procedureDescription != null) {
+            procedureDescription.transformToSSA();
+        }
+    }
+
+    @Nullable
+    @Override
+    public BaseBlock getEntryBlock() {
+        findProcedureDescription();
+        if (procedureDescription != null) {
+            return procedureDescription.getEntryBlock();
+        }
+        return null;
     }
 }
