@@ -2,7 +2,12 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.Constant;
+import com.merkrafter.representation.ssa.Operand;
+import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +21,7 @@ import java.util.Objects;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ConstantNode<T> implements Expression {
+public class ConstantNode<T> implements Expression, SSATransformableExpression {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -25,6 +30,9 @@ public class ConstantNode<T> implements Expression {
     private final T value;
     @NotNull
     private final Position position;
+
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -131,5 +139,26 @@ public class ConstantNode<T> implements Expression {
                              type.name(),
                              System.lineSeparator(),
                              value.toString());
+    }
+
+    /**
+     * Transforms this ConstantNode to a Constant operand and stores it for later use.
+     * @param baseBlock ignored
+     */
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        if(value instanceof Long && operand == null){
+            operand = new Constant((Long) value);
+        }
+    }
+
+
+    /**
+     * @return the operand that this expression was transformed to
+     */
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        return operand;
     }
 }

@@ -2,6 +2,7 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ReturnNode extends AbstractStatementNode {
+public class ReturnNode extends AbstractStatementNode implements SSATransformableStatement {
     // ATTRIBUTES
     //==============================================================
     @Nullable
@@ -138,5 +139,21 @@ public class ReturnNode extends AbstractStatementNode {
     @Override
     public Position getPosition() {
         return position;
+    }
+
+    @Override
+    public void transformToSSA(@NotNull final BaseBlock baseBlock, final JoinBlock joinBlock) {
+        if (expression instanceof SSATransformableExpression) {
+            final SSATransformableExpression ssaExpr = (SSATransformableExpression) expression;
+            ssaExpr.transformToSSA(baseBlock);
+            final Operand op = ssaExpr.getOperand();
+            if (op != null) {
+                final Instruction instruction =
+                        new SpecialInstruction(SpecialInstruction.Type.RETURN,
+                                               new Operand[]{ssaExpr.getOperand()});
+                baseBlock.insert(instruction);
+            }
+        }
+        // does not have to transform the next statements
     }
 }

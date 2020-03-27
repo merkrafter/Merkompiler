@@ -3,7 +3,9 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ProcedureDescription;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class ProcedureCallNode extends AbstractStatementNode implements Expression {
+public class ProcedureCallNode extends AbstractStatementNode implements Expression, SSATransformableExpression, SSATransformableStatement {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -23,6 +25,8 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     private final ParameterListNode args;
     @NotNull
     private final Position position;
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -142,4 +146,42 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     public Position getPosition() {
         return position;
     }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        transformToSSA(baseBlock, null);
+    }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock,
+                               final @Nullable JoinBlock joinBlock) {
+        final List<Expression> parameters = args.getParameters();
+        final Operand[] operands = new Operand[3 + parameters.size()];
+        operands[0] = new SymbolicOperand("CLASSNAME"); // TODO
+        operands[1] = new SymbolicOperand(procedure.getName());
+        operands[2] = new SymbolicOperand("this");
+        for (int i = 0; i < parameters.size(); i++) {
+            if (parameters.get(i) instanceof SSATransformableExpression) {
+                final SSATransformableExpression param =
+                        (SSATransformableExpression) parameters.get(i);
+                param.transformToSSA(baseBlock);
+                operands[3 + i] = param.getOperand();
+            }
+        }
+        final Instruction instruction =
+                new SpecialInstruction(SpecialInstruction.Type.DISPATCH, operands);
+        baseBlock.insert(instruction);
+        this.operand = new InstructionOperand(instruction);
+
+    }
+
+    /**
+     * @return the operand that this expression was transformed to
+     */
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        return operand;
+    }
+
 }

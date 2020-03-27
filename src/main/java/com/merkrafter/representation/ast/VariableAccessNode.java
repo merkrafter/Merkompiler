@@ -3,7 +3,12 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.VariableDescription;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.Operand;
+import com.merkrafter.representation.ssa.ParameterOperand;
+import com.merkrafter.representation.ssa.SSATransformableExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,13 +19,15 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class VariableAccessNode implements Expression {
+public class VariableAccessNode implements Expression, SSATransformableExpression {
     // ATTRIBUTES
     //==============================================================
     @NotNull
     private final VariableDescription variableDescription;
     @NotNull
     private final Position position;
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -69,6 +76,10 @@ public class VariableAccessNode implements Expression {
         return variableDescription.getName();
     }
 
+    @NotNull VariableDescription getVariableDescription() {
+        return variableDescription;
+    }
+
     /**
      * @return empty list
      */
@@ -113,4 +124,34 @@ public class VariableAccessNode implements Expression {
     public Position getPosition() {
         return position;
     }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        final Operand currentVariableOperand = variableDescription.getOperand();
+        if (currentVariableOperand == null) { // this is a procedure parameter
+            operand = new ParameterOperand(variableDescription);
+        } else {
+            operand = currentVariableOperand.copy();
+        }
+        // TODO implement this for fields
+    }
+
+    /**
+     * @return the operand that this expression was transformed to
+     */
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        return operand;
+    }
+
+    /**
+     * Sets the operand for the internal VariableDescription
+     *
+     * @param operand the operand that is assigned to the VariableDescription
+     */
+    void setOperand(@NotNull final Operand operand) {
+        variableDescription.setOperand(operand);
+    }
+
 }

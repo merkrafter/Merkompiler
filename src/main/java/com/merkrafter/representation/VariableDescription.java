@@ -1,6 +1,8 @@
 package com.merkrafter.representation;
 
+import com.merkrafter.representation.ssa.Operand;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -22,6 +24,13 @@ public class VariableDescription extends ObjectDescription {
     @NotNull
     private Object value;
     private final boolean constant;
+
+    /**
+     * The value of this variable during the SSA form transformation process
+     */
+    // TODO make value an Expression and transform it if needed
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -53,6 +62,11 @@ public class VariableDescription extends ObjectDescription {
         return constant;
     }
 
+    @Nullable
+    public Operand getOperand() {
+        return operand;
+    }
+
     // SETTER
     //==============================================================
 
@@ -79,6 +93,10 @@ public class VariableDescription extends ObjectDescription {
             }
         }
         return false;
+    }
+
+    public void setOperand(@NotNull final Operand operand) {
+        this.operand = operand;
     }
 
     // METHODS

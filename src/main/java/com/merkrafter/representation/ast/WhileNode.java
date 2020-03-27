@@ -2,7 +2,12 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.JoinBlock;
+import com.merkrafter.representation.ssa.SSATransformableExpression;
+import com.merkrafter.representation.ssa.SSATransformableStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -13,7 +18,7 @@ import java.util.List;
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class WhileNode extends AbstractStatementNode {
+public class WhileNode extends AbstractStatementNode implements SSATransformableStatement {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -128,5 +133,30 @@ public class WhileNode extends AbstractStatementNode {
          */
         return super.isCompatibleToType(type) && (loopBody.isCompatibleToType(type)
                                                   || !loopBody.hasReturnStatement());
+    }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock,
+                               final @Nullable JoinBlock outerJoinBlock) {
+        final JoinBlock joinBlock = new JoinBlock(baseBlock);
+        joinBlock.setEnvironment(JoinBlock.Environment.WHILE);
+        joinBlock.setUpdatePosition(JoinBlock.Position.SECOND);
+        if (condition instanceof SSATransformableExpression) {
+            ((SSATransformableExpression) condition).transformToSSA(joinBlock);
+        }
+        if (loopBody instanceof SSATransformableStatement) {
+            final BaseBlock loopBodyBlock = BaseBlock.getInstance();
+            joinBlock.setBranch(loopBodyBlock);
+            loopBodyBlock.setBranch(baseBlock);
+            ((SSATransformableStatement) loopBody).transformToSSA(loopBodyBlock, joinBlock);
+            joinBlock.commitPhi();
+            joinBlock.renamePhi(joinBlock);
+            joinBlock.renamePhi(loopBodyBlock);
+        }
+        if (getNext() instanceof SSATransformableStatement) {
+            final BaseBlock failBlock = BaseBlock.getInstance();
+            baseBlock.setFail(failBlock);
+            ((SSATransformableStatement) getNext()).transformToSSA(failBlock, outerJoinBlock);
+        }
     }
 }

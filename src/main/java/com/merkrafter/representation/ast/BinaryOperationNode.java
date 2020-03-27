@@ -2,7 +2,9 @@ package com.merkrafter.representation.ast;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +17,7 @@ import static com.merkrafter.representation.ast.AbstractStatementNode.collectErr
  * @since v0.3.0
  * @author merkrafter
  ***************************************************************/
-public class BinaryOperationNode implements Expression {
+public class BinaryOperationNode implements Expression, SSATransformableExpression {
     // ATTRIBUTES
     //==============================================================
     @NotNull
@@ -25,6 +27,9 @@ public class BinaryOperationNode implements Expression {
 
     @NotNull
     private final BinaryOperationNodeType binOpType;
+
+    @Nullable
+    private Operand operand;
 
     // CONSTRUCTORS
     //==============================================================
@@ -169,4 +174,35 @@ public class BinaryOperationNode implements Expression {
 
         return dotRepr.toString();
     }
+
+    @Override
+    public void transformToSSA(final @NotNull BaseBlock baseBlock) {
+        if (leftOperand instanceof SSATransformableExpression
+            && rightOperand instanceof SSATransformableExpression) {
+
+            final SSATransformableExpression leftOperand =
+                    (SSATransformableExpression) this.leftOperand;
+            final SSATransformableExpression rightOperand =
+                    (SSATransformableExpression) this.rightOperand;
+
+            leftOperand.transformToSSA(baseBlock);
+            rightOperand.transformToSSA(baseBlock);
+            assert leftOperand.getOperand() != null;
+            assert rightOperand.getOperand() != null;
+
+            final Instruction instruction =
+                    new BinaryOperationInstruction(leftOperand.getOperand().copy(),
+                                                   this.binOpType,
+                                                   rightOperand.getOperand().copy());
+            operand = new InstructionOperand(instruction);
+            baseBlock.insert(instruction);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Operand getOperand() {
+        return operand;
+    }
+
 }

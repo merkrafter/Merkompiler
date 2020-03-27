@@ -3,7 +3,12 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.lexing.Locatable;
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.Type;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.JoinBlock;
+import com.merkrafter.representation.ssa.SSATransformableExpression;
+import com.merkrafter.representation.ssa.SSATransformableStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -114,5 +119,26 @@ public class IfNode implements AbstractSyntaxTree, Locatable {
 
     public boolean hasReturnStatement() {
         return ifBranch.hasReturnStatement();
+    }
+
+    /**
+     * @param baseBlock the block that all instructions are inserted into
+     * @param outerJoinBlock if this IfNode is part of nested ifs/whiles: JoinBlock from outer scope
+     */
+    void transformToSSA(@NotNull final BaseBlock baseBlock,
+                        @Nullable final JoinBlock outerJoinBlock) {
+        if (condition instanceof SSATransformableExpression) {
+            final SSATransformableExpression ssaCond = (SSATransformableExpression) condition;
+            ssaCond.transformToSSA(baseBlock);
+            final BaseBlock thenBlock = baseBlock.getBranch();
+            assert thenBlock != null; // is created by the IfElseNode
+            assert thenBlock.getBranch() instanceof JoinBlock;
+            final JoinBlock joinBlock = (JoinBlock) thenBlock.getBranch();
+            if (ifBranch instanceof SSATransformableStatement) {
+                joinBlock.setUpdatePosition(JoinBlock.Position.FIRST);
+                ((SSATransformableStatement) ifBranch).transformToSSA(thenBlock, joinBlock);
+                joinBlock.resetPhi();
+            }
+        }
     }
 }
