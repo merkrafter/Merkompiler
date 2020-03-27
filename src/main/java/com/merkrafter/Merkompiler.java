@@ -8,6 +8,7 @@ import com.merkrafter.lexing.TokenType;
 import com.merkrafter.parsing.Parser;
 import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ClassNode;
+import com.merkrafter.representation.ssa.SSATransformableClass;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,8 @@ public class Merkompiler {
 
     // META-INFORMATION
     //==============================================================
-    @NotNull public static final String VERSION = "v0.5.0";
+    @NotNull
+    public static final String VERSION = "v0.5.0";
 
     /**
      * The main function of this compiler reads in the filename and handles other possible command line
@@ -97,6 +99,18 @@ public class Merkompiler {
                     return;
                 }
             }
+
+            if (!(abstractSyntaxTree instanceof SSATransformableClass)) {
+                System.err.println("Was not able to convert to SSA form");
+                return;
+            }
+            ((SSATransformableClass) abstractSyntaxTree).transformToSSA();
+
+            if (config.isGraphical()) {
+                final PrintWriter dotFileWriter = new PrintWriter(config.getInputFile() + ".dot");
+                dotFileWriter.print(((ClassNode) abstractSyntaxTree).getDotRepresentation());
+                dotFileWriter.close();
+            } // else print the instructions
         } finally {
             input.close();
             if (out != System.out) {
