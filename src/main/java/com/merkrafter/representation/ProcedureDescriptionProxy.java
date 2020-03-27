@@ -3,8 +3,6 @@ package com.merkrafter.representation;
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ast.ParameterListNode;
 import com.merkrafter.representation.ast.Statement;
-import com.merkrafter.representation.ssa.BaseBlock;
-import com.merkrafter.representation.ssa.SSATransformableProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -178,13 +176,4 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         }
     }
 
-    @Nullable
-    @Override
-    public BaseBlock getEntryBlock() {
-        findProcedureDescription();
-        if (procedureDescription != null) {
-            return procedureDescription.getEntryBlock();
-        }
-        return null;
-    }
 }

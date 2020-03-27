@@ -1,7 +1,5 @@
 package com.merkrafter.representation.ssa;
 
-import org.jetbrains.annotations.Nullable;
-
 /****
  * @since v0.5.0
  * @author merkrafter
@@ -17,5 +15,4 @@ public interface SSATransformableProcedure {
      */
     void transformToSSA();
 
-    @Nullable BaseBlock getEntryBlock();
 }

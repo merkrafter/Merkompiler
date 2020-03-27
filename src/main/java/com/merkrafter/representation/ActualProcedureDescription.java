@@ -226,9 +226,4 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
         }
     }
 
-    @Nullable
-    @Override
-    public BaseBlock getEntryBlock() {
-        return entryBlock;
-    }
 }
