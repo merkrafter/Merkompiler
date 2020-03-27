@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.merkrafter.representation.ast.AbstractStatementNode.collectErrorsFrom;
 
@@ -26,6 +27,7 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent, SSATra
     //==============================================================
     @NotNull
     private final ClassDescription classDescription;
+    private boolean ssaTransformed;
 
     // CONSTRUCTORS
     //==============================================================
@@ -49,6 +51,14 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent, SSATra
     @NotNull
     protected List<ObjectDescription> getDefinedObjects() {
         return getClassDescription().getSymbolTable().getDescriptions();
+    }
+
+    @NotNull
+    private List<ProcedureDescription> getDefinedProcedures() {
+        return getDefinedObjects().stream()
+                                  .filter(i -> i instanceof ProcedureDescription)
+                                  .map(i -> (ProcedureDescription) i)
+                                  .collect(Collectors.toList());
     }
 
     /**
@@ -109,6 +119,42 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent, SSATra
     @NotNull
     @Override
     public String getDotRepresentation() {
+        if (ssaTransformed) {
+            return getDotRepresentationForSSA();
+        }
+        return getDotRepresentationForAST();
+    }
+
+    @NotNull
+    private String getDotRepresentationForSSA() {
+        final ClassDescription clazz = getClassDescription();
+        final List<ProcedureDescription> procs = getDefinedProcedures();
+
+        final StringBuilder dotRepr = new StringBuilder();
+        dotRepr.append(String.format("digraph %s {", clazz.getName()));
+        dotRepr.append(System.lineSeparator());
+
+        // add this class node
+        dotRepr.append(String.format("%d[shape=box,label=\"%s\"];",
+                                     getID(),
+                                     getClassDescription().getName()));
+        dotRepr.append(System.lineSeparator());
+
+        // add all procedures
+        for (@NotNull final ProcedureDescription proc : procs) {
+            dotRepr.append(proc.getDotRepresentation());
+            dotRepr.append(System.lineSeparator());
+            dotRepr.append(String.format("%d -> %d;", getID(), proc.getID()));
+            dotRepr.append(System.lineSeparator());
+        }
+
+        dotRepr.append("}");
+
+        return dotRepr.toString();
+    }
+
+    @NotNull
+    private String getDotRepresentationForAST() {
         final ClassDescription clazz = getClassDescription();
         final List<ObjectDescription> descriptions = getDefinedObjects();
 
@@ -170,6 +216,7 @@ public class ClassNode implements AbstractSyntaxTree, GraphicalComponent, SSATra
         for (@NotNull final ObjectDescription obj : getDefinedObjects()) {
             if (obj instanceof SSATransformableProcedure) {
                 ((SSATransformableProcedure) obj).transformToSSA();
+                ssaTransformed = true;
             }
         }
     }
