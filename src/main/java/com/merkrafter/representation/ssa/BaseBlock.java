@@ -99,4 +99,20 @@ public class BaseBlock {
         lastInstruction = tmp;
 
     }
+
+    protected void insertFirst(@NotNull final Instruction instruction) {
+        if (firstInstruction == null) {
+            insert(instruction);
+            return;
+        }
+
+        Instruction tmp = instruction;
+        while (tmp.getNext() != null) {
+            tmp = tmp.getNext();
+        }
+        tmp.setNext(firstInstruction);
+        firstInstruction = tmp;
+
+    }
+
 }
