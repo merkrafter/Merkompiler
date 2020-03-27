@@ -169,6 +169,33 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     @NotNull
     @Override
     public String getDotRepresentation() {
+        if(entryBlock != null){
+            return getDotRepresentationForSSA();
+        }
+        return getDotRepresentationForAST();
+    }
+
+    @NotNull
+    private String getDotRepresentationForSSA(){
+        final StringBuilder dotRepr = new StringBuilder();
+
+        // define this as a node (with method name)
+        dotRepr.append(String.format("%d[shape=box,label=%s];", getID(), getName()));
+        dotRepr.append(System.lineSeparator());
+
+        assert entryBlock != null;
+        dotRepr.append(entryBlock.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+
+        dotRepr.append(String.format("%d -> %d;", getID(), entryBlock.getID()));
+        dotRepr.append(System.lineSeparator());
+
+        return dotRepr.toString();
+    }
+
+    @NotNull
+    private String getDotRepresentationForAST() {
         final StringBuilder dotRepr = new StringBuilder();
 
         // define entry point
