@@ -30,10 +30,31 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     private final Position position;
     @Nullable
     private BaseBlock entryBlock;
+    @Nullable
+    private final ClassDescription clazz;
 
 
     // CONSTRUCTORS
     //==============================================================
+
+    /****
+     * Creates a new ProcedureDescription with a return type, a parameter list, an outer scope and
+     * a class that this procedure is a member of.
+     * This constructor does not validate whether the enclosingSymbolTable does only contain
+     * valid objects.
+     ***************************************************************/
+    public ActualProcedureDescription(@NotNull final Type returnType, @NotNull final String name,
+                                      @NotNull final List<VariableDescription> paramList,
+                                      @Nullable final SymbolTable enclosingSymbolTable,
+                                      @Nullable final ClassDescription clazz,
+                                      @NotNull final Position position) {
+        super(name);
+        this.returnType = returnType;
+        this.paramList = paramList;
+        this.symbols = new SymbolTable(enclosingSymbolTable);
+        this.clazz = clazz;
+        this.position = position;
+    }
 
     /****
      * Creates a new ProcedureDescription with a return type, a parameter list and an outer scope.
@@ -44,11 +65,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
                                       @NotNull final List<VariableDescription> paramList,
                                       @Nullable final SymbolTable enclosingSymbolTable,
                                       @NotNull final Position position) {
-        super(name);
-        this.returnType = returnType;
-        this.paramList = paramList;
-        this.symbols = new SymbolTable(enclosingSymbolTable);
-        this.position = position;
+        this(returnType, name, paramList, enclosingSymbolTable, null, position);
     }
 
     // GETTER
@@ -213,6 +230,15 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
         dotRepr.append(System.lineSeparator());
 
         return dotRepr.toString();
+    }
+
+    @NotNull
+    @Override
+    public String getClassName() {
+        if (clazz != null) {
+            return clazz.getName();
+        }
+        return "<CLASSNAME>";
     }
 
     /**

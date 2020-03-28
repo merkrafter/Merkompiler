@@ -153,7 +153,8 @@ public class BaseBlock implements GraphicalComponent {
         }
 
         // define this
-        dotRepr.append(String.format("%d[shape=box,label=\"%s\"]", getID(), instrStrings));
+        dotRepr.append(String.format("%d[shape=box,label=\"%s\"];", getID(), instrStrings));
+        dotRepr.append(System.lineSeparator());
         drawn = true;
 
         if (branch != null) {

@@ -26,6 +26,11 @@ public interface ProcedureDescription extends GraphicalComponent, Locatable, SSA
 
     @Nullable Statement getEntryPoint();
 
+    /**
+     * @return the name of the class that this procedure is a member of
+     */
+    @NotNull String getClassName();
+
     @Override
     boolean equals(@NotNull Object o);
 }

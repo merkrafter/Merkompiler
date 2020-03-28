@@ -157,7 +157,7 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
                                final @Nullable JoinBlock joinBlock) {
         final List<Expression> parameters = args.getParameters();
         final Operand[] operands = new Operand[3 + parameters.size()];
-        operands[0] = new SymbolicOperand("CLASSNAME"); // TODO
+        operands[0] = new SymbolicOperand(procedure.getClassName());
         operands[1] = new SymbolicOperand(procedure.getName());
         operands[2] = new SymbolicOperand("this");
         for (int i = 0; i < parameters.size(); i++) {

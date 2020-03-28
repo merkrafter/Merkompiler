@@ -33,6 +33,9 @@ public class Parser {
     @NotNull
     private SymbolTable symbolTable;
 
+    @Nullable
+    private ClassDescription clazz;
+
     // CONSTRUCTORS
     //==============================================================
 
@@ -92,6 +95,7 @@ public class Parser {
 
         final ClassDescription clazz =
                 new ClassDescription(identifier.getIdentifier(), symbolTable);
+        this.clazz = clazz;
 
         final SymbolTable prevSymbolTable = symbolTable;
         symbolTable = clazz.getSymbolTable();
@@ -260,6 +264,7 @@ public class Parser {
                                               identifier.getIdentifier(),
                                               formalParameters,
                                               symbolTable,
+                                              clazz,
                                               position);
     }
 
