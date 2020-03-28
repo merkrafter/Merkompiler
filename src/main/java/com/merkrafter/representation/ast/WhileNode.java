@@ -157,6 +157,8 @@ public class WhileNode extends AbstractStatementNode implements SSATransformable
             final BaseBlock failBlock = BaseBlock.getInstance();
             baseBlock.setFail(failBlock);
             ((SSATransformableStatement) getNext()).transformToSSA(failBlock, outerJoinBlock);
+        } else {
+            baseBlock.setFail(outerJoinBlock);
         }
     }
 }
