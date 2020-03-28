@@ -153,6 +153,9 @@ public class ReturnNode extends AbstractStatementNode implements SSATransformabl
                                                new Operand[]{ssaExpr.getOperand()});
                 baseBlock.insert(instruction);
             }
+        } else {
+            baseBlock.insert(new SpecialInstruction(SpecialInstruction.Type.RETURN,
+                                                    new Operand[]{}));
         }
         // does not have to transform the next statements
     }
