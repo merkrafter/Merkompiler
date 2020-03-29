@@ -149,7 +149,7 @@ public class WhileNode extends AbstractStatementNode implements SSATransformable
             joinBlock.setBranch(loopBodyBlock);
             loopBodyBlock.setBranch(baseBlock);
             ((SSATransformableStatement) loopBody).transformToSSA(loopBodyBlock, joinBlock);
-            joinBlock.commitPhi();
+            joinBlock.commitPhi(outerJoinBlock);
             joinBlock.renamePhi(joinBlock);
             joinBlock.renamePhi(loopBodyBlock);
         }

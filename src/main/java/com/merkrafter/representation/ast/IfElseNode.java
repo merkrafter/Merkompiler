@@ -156,7 +156,7 @@ public class IfElseNode extends AbstractStatementNode implements SSATransformabl
             baseBlock.setFail(failBlock);
             joinBlock.setUpdatePosition(JoinBlock.Position.SECOND);
             ((SSATransformableStatement) elseBranch).transformToSSA(failBlock, joinBlock);
-            joinBlock.commitPhi();
+            joinBlock.commitPhi(outerJoinBlock);
         }
 
         if (getNext() instanceof SSATransformableStatement) {

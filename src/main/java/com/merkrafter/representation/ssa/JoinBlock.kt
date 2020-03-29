@@ -43,13 +43,17 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      * that are inserted into this block. This also sets the operands of the VariableDescriptions
      * to phi instructions.
      */
-    fun commitPhi() {
+    fun commitPhi(joinBlock: JoinBlock? = null) {
         for (varDesc in phiTable.keys) {
             val phiInstruction = phiTable[varDesc]!!
             insertFirst(phiInstruction)
-            varDesc.setOperand(InstructionOperand(phiInstruction))
+            val instrOp = InstructionOperand(phiInstruction)
+            varDesc.setOperand(instrOp)
+            joinBlock?.updatePhi(varDesc, instrOp)
         }
     }
+
+    fun commitPhi() = commitPhi(null)
 
     /**
      * Loads the operands from updatePosition from the cache for all VariableDescriptions and stores
