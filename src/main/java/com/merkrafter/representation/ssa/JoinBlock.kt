@@ -146,5 +146,11 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
         innerBlock.setFail(fail)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (innerBlock == null) {
+            return super.equals(other)
+        }
+        return innerBlock == other
+    }
 
 }

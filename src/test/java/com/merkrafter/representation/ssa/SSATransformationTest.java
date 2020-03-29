@@ -494,7 +494,7 @@ class SSATransformationTest {
         // assert baseBlock has the loop body as its branch
         final BaseBlock loopBody = baseBlock.getBranch();
         assertNotNull(loopBody);
-        assertSame(baseBlock, loopBody.getBranch()); // assert loopback
+        assertEquals(loopBody.getBranch(), baseBlock); // assert loop points back to condition
         assertTrue(loopBody.getFirstInstruction() instanceof BinaryOperationInstruction);
         final BinaryOperationInstruction mulInstr =
                 (BinaryOperationInstruction) loopBody.getFirstInstruction();

@@ -139,6 +139,8 @@ public class AssignmentNode extends AbstractStatementNode implements SSATransfor
         }
         if (getNext() instanceof SSATransformableStatement) {
             ((SSATransformableStatement) getNext()).transformToSSA(baseBlock, joinBlock);
+        } else if (joinBlock != null) {
+            baseBlock.setBranch(joinBlock);
         }
     }
 }

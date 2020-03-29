@@ -173,6 +173,12 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
         baseBlock.insert(instruction);
         this.operand = new InstructionOperand(instruction);
 
+        if (getNext() instanceof SSATransformableStatement) {
+            ((SSATransformableStatement) getNext()).transformToSSA(baseBlock, joinBlock);
+        } else if (joinBlock != null) {
+            baseBlock.setBranch(joinBlock);
+        }
+
     }
 
     /**
@@ -183,5 +189,4 @@ public class ProcedureCallNode extends AbstractStatementNode implements Expressi
     public Operand getOperand() {
         return operand;
     }
-
 }

@@ -158,5 +158,8 @@ public class ReturnNode extends AbstractStatementNode implements SSATransformabl
                                                     new Operand[]{}));
         }
         // does not have to transform the next statements
+        if (joinBlock != null) {
+            baseBlock.setBranch(joinBlock);
+        }
     }
 }
