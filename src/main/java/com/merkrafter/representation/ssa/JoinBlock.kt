@@ -22,23 +22,20 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      * block that has operand at updatePosition.
      * It can then be committed via the commit() method
      */
-    private fun updatePhi(varDesc: VariableDescription, operand1: Operand, operand2: Operand) {
+    fun updatePhi(varDesc: VariableDescription, operand: Operand) {
         if (varDesc in phiTable) {
             val instruction = phiTable[varDesc]!!
             val instrOperands = instruction.operands
-            instrOperands[updatePosition.ordinal] = operand1
+            instrOperands[updatePosition.ordinal] = operand
         } else {
-            val instruction = SpecialInstruction(SpecialInstruction.Type.PHI, arrayOf(operand2, operand1))
+            // initialization
+            val ops = when (updatePosition) {
+                Position.FIRST -> arrayOf(operand, ParameterOperand(varDesc))
+                Position.SECOND -> arrayOf(ParameterOperand(varDesc), operand)
+            }
+            val instruction = SpecialInstruction(SpecialInstruction.Type.PHI, ops)
             phiTable[varDesc] = instruction
         }
-    }
-
-    /**
-     * Initializes the second operand with a ParameterOperand pointing to the variable description.
-     */
-    fun updatePhi(varDesc: VariableDescription, operand: Operand) = when (environment) {
-        Environment.WHILE -> updatePhi(varDesc, operand, ParameterOperand(varDesc))
-        else -> updatePhi(varDesc, operand, operand)
     }
 
     /**
@@ -62,7 +59,8 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
         for (varDesc in phiTable.keys) {
             val instruction = phiTable[varDesc]!!
             val instrOperands = instruction.operands
-            varDesc.setOperand(instrOperands[updatePosition.ordinal])
+            // don't use the position that was updated right before this call
+            varDesc.setOperand(instrOperands[1 - updatePosition.ordinal])
         }
     }
 

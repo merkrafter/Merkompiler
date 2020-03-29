@@ -71,7 +71,8 @@ class BaseBlockTest {
         final Operand[] ops = instruction.getOperands();
         assertEquals(2, ops.length);
         assertEquals(operand, ops[0]);
-        assertEquals(operand, ops[1]);
+        assertTrue(ops[1] instanceof ParameterOperand);
+        assertEquals(varDesc, ((ParameterOperand) ops[1]).getVariable());
     }
 
     /**
@@ -112,9 +113,7 @@ class BaseBlockTest {
         final Operand[] ops = instruction.getOperands();
         assertEquals(2, ops.length);
         final Operand updatedOperand = ops[position.ordinal()];
-        final Operand fixedOperand = ops[1 - position.ordinal()];
         assertEquals(newOperand, updatedOperand);
-        assertEquals(operand, fixedOperand);
     }
 
     @Test
@@ -126,10 +125,10 @@ class BaseBlockTest {
 
         joinBlock.updatePhi(varDesc, operand);
         joinBlock.updatePhi(varDesc, newOperand);
-        joinBlock.setUpdatePosition(JoinBlock.Position.SECOND);
         joinBlock.resetPhi();
 
-        assertEquals(operand, varDesc.getOperand());
+        assertTrue(varDesc.getOperand() instanceof ParameterOperand);
+        assertEquals(varDesc, ((ParameterOperand) varDesc.getOperand()).getVariable());
     }
 
     @Test
@@ -270,6 +269,7 @@ class BaseBlockTest {
         final Operand[] ops = instruction.getOperands();
         assertEquals(2, ops.length);
         assertEquals(operand, ops[0]);
-        assertEquals(operand, ops[1]);
+        assertTrue(ops[1] instanceof ParameterOperand);
+        assertEquals(varDesc, ((ParameterOperand) ops[1]).getVariable());
     }
 }
