@@ -128,11 +128,7 @@ public class VariableAccessNode implements Expression, SSATransformableExpressio
     @Override
     public void transformToSSA(final @NotNull BaseBlock baseBlock) {
         final Operand currentVariableOperand = variableDescription.getOperand();
-        if (currentVariableOperand == null) { // this is a procedure parameter
-            operand = new ParameterOperand(variableDescription);
-        } else {
-            operand = currentVariableOperand.copy();
-        }
+        operand = currentVariableOperand.copy();
         // TODO implement this for fields
     }
 

@@ -58,7 +58,7 @@ class BaseBlockTest {
 
     @Test
     void insertPhiIntoJoinBlock() {
-        final VariableDescription varDesc = new VariableDescription("var", INT, 0, false);
+        final VariableDescription varDesc = new VariableDescription("var", INT, false);
         final Operand operand = new Constant(1);
         final JoinBlock joinBlock = new JoinBlock();
 
@@ -118,7 +118,7 @@ class BaseBlockTest {
 
     @Test
     void resetPhiInJoinBlock() {
-        final VariableDescription varDesc = new VariableDescription("var", INT, 0, false);
+        final VariableDescription varDesc = new VariableDescription("var", INT, false);
         final Operand operand = new Constant(1);
         final Operand newOperand = new Constant(2);
         final JoinBlock joinBlock = new JoinBlock();
@@ -255,7 +255,7 @@ class BaseBlockTest {
      */
     @Test
     void commitPhiAsProxy() {
-        final VariableDescription varDesc = new VariableDescription("var", INT, 0, false);
+        final VariableDescription varDesc = new VariableDescription("var", INT, false);
         final Operand operand = new Constant(1);
         final BaseBlock innerBlock = BaseBlock.getInstance();
         final JoinBlock joinBlock = new JoinBlock(innerBlock);

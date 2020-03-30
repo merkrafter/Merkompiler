@@ -13,7 +13,7 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
     enum class Position { FIRST, SECOND }
     enum class Environment { NONE, WHILE, IFELSE }
 
-    private val phiTable: MutableMap<VariableDescription, SpecialInstruction> = HashMap()
+    private val phiTable: MutableMap<VariableDescription, Pair<Operand, SpecialInstruction>> = HashMap()
     var updatePosition: Position = Position.FIRST
     var environment: Environment = Environment.NONE
 
@@ -24,17 +24,18 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      */
     fun updatePhi(varDesc: VariableDescription, operand: Operand) {
         if (varDesc in phiTable) {
-            val instruction = phiTable[varDesc]!!
+            val instruction = phiTable[varDesc]!!.component2()
             val instrOperands = instruction.operands
             instrOperands[updatePosition.ordinal] = operand
         } else {
             // initialization
+            val prevOp: Operand = varDesc.operand
             val ops = when (updatePosition) {
-                Position.FIRST -> arrayOf(operand, ParameterOperand(varDesc))
-                Position.SECOND -> arrayOf(ParameterOperand(varDesc), operand)
+                Position.FIRST -> arrayOf(operand, prevOp)
+                Position.SECOND -> arrayOf(prevOp, operand)
             }
             val instruction = SpecialInstruction(SpecialInstruction.Type.PHI, ops)
-            phiTable[varDesc] = instruction
+            phiTable[varDesc] = Pair(prevOp, instruction)
         }
     }
 
@@ -45,11 +46,16 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      */
     fun commitPhi(joinBlock: JoinBlock? = null) {
         for (varDesc in phiTable.keys) {
-            val phiInstruction = phiTable[varDesc]!!
+            val phiInstruction = phiTable[varDesc]!!.component2()
             insertFirst(phiInstruction)
             val instrOp = InstructionOperand(phiInstruction)
-            varDesc.setOperand(instrOp)
+            varDesc.operand = instrOp
             joinBlock?.updatePhi(varDesc, instrOp)
+
+            // propagate the original operand of varDesc
+            val storedPairAtOther = joinBlock?.phiTable?.get(varDesc)
+            val prevOpAtThis = phiTable[varDesc]!!.first
+            joinBlock?.phiTable?.set(varDesc, storedPairAtOther!!.copy(first = prevOpAtThis))
         }
     }
 
@@ -61,10 +67,11 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      */
     fun resetPhi() {
         for (varDesc in phiTable.keys) {
-            val instruction = phiTable[varDesc]!!
+            /*val instruction = phiTable[varDesc]!!.component2()
             val instrOperands = instruction.operands
             // don't use the position that was updated right before this call
-            varDesc.setOperand(instrOperands[1 - updatePosition.ordinal])
+            varDesc.operand = instrOperands[1 - updatePosition.ordinal]*/
+            varDesc.operand = phiTable[varDesc]!!.component1()
         }
     }
 
@@ -81,7 +88,7 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
                     for ((index, operand) in instruction.operands.withIndex()) {
                         if (operand is ParameterOperand && operand.variable.equals(varDesc)) {
                             // the outmost loop ensures phiTable[varDesc] != null
-                            instruction.operands[index] = InstructionOperand(phiTable[varDesc]!!)
+                            instruction.operands[index] = InstructionOperand(phiTable[varDesc]!!.component2())
                         }
                     }
                 }

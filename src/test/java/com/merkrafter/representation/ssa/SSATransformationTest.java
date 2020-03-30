@@ -60,7 +60,7 @@ class SSATransformationTest {
          */
         final ConstantNode<Long> constNode = new ConstantNode<>(INT, 1L, p);
         final VariableAccessNode varNode =
-                new VariableAccessNode(new VariableDescription("var", INT, 0, false), p);
+                new VariableAccessNode(new VariableDescription("var", INT, false), p);
         final SSATransformableExpression expression =
                 new BinaryOperationNode(constNode, PLUS, varNode);
         final BaseBlock baseBlock = BaseBlock.getInstance();
@@ -87,11 +87,11 @@ class SSATransformationTest {
          * 1: add a, (0)
          */
         final VariableAccessNode a =
-                new VariableAccessNode(new VariableDescription("a", INT, 0, false), p);
+                new VariableAccessNode(new VariableDescription("a", INT, false), p);
         final VariableAccessNode b =
-                new VariableAccessNode(new VariableDescription("b", INT, 0, false), p);
+                new VariableAccessNode(new VariableDescription("b", INT, false), p);
         final VariableAccessNode c =
-                new VariableAccessNode(new VariableDescription("c", INT, 0, false), p);
+                new VariableAccessNode(new VariableDescription("c", INT, false), p);
         final BinaryOperationNode bxc = new BinaryOperationNode(b, TIMES, c);
         final SSATransformableExpression expression = new BinaryOperationNode(a, PLUS, bxc);
         final BaseBlock baseBlock = BaseBlock.getInstance();
@@ -462,7 +462,7 @@ class SSATransformationTest {
          */
         final ConstantNode<Long> const2 = new ConstantNode<>(INT, 2L, p);
         final ConstantNode<Long> const10 = new ConstantNode<>(INT, 10L, p);
-        final VariableDescription aDescr = new VariableDescription("a", INT, 0, false);
+        final VariableDescription aDescr = new VariableDescription("a", INT, false);
         final VariableAccessNode a = new VariableAccessNode(aDescr, p);
         final BinaryOperationNode ax2 = new BinaryOperationNode(a, TIMES, const2);
         final BinaryOperationNode condition = new BinaryOperationNode(a, LOWER_EQUAL, const10);
