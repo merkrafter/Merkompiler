@@ -164,4 +164,10 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
         return innerBlock == other
     }
 
+    override fun getID(): Int {
+        if (innerBlock == null) {
+            return super.getID()
+        }
+        return innerBlock.id
+    }
 }
