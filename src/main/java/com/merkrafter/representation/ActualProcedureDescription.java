@@ -2,6 +2,8 @@ package com.merkrafter.representation;
 
 import com.merkrafter.lexing.Position;
 import com.merkrafter.representation.ast.Statement;
+import com.merkrafter.representation.ssa.BaseBlock;
+import com.merkrafter.representation.ssa.SSATransformableStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,10 +28,33 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     private Statement statements;
     @NotNull
     private final Position position;
+    @Nullable
+    private BaseBlock entryBlock;
+    @Nullable
+    private final ClassDescription clazz;
 
 
     // CONSTRUCTORS
     //==============================================================
+
+    /****
+     * Creates a new ProcedureDescription with a return type, a parameter list, an outer scope and
+     * a class that this procedure is a member of.
+     * This constructor does not validate whether the enclosingSymbolTable does only contain
+     * valid objects.
+     ***************************************************************/
+    public ActualProcedureDescription(@NotNull final Type returnType, @NotNull final String name,
+                                      @NotNull final List<VariableDescription> paramList,
+                                      @Nullable final SymbolTable enclosingSymbolTable,
+                                      @Nullable final ClassDescription clazz,
+                                      @NotNull final Position position) {
+        super(name);
+        this.returnType = returnType;
+        this.paramList = paramList;
+        this.symbols = new SymbolTable(enclosingSymbolTable);
+        this.clazz = clazz;
+        this.position = position;
+    }
 
     /****
      * Creates a new ProcedureDescription with a return type, a parameter list and an outer scope.
@@ -40,11 +65,7 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
                                       @NotNull final List<VariableDescription> paramList,
                                       @Nullable final SymbolTable enclosingSymbolTable,
                                       @NotNull final Position position) {
-        super(name);
-        this.returnType = returnType;
-        this.paramList = paramList;
-        this.symbols = new SymbolTable(enclosingSymbolTable);
-        this.position = position;
+        this(returnType, name, paramList, enclosingSymbolTable, null, position);
     }
 
     // GETTER
@@ -165,6 +186,33 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
     @NotNull
     @Override
     public String getDotRepresentation() {
+        if(entryBlock != null){
+            return getDotRepresentationForSSA();
+        }
+        return getDotRepresentationForAST();
+    }
+
+    @NotNull
+    private String getDotRepresentationForSSA(){
+        final StringBuilder dotRepr = new StringBuilder();
+
+        // define this as a node (with method name)
+        dotRepr.append(String.format("%d[shape=box,label=%s];", getID(), getName()));
+        dotRepr.append(System.lineSeparator());
+
+        assert entryBlock != null;
+        dotRepr.append(entryBlock.getDotRepresentation());
+        dotRepr.append(System.lineSeparator());
+
+
+        dotRepr.append(String.format("%d -> %d;", getID(), entryBlock.getID()));
+        dotRepr.append(System.lineSeparator());
+
+        return dotRepr.toString();
+    }
+
+    @NotNull
+    private String getDotRepresentationForAST() {
         final StringBuilder dotRepr = new StringBuilder();
 
         // define entry point
@@ -183,4 +231,25 @@ public class ActualProcedureDescription extends ObjectDescription implements Pro
 
         return dotRepr.toString();
     }
+
+    @NotNull
+    @Override
+    public String getClassName() {
+        if (clazz != null) {
+            return clazz.getName();
+        }
+        return "<CLASSNAME>";
+    }
+
+    /**
+     * After calling this method, getEntryBlock must not return null.
+     */
+    @Override
+    public void transformToSSA() {
+        if (statements instanceof SSATransformableStatement) {
+            entryBlock = BaseBlock.getInstance();
+            ((SSATransformableStatement) statements).transformToSSA(entryBlock, null);
+        }
+    }
+
 }

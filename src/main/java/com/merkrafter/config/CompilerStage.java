@@ -19,7 +19,11 @@ public enum CompilerStage {
     /**
      * Scan and parse the input and output whether this was successful.
      */
-    PARSING;
+    PARSING,
+    /**
+     * Parse the input and transform it to ssa form; output the instructions.
+     */
+    SSAFORM;
 
 
     /**
@@ -38,6 +42,6 @@ public enum CompilerStage {
      */
     @NotNull
     public static CompilerStage latest() {
-        return PARSING;
+        return SSAFORM;
     }
 }

@@ -6,6 +6,7 @@ import com.merkrafter.representation.ssa.BaseBlock;
 import com.merkrafter.representation.ssa.JoinBlock;
 import com.merkrafter.representation.ssa.SSATransformableStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -142,27 +143,28 @@ public class IfElseNode extends AbstractStatementNode implements SSATransformabl
      * @param outerJoinBlock if this IfNode is part of nested ifs/whiles: JoinBlock from outer scope
      */
     @Override
-    public void transformToSSA(@NotNull final BaseBlock baseBlock, final JoinBlock outerJoinBlock) {
+    public void transformToSSA(@NotNull final BaseBlock baseBlock,
+                               @Nullable final JoinBlock outerJoinBlock) {
         final JoinBlock joinBlock = new JoinBlock();
         final BaseBlock thenBlock = BaseBlock.getInstance();
         joinBlock.setEnvironment(JoinBlock.Environment.IFELSE);
-        thenBlock.setBranch(joinBlock);
         baseBlock.setBranch(thenBlock);
 
-        ifBranch.transformToSSA(baseBlock, outerJoinBlock);
+        ifBranch.transformToSSA(baseBlock, joinBlock);
         if (elseBranch instanceof SSATransformableStatement) {
             final BaseBlock failBlock = BaseBlock.getInstance();
-            failBlock.setBranch(joinBlock);
             baseBlock.setFail(failBlock);
             joinBlock.setUpdatePosition(JoinBlock.Position.SECOND);
             ((SSATransformableStatement) elseBranch).transformToSSA(failBlock, joinBlock);
-            joinBlock.commitPhi();
+            joinBlock.commitPhi(outerJoinBlock);
         }
 
-        final BaseBlock nextBaseBlock = BaseBlock.getInstance();
-        joinBlock.setBranch(nextBaseBlock);
         if (getNext() instanceof SSATransformableStatement) {
+            final BaseBlock nextBaseBlock = BaseBlock.getInstance();
+            joinBlock.setBranch(nextBaseBlock);
             ((SSATransformableStatement) getNext()).transformToSSA(nextBaseBlock, outerJoinBlock);
+        } else if (outerJoinBlock != null) {
+            joinBlock.setBranch(outerJoinBlock);
         }
     }
 }

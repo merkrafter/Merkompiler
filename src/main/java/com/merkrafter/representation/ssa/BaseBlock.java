@@ -1,5 +1,6 @@
 package com.merkrafter.representation.ssa;
 
+import com.merkrafter.representation.graphical.GraphicalComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * @since v0.5.0
  * @author merkrafter
  ***************************************************************/
-public class BaseBlock {
+public class BaseBlock implements GraphicalComponent {
     // ATTRIBUTES
     //==============================================================
     @Nullable
@@ -26,6 +27,11 @@ public class BaseBlock {
 
     @Nullable
     private BaseBlock fail;
+
+    /**
+     * To avoid loops during printing blocks of while loops.
+     */
+    private boolean drawn;
 
     // CONSTRUCTION
     //==============================================================
@@ -115,4 +121,54 @@ public class BaseBlock {
 
     }
 
+    /**
+     * @return an identifier unique in the whole graphic
+     */
+    @Override
+    public int getID() {
+        return hashCode();
+    }
+
+    /**
+     * @return dot/graphviz declarations of this
+     */
+    @NotNull
+    @Override
+    public String getDotRepresentation() {
+        if (drawn) {
+            return "";
+        }
+        drawn = true;
+        final StringBuilder dotRepr = new StringBuilder();
+
+        // define statements
+        final StringBuilder instrStrings = new StringBuilder();
+        Instruction instr = getFirstInstruction();
+        if (instr == null) {
+            instrStrings.append("<empty>");
+        }
+        while (instr != null) {
+            instrStrings.append(instr.toString());
+            instrStrings.append(System.lineSeparator());
+            instr = instr.getNext();
+        }
+
+        // define this
+        dotRepr.append(String.format("%d[shape=box,label=\"%s\"];", getID(), instrStrings));
+        dotRepr.append(System.lineSeparator());
+
+        if (branch != null) {
+            dotRepr.append(String.format("%d -> %d[label=branch];", getID(), branch.getID()));
+            dotRepr.append(System.lineSeparator());
+            dotRepr.append(branch.getDotRepresentation());
+        }
+
+        if (fail != null) {
+            dotRepr.append(String.format("%d -> %d[label=fail];", getID(), fail.getID()));
+            dotRepr.append(System.lineSeparator());
+            dotRepr.append(fail.getDotRepresentation());
+        }
+
+        return dotRepr.toString();
+    }
 }

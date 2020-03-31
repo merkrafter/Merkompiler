@@ -8,19 +8,18 @@ import com.merkrafter.lexing.TokenType;
 import com.merkrafter.parsing.Parser;
 import com.merkrafter.representation.ast.AbstractSyntaxTree;
 import com.merkrafter.representation.ast.ClassNode;
+import com.merkrafter.representation.ssa.SSATransformableClass;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 
 public class Merkompiler {
 
     // META-INFORMATION
     //==============================================================
-    @NotNull public static final String VERSION = "v0.5.0";
+    @NotNull
+    public static final String VERSION = "v0.5.0";
 
     /**
      * The main function of this compiler reads in the filename and handles other possible command line
@@ -37,6 +36,9 @@ public class Merkompiler {
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
             System.exit(ErrorCode.FILE_NOT_FOUND.id);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(ErrorCode.IO_ERROR.id);
         }
     }
 
@@ -47,7 +49,7 @@ public class Merkompiler {
      * @param config configuration data for this program call
      * @throws FileNotFoundException if the input or output file could not be found
      */
-    static void run(@NotNull final Config config) throws FileNotFoundException {
+    static void run(@NotNull final Config config) throws IOException {
         if (config.isVerbose()) {
             System.out.println(config);
         }
@@ -55,41 +57,65 @@ public class Merkompiler {
         final File inputFile = new File(config.getInputFile());
         final Input input = new Input(inputFile.getAbsolutePath());
         final Scanner scanner = new Scanner(input);
-        if (config.isVerbose()) {
-            scanner.setFilename(inputFile.getAbsolutePath());
-        } else {
-            scanner.setFilename(inputFile.getName());
-        }
-
         PrintStream out = System.out; // write to stdout by default
+        try {
+            if (config.isVerbose()) {
+                scanner.setFilename(inputFile.getAbsolutePath());
+            } else {
+                scanner.setFilename(inputFile.getName());
+            }
 
-        // write to output file if given
-        if (config.getOutputFile() != null) {
-            out = new PrintStream(config.getOutputFile());
-        }
 
-        if (config.getStage() == CompilerStage.SCANNING) {
-            // only print the tokens if the processing should stop after scanning
-            do {
-                scanner.processToken();
-                out.println(scanner.getSym());
-            } while (scanner.getSym().getType() != TokenType.EOF);
-        } else if (config.getStage() == CompilerStage.PARSING) {
+            // write to output file if given
+            if (config.getOutputFile() != null) {
+                out = new PrintStream(config.getOutputFile());
+            }
+
+            if (config.getStage() == CompilerStage.SCANNING) {
+                // only print the tokens if the processing should stop after scanning
+                do {
+                    scanner.processToken();
+                    out.println(scanner.getSym());
+                } while (scanner.getSym().getType() != TokenType.EOF);
+                return;
+            }
+
             final Parser parser = new Parser(scanner);
             final AbstractSyntaxTree abstractSyntaxTree = parser.parse();
-            int numErrors = 0;
+            int numParsingErrors = 0;
             for (final String errMsg : abstractSyntaxTree.getAllErrors()) {
-                numErrors++;
+                numParsingErrors++;
                 System.err.println(errMsg);
             }
-            if (config.isGraphical() && numErrors == 0 && abstractSyntaxTree instanceof ClassNode) {
-                final PrintWriter dotFileWriter = new PrintWriter(config.getInputFile() + ".dot");
-                dotFileWriter.print(((ClassNode)abstractSyntaxTree).getDotRepresentation());
-                dotFileWriter.close();
+            if (numParsingErrors > 0) {
+                return;
             }
-        }
-        if (out != System.out) {
-            out.close();
+            if (config.getStage() == CompilerStage.PARSING) {
+                if (config.isGraphical() && abstractSyntaxTree instanceof ClassNode) {
+                    final PrintWriter dotFileWriter =
+                            new PrintWriter(config.getInputFile() + ".dot");
+                    dotFileWriter.print(((ClassNode) abstractSyntaxTree).getDotRepresentation());
+                    dotFileWriter.close();
+                    return;
+                }
+            }
+
+            if (!(abstractSyntaxTree instanceof SSATransformableClass)) {
+                System.err.println("Was not able to convert to SSA form");
+                return;
+            }
+            ((SSATransformableClass) abstractSyntaxTree).transformToSSA();
+
+            if (config.isGraphical()) {
+                final PrintWriter dotFileWriter = new PrintWriter(config.getInputFile() + ".dot");
+                dotFileWriter.print(((ClassNode) abstractSyntaxTree).getDotRepresentation());
+                dotFileWriter.close();
+            } // else print the instructions
+        } finally {
+            input.close();
+            if (out != System.out) {
+                out.close();
+            }
         }
     }
 }

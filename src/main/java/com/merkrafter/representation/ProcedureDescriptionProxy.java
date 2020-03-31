@@ -164,4 +164,26 @@ public class ProcedureDescriptionProxy implements ProcedureDescription {
         return String.format("%d[shape=box,label=\"extern %s\"];", getID(), name)
                + System.lineSeparator();
     }
+
+    @NotNull
+    @Override
+    public String getClassName() {
+        findProcedureDescription();
+        if (procedureDescription != null) {
+            return procedureDescription.getClassName();
+        }
+        return "<CLASSNAME>";
+    }
+
+    /**
+     * After calling this method, getEntryBlock must not return null.
+     */
+    @Override
+    public void transformToSSA() {
+        findProcedureDescription();
+        if (procedureDescription != null) {
+            procedureDescription.transformToSSA();
+        }
+    }
+
 }

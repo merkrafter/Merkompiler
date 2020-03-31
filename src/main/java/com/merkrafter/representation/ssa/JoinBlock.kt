@@ -13,7 +13,7 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
     enum class Position { FIRST, SECOND }
     enum class Environment { NONE, WHILE, IFELSE }
 
-    private val phiTable: MutableMap<VariableDescription, SpecialInstruction> = HashMap()
+    private val phiTable: MutableMap<VariableDescription, Pair<Operand, SpecialInstruction>> = HashMap()
     var updatePosition: Position = Position.FIRST
     var environment: Environment = Environment.NONE
 
@@ -22,23 +22,21 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      * block that has operand at updatePosition.
      * It can then be committed via the commit() method
      */
-    private fun updatePhi(varDesc: VariableDescription, operand1: Operand, operand2: Operand) {
+    fun updatePhi(varDesc: VariableDescription, operand: Operand) {
         if (varDesc in phiTable) {
-            val instruction = phiTable[varDesc]!!
+            val instruction = phiTable[varDesc]!!.component2()
             val instrOperands = instruction.operands
-            instrOperands[updatePosition.ordinal] = operand1
+            instrOperands[updatePosition.ordinal] = operand
         } else {
-            val instruction = SpecialInstruction(SpecialInstruction.Type.PHI, arrayOf(operand2, operand1))
-            phiTable[varDesc] = instruction
+            // initialization
+            val prevOp: Operand = varDesc.operand
+            val ops = when (updatePosition) {
+                Position.FIRST -> arrayOf(operand, prevOp)
+                Position.SECOND -> arrayOf(prevOp, operand)
+            }
+            val instruction = SpecialInstruction(SpecialInstruction.Type.PHI, ops)
+            phiTable[varDesc] = Pair(prevOp, instruction)
         }
-    }
-
-    /**
-     * Initializes the second operand with a ParameterOperand pointing to the variable description.
-     */
-    fun updatePhi(varDesc: VariableDescription, operand: Operand) = when (environment) {
-        Environment.WHILE -> updatePhi(varDesc, operand, ParameterOperand(varDesc))
-        else -> updatePhi(varDesc, operand, operand)
     }
 
     /**
@@ -46,13 +44,23 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      * that are inserted into this block. This also sets the operands of the VariableDescriptions
      * to phi instructions.
      */
-    fun commitPhi() {
+    fun commitPhi(joinBlock: JoinBlock? = null) {
         for (varDesc in phiTable.keys) {
-            val phiInstruction = phiTable[varDesc]!!
+            val phiInstruction = phiTable[varDesc]!!.component2()
             insertFirst(phiInstruction)
-            varDesc.setOperand(InstructionOperand(phiInstruction))
+            val instrOp = InstructionOperand(phiInstruction)
+            varDesc.operand = phiTable[varDesc]!!.component1()
+            joinBlock?.updatePhi(varDesc, instrOp)
+            varDesc.operand = instrOp
+
+            // propagate the original operand of varDesc
+            val storedPairAtOther = joinBlock?.phiTable?.get(varDesc)
+            val prevOpAtThis = phiTable[varDesc]!!.first
+            joinBlock?.phiTable?.set(varDesc, storedPairAtOther!!.copy(first = prevOpAtThis))
         }
     }
+
+    fun commitPhi() = commitPhi(null)
 
     /**
      * Loads the operands from updatePosition from the cache for all VariableDescriptions and stores
@@ -60,9 +68,11 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      */
     fun resetPhi() {
         for (varDesc in phiTable.keys) {
-            val instruction = phiTable[varDesc]!!
+            /*val instruction = phiTable[varDesc]!!.component2()
             val instrOperands = instruction.operands
-            varDesc.setOperand(instrOperands[updatePosition.ordinal])
+            // don't use the position that was updated right before this call
+            varDesc.operand = instrOperands[1 - updatePosition.ordinal]*/
+            varDesc.operand = phiTable[varDesc]!!.component1()
         }
     }
 
@@ -70,20 +80,29 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      * Uses the variable-to-phi function mappings that are stored in this JoinBlock to rename all
      * their occurrences in the given block to the respective phi functions.
      */
-    fun renamePhi(block: BaseBlock) {
+    fun renamePhi(block: BaseBlock) = renamePhi(block, block)
+    fun renamePhi(block: BaseBlock, end: BaseBlock, excludePhi: Boolean = true) {
         var instruction: Instruction?
         for (varDesc in phiTable.keys) {
             instruction = block.firstInstruction
             while (instruction != null) {
-                if (!(instruction is SpecialInstruction && instruction.type == SpecialInstruction.Type.PHI)) {
+                if (!(excludePhi && instruction is SpecialInstruction && instruction.type == SpecialInstruction.Type.PHI)) {
                     for ((index, operand) in instruction.operands.withIndex()) {
                         if (operand is ParameterOperand && operand.variable.equals(varDesc)) {
                             // the outmost loop ensures phiTable[varDesc] != null
-                            instruction.operands[index] = InstructionOperand(phiTable[varDesc]!!)
+                            instruction.operands[index] = InstructionOperand(phiTable[varDesc]!!.component2())
                         }
                     }
                 }
                 instruction = instruction.next
+            }
+        }
+        if (block !== end) {
+            if (block.branch != null && block.branch !== end) {
+                renamePhi(block.branch!!, end, excludePhi)
+            }
+            if (block.fail != null) {
+                renamePhi(block.fail!!, end, excludePhi)
             }
         }
     }
@@ -148,5 +167,17 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
         innerBlock.setFail(fail)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (innerBlock == null) {
+            return super.equals(other)
+        }
+        return innerBlock == other
+    }
 
+    override fun getID(): Int {
+        if (innerBlock == null) {
+            return super.getID()
+        }
+        return innerBlock.id
+    }
 }
