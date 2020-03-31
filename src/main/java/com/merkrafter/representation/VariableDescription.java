@@ -46,7 +46,8 @@ public class VariableDescription extends ObjectDescription {
         this.type = type;
         this.value = value;
         this.constant = constant;
-        operand = new Constant(0L);
+        operand = new ParameterOperand(this);
+        //operand = new Constant(0L);
     }
 
     /****

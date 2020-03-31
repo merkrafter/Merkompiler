@@ -49,8 +49,9 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
             val phiInstruction = phiTable[varDesc]!!.component2()
             insertFirst(phiInstruction)
             val instrOp = InstructionOperand(phiInstruction)
-            varDesc.operand = instrOp
+            varDesc.operand = phiTable[varDesc]!!.component1()
             joinBlock?.updatePhi(varDesc, instrOp)
+            varDesc.operand = instrOp
 
             // propagate the original operand of varDesc
             val storedPairAtOther = joinBlock?.phiTable?.get(varDesc)
@@ -79,12 +80,13 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
      * Uses the variable-to-phi function mappings that are stored in this JoinBlock to rename all
      * their occurrences in the given block to the respective phi functions.
      */
-    fun renamePhi(block: BaseBlock) {
+    fun renamePhi(block: BaseBlock) = renamePhi(block, block)
+    fun renamePhi(block: BaseBlock, end: BaseBlock, excludePhi: Boolean = true) {
         var instruction: Instruction?
         for (varDesc in phiTable.keys) {
             instruction = block.firstInstruction
             while (instruction != null) {
-                if (!(instruction is SpecialInstruction && instruction.type == SpecialInstruction.Type.PHI)) {
+                if (!(excludePhi && instruction is SpecialInstruction && instruction.type == SpecialInstruction.Type.PHI)) {
                     for ((index, operand) in instruction.operands.withIndex()) {
                         if (operand is ParameterOperand && operand.variable.equals(varDesc)) {
                             // the outmost loop ensures phiTable[varDesc] != null
@@ -93,6 +95,14 @@ class JoinBlock(private val innerBlock: BaseBlock? = null) : BaseBlock() {
                     }
                 }
                 instruction = instruction.next
+            }
+        }
+        if (block !== end) {
+            if (block.branch != null && block.branch !== end) {
+                renamePhi(block.branch!!, end, excludePhi)
+            }
+            if (block.fail != null) {
+                renamePhi(block.fail!!, end, excludePhi)
             }
         }
     }
