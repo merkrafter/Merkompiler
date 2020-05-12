@@ -66,8 +66,7 @@ $ mvn test
 - [mockito](https://github.com/mockito/mockito) by Mockito contributors under the [MIT license](https://github.com/mockito/mockito/blob/release/3.x/LICENSE)
 
 ## Contributing
-As this is a study project, direct contributing is not allowed.
-You are still invited to open an issue if you find a bug or something similar.
+See [Contributing](CONTRIBUTING.md) file.
 
 ## Versioning
 This project uses [Semantic Versioning](https://semver.org/).
