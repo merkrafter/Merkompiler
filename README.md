@@ -1,3 +1,5 @@
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/merkrafter/Merkompiler?sort=semver&color=green)
+
 # Merkompiler
 `Merkompiler` is a JavaSST compiler written in Java (and pieces of Kotlin) as a study project.
 It is not meant to be used in production, but rather as a template and inspiration for others
