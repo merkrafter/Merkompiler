@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
  * @author merkrafter
  ***************************************************************/
 public interface Locatable {
-    // METHODS
-    //==============================================================
-    // public methods
-    //--------------------------------------------------------------
-    @NotNull
-    Position getPosition();
+  // METHODS
+  // ==============================================================
+  // public methods
+  // --------------------------------------------------------------
+  @NotNull
+  Position getPosition();
 }

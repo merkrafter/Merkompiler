@@ -9,19 +9,18 @@ import org.jetbrains.annotations.NotNull;
  * @author merkrafter
  ***************************************************************/
 public enum Type {
-    INT(0),
-    BOOLEAN(false),
-    VOID(0);
+  INT(0),
+  BOOLEAN(false),
+  VOID(0);
 
-    @NotNull
-    private final Object defaultValue;
+  @NotNull private final Object defaultValue;
 
-    Type(@NotNull final Object defaultValue) {
-        this.defaultValue = defaultValue;
-    }
+  Type(@NotNull final Object defaultValue) {
+    this.defaultValue = defaultValue;
+  }
 
-    @NotNull
-    public Object getDefaultValue() {
-        return defaultValue;
-    }
+  @NotNull
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
 }

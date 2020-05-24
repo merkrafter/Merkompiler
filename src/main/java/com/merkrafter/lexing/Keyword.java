@@ -7,13 +7,13 @@ package com.merkrafter.lexing;
  * @author merkrafter
  ***************************************************************/
 public enum Keyword {
-    CLASS,
-    ELSE,
-    FINAL,
-    IF,
-    INT,
-    PUBLIC,
-    RETURN,
-    VOID,
-    WHILE,
+  CLASS,
+  ELSE,
+  FINAL,
+  IF,
+  INT,
+  PUBLIC,
+  RETURN,
+  VOID,
+  WHILE,
 }

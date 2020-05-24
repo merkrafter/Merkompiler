@@ -3,9 +3,8 @@ package com.merkrafter.representation.ast;
 import com.merkrafter.lexing.Locatable;
 import com.merkrafter.representation.Type;
 import com.merkrafter.representation.graphical.GraphicalComponent;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /****
  * An expression is anything that can be evaluated to a type.
@@ -14,15 +13,15 @@ import java.util.List;
  * @author merkrafter
  ***************************************************************/
 public interface Expression extends AbstractSyntaxTree, GraphicalComponent, Locatable {
-    // METHODS
-    //==============================================================
-    // public methods
-    //--------------------------------------------------------------
+  // METHODS
+  // ==============================================================
+  // public methods
+  // --------------------------------------------------------------
 
-    /**
-     * @return the type that this expression evaluates to
-     */
-    @NotNull Type getReturnedType();
+  /** @return the type that this expression evaluates to */
+  @NotNull
+  Type getReturnedType();
 
-    @NotNull List<String> getTypingErrors();
+  @NotNull
+  List<String> getTypingErrors();
 }

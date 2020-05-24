@@ -11,18 +11,14 @@ package com.merkrafter.representation.graphical;
  * @since v0.4.0
  ***************************************************************/
 public interface GraphicalComponent {
-    // METHODS
-    //==============================================================
-    // public methods
-    //--------------------------------------------------------------
+  // METHODS
+  // ==============================================================
+  // public methods
+  // --------------------------------------------------------------
 
-    /**
-     * @return an identifier unique in the whole AST
-     */
-    int getID();
+  /** @return an identifier unique in the whole AST */
+  int getID();
 
-    /**
-     * @return dot/graphviz declarations of this component's children
-     */
-    String getDotRepresentation();
+  /** @return dot/graphviz declarations of this component's children */
+  String getDotRepresentation();
 }
