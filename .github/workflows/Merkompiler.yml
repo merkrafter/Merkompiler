@@ -11,10 +11,11 @@ jobs:
   style_check:
     # This job uses google-java-format to check whether the (main and test) source code is formatted properly
     runs-on: ubuntu-latest
+    container: openjdk:11
     steps:
       - uses: actions/checkout@v1
       - name: Download google-java-format Release 1.8
-        run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar
+        run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar -P ./
       - name: Check style with google-java-format
         # --dry-run lists all files that do NOT comply in either the main or the test source directories
         run: |
