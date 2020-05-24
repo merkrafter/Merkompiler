@@ -8,6 +8,26 @@ on:
       - development
 
 jobs:
+  style_check:
+    # This job uses google-java-format to check whether the (main and test) source code is formatted properly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Download GitHub Release
+        uses: Legion2/download-release-action@v2.1.0
+        with:
+          repository:  google/google-java-format 
+          tag: 1.8
+          file: google-java-format-1.8-all-deps.jar
+          path: ./
+      - name: Check style with google-java-format
+        # --dry-run lists all files that do NOT comply in either the main or the test source directories
+        run: |
+          if [[ $(java -jar google-java-format-1.8-all-deps.jar --dry-run src/*/java/**/*.java) ]]; then
+            false
+          else
+            true
+          fi
   build:
 
     runs-on: ubuntu-latest
