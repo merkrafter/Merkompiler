@@ -17,7 +17,7 @@ jobs:
       - name: Download google-java-format Release 1.8
         run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar -P ./
       - name: Check style with google-java-format
-        run: java -jar google-java-format-1.8-all-deps.jar --dry-run --set-exit-if-changed src/*/java/**/*.java
+        run: java -jar google-java-format-1.8-all-deps.jar --dry-run --set-exit-if-changed $(find src -path "*/java/**" -path "*.java")
         
   build:
 
