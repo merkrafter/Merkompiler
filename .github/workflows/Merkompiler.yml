@@ -13,13 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Download GitHub Release
-        uses: Legion2/download-release-action@v2.1.0
-        with:
-          repository:  google/google-java-format 
-          tag: 1.8
-          file: google-java-format-1.8-all-deps.jar
-          path: ./
+      - name: Download google-java-format Release 1.8
+        run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar
       - name: Check style with google-java-format
         # --dry-run lists all files that do NOT comply in either the main or the test source directories
         run: |
