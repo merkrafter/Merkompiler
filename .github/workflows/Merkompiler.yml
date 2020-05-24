@@ -16,6 +16,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Download google-java-format Release 1.8
         run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar -P ./
+      - name: List directory
+        run: ls  
       - name: Check style with google-java-format
         # --dry-run lists all files that do NOT comply in either the main or the test source directories
         run: |
