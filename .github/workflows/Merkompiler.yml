@@ -14,10 +14,19 @@ jobs:
     container: openjdk:11
     steps:
       - uses: actions/checkout@v1
+      - name: Cache google-java-format jar
+        uses: actions/cache@v1.2.0
+        env:
+          cache-name: formatter
+        with:
+          path: ./formatter
+          # to keep things simple, no version information is used for the cache as it is unlikely that another version of the formatter will be used
+          key: formatter-jar
       - name: Download google-java-format Release 1.8
-        run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar -P ./
+        if: ${{ cache-hit }} == false
+        run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar -P ./formatter
       - name: Check style with google-java-format
-        run: java -jar google-java-format-1.8-all-deps.jar --dry-run --set-exit-if-changed $(find src -path "*/java/**" -path "*.java")
+        run: java -jar ./formatter/google-java-format-1.8-all-deps.jar --dry-run --set-exit-if-changed $(find src -path "*/java/**" -path "*.java")
         
   build:
 
