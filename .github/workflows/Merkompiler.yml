@@ -15,6 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Cache google-java-format jar
+        id: cache-formatter
         uses: actions/cache@v1.2.0
         env:
           cache-name: formatter
@@ -23,7 +24,7 @@ jobs:
           # to keep things simple, no version information is used for the cache as it is unlikely that another version of the formatter will be used
           key: formatter-jar
       - name: Download google-java-format Release 1.8
-        if: ${{ cache-hit }} == false
+        if: ${{ steps.cache-formatter.outputs.cache-hit == false }}
         run: wget https://github.com/google/google-java-format/releases/download/google-java-format-1.8/google-java-format-1.8-all-deps.jar -P ./formatter
       - name: Check style with google-java-format
         run: java -jar ./formatter/google-java-format-1.8-all-deps.jar --dry-run --set-exit-if-changed $(find src -path "*/java/**" -path "*.java")
