@@ -38,5 +38,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Cache mvn dependencies
+      uses: actions/cache@v1.2.0
+      env:
+        cache-name: mvn-deps
+      with:
+        path: ~/.m2
+        key: ${{ env.cache-name }}-${{ hash(pom.xml) }}
+        restore-keys: ${{ env.cache-name }}-
     - name: Test with Maven
       run: mvn -B kotlin:compile test --file pom.xml
