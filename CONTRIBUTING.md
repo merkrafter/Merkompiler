@@ -6,6 +6,11 @@ Make sure to also read the [Code of Conduct](CODE_OF_CONDUCT.md) (which is GitHu
 
 ## Improvement workflow
 This project's development is organized using [git flow](https://www.atlassian.com/de/git/tutorials/comparing-workflows/gitflow-workflow).
+Main development runs on the `development` branch, releases can be found on the `master` branch.
+Please use the naming scheme `feature/**` or `refactor/**` for your branches with dashes to separate words, e.g. `feature/graphical-ast`.
+This makes it simpler for everyone to see where this branch belongs.
+It also triggers the GitHub Actions workflows.
+
 Open tasks can be found on the project boards on GitHub (To Do).
 Feel free to pick one and notify the others via the attached issue.
 If you find something that you think could or should be improved, please open a new issue before spending your time on writing actual code.
