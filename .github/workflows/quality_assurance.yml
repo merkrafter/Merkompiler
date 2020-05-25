@@ -29,10 +29,9 @@ jobs:
       - name: Check style with google-java-format
         run: java -jar ./formatter/google-java-format-1.8-all-deps.jar --dry-run --set-exit-if-changed $(find src -path "*/java/**" -path "*.java")
         
-  build:
-
+  functional_tests:
+    # this step runs the project's functional tests using mvn test
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Set up JDK 1.8
@@ -41,10 +40,3 @@ jobs:
         java-version: 1.8
     - name: Test with Maven
       run: mvn -B kotlin:compile test --file pom.xml
-    - name: Build with Maven
-      run: mvn -B kotlin:compile package --file pom.xml
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: Merkompiler-standalone.jar
-        path: target/Merkompiler-jar-with-dependencies.jar
