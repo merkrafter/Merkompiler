@@ -44,7 +44,7 @@ jobs:
         cache-name: mvn-deps
       with:
         path: ~/.m2
-        key: ${{ env.cache-name }}-${{ hashFiles(pom.xml) }}
+        key: ${{ env.cache-name }}-${{ hashFiles('pom.xml') }}
         restore-keys: ${{ env.cache-name }}-
     - name: Test with Maven
       run: mvn -B kotlin:compile test --file pom.xml
