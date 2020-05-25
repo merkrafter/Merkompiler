@@ -9,66 +9,64 @@ import org.jetbrains.annotations.NotNull;
  * @author merkrafter
  ***************************************************************/
 public class KeywordToken extends Token {
-    // ATTRIBUTES
-    //==============================================================
-    /**
-     * the keyword this token stands for
-     */
-    @NotNull
-    private final Keyword keyword;
+  // ATTRIBUTES
+  // ==============================================================
+  /** the keyword this token stands for */
+  @NotNull private final Keyword keyword;
 
-    // CONSTRUCTORS
-    //==============================================================
+  // CONSTRUCTORS
+  // ==============================================================
 
-    /****
-     * Creates a new KeywordToken from a keyword and position data.
-     ***************************************************************/
-    public KeywordToken(@NotNull final Keyword keyword, @NotNull final String filename,
-                        final long line, final int position) {
-        super(TokenType.KEYWORD, filename, line, position);
-        this.keyword = keyword;
+  /****
+   * Creates a new KeywordToken from a keyword and position data.
+   ***************************************************************/
+  public KeywordToken(
+      @NotNull final Keyword keyword,
+      @NotNull final String filename,
+      final long line,
+      final int position) {
+    super(TokenType.KEYWORD, filename, line, position);
+    this.keyword = keyword;
+  }
+
+  // GETTER
+  // ==============================================================
+
+  /** @return the keyword this token stands for */
+  @NotNull
+  public Keyword getKeyword() {
+    return keyword;
+  }
+
+  // METHODS
+  // ==============================================================
+  // public methods
+  // --------------------------------------------------------------
+
+  /**
+   * Two KeywordTokens are equal if both have the type KeywordToken and their keywords, line
+   * numbers, positions and filenames are equal.
+   *
+   * @param obj ideally a KeywordToken to compare this with
+   * @return whether this is equal to obj
+   */
+  @Override
+  public boolean equals(@NotNull final Object obj) {
+    if (!super.equals(obj)) {
+      return false;
     }
+    return obj instanceof KeywordToken && ((KeywordToken) obj).keyword == keyword;
+  }
 
-    // GETTER
-    //==============================================================
-
-    /**
-     * @return the keyword this token stands for
-     */
-    @NotNull
-    public Keyword getKeyword() {
-        return keyword;
-    }
-
-    // METHODS
-    //==============================================================
-    // public methods
-    //--------------------------------------------------------------
-
-    /**
-     * Two KeywordTokens are equal if both have the type KeywordToken and their keywords, line
-     * numbers, positions and filenames are equal.
-     *
-     * @param obj ideally a KeywordToken to compare this with
-     * @return whether this is equal to obj
-     */
-    @Override
-    public boolean equals(@NotNull final Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        return obj instanceof KeywordToken && ((KeywordToken) obj).keyword == keyword;
-    }
-
-    /**
-     * Creates a String representation of this KeywordToken in the following format:
-     * FILENAME(LINE,POSITION): TYPE(KEYWORD)
-     *
-     * @return a String representation of this KeywordToken
-     */
-    @NotNull
-    @Override
-    public String toString() {
-        return super.toString() + String.format("(%s)", keyword.name().toLowerCase());
-    }
+  /**
+   * Creates a String representation of this KeywordToken in the following format:
+   * FILENAME(LINE,POSITION): TYPE(KEYWORD)
+   *
+   * @return a String representation of this KeywordToken
+   */
+  @NotNull
+  @Override
+  public String toString() {
+    return super.toString() + String.format("(%s)", keyword.name().toLowerCase());
+  }
 }

@@ -78,3 +78,7 @@ Further paragraphs come after blank lines.
 
   ### Sources
   * https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53
+
+## Code Formatter
+The style used for the java source files is the [Google style](https://github.com/google/google-java-format/).
+Make sure to apply it before every commit, e.g. using pre-commit hooks.

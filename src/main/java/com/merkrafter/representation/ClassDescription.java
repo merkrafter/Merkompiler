@@ -10,50 +10,43 @@ import org.jetbrains.annotations.Nullable;
  * @author merkrafter
  ***************************************************************/
 public class ClassDescription extends ObjectDescription {
-    // ATTRIBUTES
-    //==============================================================
-    @NotNull
-    private final SymbolTable symbolTable;
+  // ATTRIBUTES
+  // ==============================================================
+  @NotNull private final SymbolTable symbolTable;
 
-    // CONSTRUCTORS
-    //==============================================================
+  // CONSTRUCTORS
+  // ==============================================================
 
-    /****
-     * Creates a new ClassDescription from a name and with a symbol table from the outer scope.
-     ***************************************************************/
-    public ClassDescription(@NotNull final String name, @Nullable final SymbolTable outerScope) {
-        super(name);
-        symbolTable = new SymbolTable(outerScope);
-    }
+  /****
+   * Creates a new ClassDescription from a name and with a symbol table from the outer scope.
+   ***************************************************************/
+  public ClassDescription(@NotNull final String name, @Nullable final SymbolTable outerScope) {
+    super(name);
+    symbolTable = new SymbolTable(outerScope);
+  }
 
-    // GETTER
-    //==============================================================
+  // GETTER
+  // ==============================================================
 
-    /**
-     * @return table of all variables and methods that are defined in this class
-     */
-    @NotNull
-    public SymbolTable getSymbolTable() {
-        return symbolTable;
-    }
+  /** @return table of all variables and methods that are defined in this class */
+  @NotNull
+  public SymbolTable getSymbolTable() {
+    return symbolTable;
+  }
 
-    // SETTER
-    //==============================================================
+  // SETTER
+  // ==============================================================
 
-    /**
-     * @return an identifier unique in the whole AST
-     */
-    @Override
-    public int getID() {
-        return 0;
-    }
+  /** @return an identifier unique in the whole AST */
+  @Override
+  public int getID() {
+    return 0;
+  }
 
-    /**
-     * @return dot/graphviz declarations of this component's children
-     */
-    @NotNull
-    @Override
-    public String getDotRepresentation() {
-        return "";
-    }
+  /** @return dot/graphviz declarations of this component's children */
+  @NotNull
+  @Override
+  public String getDotRepresentation() {
+    return "";
+  }
 }

@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
  * @author merkrafter
  ***************************************************************/
 public class ParserException extends Exception {
-    // CONSTRUCTORS
-    //==============================================================
+  // CONSTRUCTORS
+  // ==============================================================
 
-    /****
-     * Creates a new ParserException by setting a message.
-     ***************************************************************/
-    public ParserException(@NotNull final String message) {
-        super(message);
-    }
+  /****
+   * Creates a new ParserException by setting a message.
+   ***************************************************************/
+  public ParserException(@NotNull final String message) {
+    super(message);
+  }
 }

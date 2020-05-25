@@ -3,10 +3,9 @@ package com.merkrafter.representation;
 import com.merkrafter.lexing.Locatable;
 import com.merkrafter.representation.ast.Statement;
 import com.merkrafter.representation.graphical.GraphicalComponent;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /****
  * This interface represents a procedure or method in a JavaSST program.
@@ -15,16 +14,21 @@ import java.util.List;
  * @author merkrafter
  ***************************************************************/
 public interface ProcedureDescription extends GraphicalComponent, Locatable {
-    @NotNull SymbolTable getSymbols();
+  @NotNull
+  SymbolTable getSymbols();
 
-    @NotNull String getName();
+  @NotNull
+  String getName();
 
-    @Nullable List<VariableDescription> getParamList();
+  @Nullable
+  List<VariableDescription> getParamList();
 
-    @Nullable Type getReturnType();
+  @Nullable
+  Type getReturnType();
 
-    @Nullable Statement getEntryPoint();
+  @Nullable
+  Statement getEntryPoint();
 
-    @Override
-    boolean equals(@NotNull Object o);
+  @Override
+  boolean equals(@NotNull Object o);
 }

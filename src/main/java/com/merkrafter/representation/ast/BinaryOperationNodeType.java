@@ -8,15 +8,15 @@ package com.merkrafter.representation.ast;
  * @author merkrafter
  ***************************************************************/
 public enum BinaryOperationNodeType {
-    /* due to this enum being different from TokenType, it may include bytecode information or
-    something similar */
-    PLUS,
-    MINUS,
-    TIMES,
-    DIVIDE,
-    EQUAL,
-    LOWER_EQUAL,
-    GREATER_EQUAL,
-    LOWER,
-    GREATER
+  /* due to this enum being different from TokenType, it may include bytecode information or
+  something similar */
+  PLUS,
+  MINUS,
+  TIMES,
+  DIVIDE,
+  EQUAL,
+  LOWER_EQUAL,
+  GREATER_EQUAL,
+  LOWER,
+  GREATER
 }

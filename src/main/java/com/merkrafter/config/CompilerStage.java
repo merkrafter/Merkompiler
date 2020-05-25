@@ -10,34 +10,27 @@ import org.jetbrains.annotations.NotNull;
  * @author merkrafter
  ***************************************************************/
 public enum CompilerStage {
-    // CONSTANTS
-    //==============================================================
-    /**
-     * Only scan the input and output tokens.
-     */
-    SCANNING,
-    /**
-     * Scan and parse the input and output whether this was successful.
-     */
-    PARSING;
+  // CONSTANTS
+  // ==============================================================
+  /** Only scan the input and output tokens. */
+  SCANNING,
+  /** Scan and parse the input and output whether this was successful. */
+  PARSING;
 
+  /** @return the lowercase name of this enum item */
+  @NotNull
+  @Override
+  public String toString() {
+    return name().toLowerCase();
+  }
 
-    /**
-     * @return the lowercase name of this enum item
-     */
-    @NotNull
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
-
-    /**
-     * Returns the latest stage this enum currently offers in terms of processing data.
-     *
-     * @return the latest available compiler stage
-     */
-    @NotNull
-    public static CompilerStage latest() {
-        return PARSING;
-    }
+  /**
+   * Returns the latest stage this enum currently offers in terms of processing data.
+   *
+   * @return the latest available compiler stage
+   */
+  @NotNull
+  public static CompilerStage latest() {
+    return PARSING;
+  }
 }

@@ -1,8 +1,7 @@
 package com.merkrafter.representation.ast;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /****
  * This interface provides a unified abstraction over both structural nodes that help during the
@@ -12,19 +11,18 @@ import java.util.List;
  * @author merkrafter
  ***************************************************************/
 public interface AbstractSyntaxTree {
-    // METHODS
-    //==============================================================
-    // public methods
-    //--------------------------------------------------------------
+  // METHODS
+  // ==============================================================
+  // public methods
+  // --------------------------------------------------------------
 
-    /**
-     * @return a list of all errors, both semantic and syntactical ones.
-     */
-    @NotNull List<String> getAllErrors();
+  /** @return a list of all errors, both semantic and syntactical ones. */
+  @NotNull
+  List<String> getAllErrors();
 
-    /**
-     * @param other the object to compare with
-     * @return whether the subtree indicated by this node is equal to another tree
-     */
-    boolean equals(Object other);
+  /**
+   * @param other the object to compare with
+   * @return whether the subtree indicated by this node is equal to another tree
+   */
+  boolean equals(Object other);
 }
