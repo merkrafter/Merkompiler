@@ -3,6 +3,9 @@ name: Quality Assurance
 on:
   pull_request:
   push:
+    paths:
+      - 'src/**'
+      - 'pom.xml'
     branches: 
       - master
       - development
