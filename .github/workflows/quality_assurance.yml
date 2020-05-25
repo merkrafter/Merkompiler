@@ -1,4 +1,4 @@
-name: Java CI
+name: Quality Assurance
 
 on:
   pull_request:
