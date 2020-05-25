@@ -17,7 +17,7 @@ public class Input implements Iterator<Character> {
   // CONSTANTS
   // ==============================================================
   /** This is the value returned by the BufferedReader if the EOF is reached. */
-  private static final int ENDOFFILE = -1;
+     private static final int ENDOFFILE = -1;
   /**
    * This is the error value for this class that is used if an IOException occurred, for instance.
    */
