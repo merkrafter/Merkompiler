@@ -1,8 +1,11 @@
-name: Java CI
+name: Quality Assurance
 
 on:
   pull_request:
   push:
+    paths:
+      - 'src/**'
+      - 'pom.xml'
     branches: 
       - master
       - development
@@ -29,22 +32,22 @@ jobs:
       - name: Check style with google-java-format
         run: java -jar ./formatter/google-java-format-1.8-all-deps.jar --dry-run --set-exit-if-changed $(find src -path "*/java/**" -path "*.java")
         
-  build:
-
+  functional_tests:
+    # this step runs the project's functional tests using mvn test
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Cache mvn dependencies
+      uses: actions/cache@v1.2.0
+      env:
+        cache-name: mvn-deps
+      with:
+        path: ~/.m2
+        key: ${{ env.cache-name }}-${{ hashFiles('pom.xml') }}
+        restore-keys: ${{ env.cache-name }}-
     - name: Test with Maven
       run: mvn -B kotlin:compile test --file pom.xml
-    - name: Build with Maven
-      run: mvn -B kotlin:compile package --file pom.xml
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: Merkompiler-standalone.jar
-        path: target/Merkompiler-jar-with-dependencies.jar
