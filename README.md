@@ -1,3 +1,4 @@
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3986/badge)](https://bestpractices.coreinfrastructure.org/projects/3986)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/merkrafter/Merkompiler?sort=semver&color=green)
 ![Style](https://img.shields.io/badge/Style-Google-blue)
 
