@@ -20,6 +20,12 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
     private val lowerAscii = 'a'..'z'
     private val upperAscii = 'A'..'Z'
     private val letters = lowerAscii + upperAscii
+    private val specialChars = TokenType.values()
+            .asSequence()
+            .map { it.symbol }
+            .filterNotNull()
+            .map { it.first() }
+            .toSet()
 
     /*
      * One could argue that passing an Iterator directly via the constructor would make more sense,
@@ -46,6 +52,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 when (ch) {
                     in letters -> tokenizeIdentifierOrKeyword()
                     in digits -> tokenizeNumber()
+                    in specialChars -> tokenizeSpecialChars()
                     else -> OtherToken(ch.toString(), "", 0, 0)
                 }
 
@@ -100,4 +107,33 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
         }
         return NumberToken(num.toString().toLong(), "", 0, 0)
     }
+
+    /**
+     * Interprets character from [ch] as a [TokenType] and returns a Token based on that.
+     *
+     * This method may read more characters from the underlying sequence to decide the [TokenType].
+     */
+    private fun tokenizeSpecialChars(): Token {
+        val tokenType = when (ch) {
+            '+' -> TokenType.PLUS
+            '-' -> TokenType.MINUS
+            '*' -> TokenType.TIMES
+            '/' -> TokenType.DIVIDE
+            '(' -> TokenType.L_PAREN
+            ')' -> TokenType.R_PAREN
+            '{' -> TokenType.L_BRACE
+            '}' -> TokenType.R_BRACE
+            '[' -> TokenType.L_SQ_BRACKET
+            ']' -> TokenType.R_SQ_BRACKET
+            ';' -> TokenType.SEMICOLON
+            ',' -> TokenType.COMMA
+            '=' -> if (nextFromInput() == '=') TokenType.EQUAL else TokenType.ASSIGN
+            '<' -> if (nextFromInput() == '=') TokenType.LOWER_EQUAL else TokenType.LOWER
+            '>' -> if (nextFromInput() == '=') TokenType.GREATER_EQUAL else TokenType.GREATER
+            else -> TokenType.OTHER
+        }
+        return Token(tokenType, "", 0, 0)
+    }
+
+    private fun nextFromInput(): Char? = if (inputIterator.hasNext()) inputIterator.next() else null
 }

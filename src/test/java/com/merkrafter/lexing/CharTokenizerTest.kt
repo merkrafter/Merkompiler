@@ -1,6 +1,7 @@
 package com.merkrafter.lexing
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -54,6 +55,23 @@ internal class CharTokenizerTest {
         fun `a keyword should be recognized as KeywordToken`(keyword: Keyword) {
             val input = keyword.name.toLowerCase().asSequence()
             val expected = sequenceOf(KeywordToken(keyword, "", 0, 0))
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should be able to recognize special characters.
+         *
+         * They are listed in [TokenType] and include symbols like +, ==, or ;
+         */
+        @ParameterizedTest
+        @EnumSource(TokenType::class,
+                mode = EnumSource.Mode.EXCLUDE,
+                names = ["KEYWORD", "IDENT", "NUMBER", "EOF", "OTHER"])
+        fun `special symbols should be recognized as their respective token`(tokenType: TokenType) {
+            //the above enum source should only include valid enum items anyway
+            val input = tokenType.symbol!!.asSequence()
+            val expected = sequenceOf(Token(tokenType, "", 0, 0))
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
