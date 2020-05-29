@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class CharTokenizerTest {
@@ -38,6 +39,21 @@ internal class CharTokenizerTest {
         fun `positive number should be recognized as NumberToken`(n: Long) {
             val input = n.toString().asSequence()
             val expected = sequenceOf(NumberToken(n, "", 0, 0))
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should be able to recognize keywords.
+         *
+         * In particular, these should be tokenized into KeywordTokens instead of IdentTokens.
+         * All possible keywords are listed in the [Keyword] enum.
+         */
+        @ParameterizedTest
+        @EnumSource(Keyword::class)
+        fun `a keyword should be recognized as KeywordToken`(keyword: Keyword) {
+            val input = keyword.name.toLowerCase().asSequence()
+            val expected = sequenceOf(KeywordToken(keyword, "", 0, 0))
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }

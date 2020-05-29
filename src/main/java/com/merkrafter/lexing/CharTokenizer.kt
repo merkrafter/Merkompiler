@@ -44,7 +44,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             if (inputIterator.hasNext()) {
                 ch = inputIterator.next()
                 when (ch) {
-                    in letters -> tokenizeIdentifier()
+                    in letters -> tokenizeIdentifierOrKeyword()
                     in digits -> tokenizeNumber()
                     else -> OtherToken(ch.toString(), "", 0, 0)
                 }
@@ -55,12 +55,13 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
 
     /**
      * Reads characters from [inputIterator] until a character appears that is neither a digit or a
-     * letter and returns an IdentToken.
+     * letter and returns an IdentToken or a KeywordToken.
      *
      * That non-digit and non-letter character may be EOF. This method assumes that [ch] contains a
-     * character representing a letter already.
+     * character representing a letter already. The decision whether an IdentToken or a KeywordToken
+     * is returned is made based on the [Keyword] enum and its members.
      */
-    private fun tokenizeIdentifier(): IdentToken {
+    private fun tokenizeIdentifierOrKeyword(): Token {
         val ident = StringBuilder(ch.toString())
         while (inputIterator.hasNext()) {
             ch = inputIterator.next()
@@ -70,8 +71,15 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 break
             }
         }
-        return IdentToken(ident.toString(), "", 0, 0)
+
+        val keyword = Keyword.values().firstOrNull { it.name == ident.toString().toUpperCase() }
+        return if (keyword != null) {
+            KeywordToken(keyword, "", 0, 0)
+        } else {
+            IdentToken(ident.toString(), "", 0, 0)
+        }
     }
+
 
     /**
      * Reads characters from [inputIterator] until a non-digit character appears and returns a
