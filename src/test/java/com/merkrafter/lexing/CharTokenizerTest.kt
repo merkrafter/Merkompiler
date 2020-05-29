@@ -14,6 +14,20 @@ internal class CharTokenizerTest {
     @Nested
     inner class HappyPaths {
         /**
+         * The Tokenizer should be able to detect identifiers.
+         * These start with a letter, either lower or upper case, and may continue with a
+         * combination of letters and/or digits.
+         */
+        @ParameterizedTest
+        @ValueSource(strings = ["a", "B", "xyz", "someIdentifier", "l33t"])
+        fun `should recognize simple identifier as IdentToken`(s: String) {
+            val input = s.asSequence()
+            val expected = sequenceOf(IdentToken(s, "", 0, 0))
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
          * The Tokenizer should be able to detect number arguments.
          * This test case makes sure that each digit is recognized as well as two- and three-digit
          * numbers and max long.

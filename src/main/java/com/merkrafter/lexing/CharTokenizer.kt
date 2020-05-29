@@ -17,6 +17,9 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
 
     // used instead of CharCategory.DECIMAL_DIGIT_NUMBER, because only ASCII should be recognized
     private val digits = '0'..'9'
+    private val lowerAscii = 'a'..'z'
+    private val upperAscii = 'A'..'Z'
+    private val letters = lowerAscii + upperAscii
 
     /*
      * One could argue that passing an Iterator directly via the constructor would make more sense,
@@ -41,6 +44,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             if (inputIterator.hasNext()) {
                 ch = inputIterator.next()
                 when (ch) {
+                    in letters -> tokenizeIdentifier()
                     in digits -> tokenizeNumber()
                     else -> OtherToken(ch.toString(), "", 0, 0)
                 }
@@ -48,6 +52,26 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             } else {
                 Token(TokenType.EOF, "", 0, 0)
             }
+
+    /**
+     * Reads characters from [inputIterator] until a character appears that is neither a digit or a
+     * letter and returns an IdentToken.
+     *
+     * That non-digit and non-letter character may be EOF. This method assumes that [ch] contains a
+     * character representing a letter already.
+     */
+    private fun tokenizeIdentifier(): IdentToken {
+        val ident = StringBuilder(ch.toString())
+        while (inputIterator.hasNext()) {
+            ch = inputIterator.next()
+            if (ch in letters || ch in digits) {
+                ident.append(ch)
+            } else {
+                break
+            }
+        }
+        return IdentToken(ident.toString(), "", 0, 0)
+    }
 
     /**
      * Reads characters from [inputIterator] until a non-digit character appears and returns a
