@@ -2,6 +2,7 @@ package com.merkrafter.lexing
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
@@ -83,6 +84,20 @@ internal class CharTokenizerTest {
             val expected = sequenceOf(OtherToken(s, "", 0, 0))
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * A Tokenizer with an empty input string should return false when hasNext is called.
+         * If next() is called in that situation anyway, an EOF token should be returned.
+         */
+        @Test
+        fun `produce EOF token on empty string`() {
+            val input = "".asSequence()
+            val tokenizer = CharTokenizer(input)
+            assertFalse(tokenizer.hasNext())
+            val actualToken = tokenizer.next()
+            val expectedToken = Token(TokenType.EOF, "", 0, 0)
+            assertEquals(expectedToken, actualToken)
         }
     }
 
