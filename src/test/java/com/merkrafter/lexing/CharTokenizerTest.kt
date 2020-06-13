@@ -139,7 +139,9 @@ internal class CharTokenizerTest {
         val sIterator = s.iterator()
 
         while (t.hasNext() && sIterator.hasNext()) {
-            assertEquals(sIterator.next(), t.next())
+            val expected = sIterator.next()
+            val actual = t.next()
+            assertEquals(expected, actual)
         }
 
         // make sure that both iterators end here
