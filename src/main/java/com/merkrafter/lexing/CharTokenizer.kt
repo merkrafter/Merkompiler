@@ -47,7 +47,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      */
     private val charQueue: Queue<Char> = LinkedList<Char>()
 
-    override fun hasNext(): Boolean = inputIterator.hasNext()
+    override fun hasNext() = hasNextChar()
 
     /**
      * Returns the next Token based on this CharTokenizer's char sequence.
@@ -55,7 +55,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      * an Exception.
      */
     override fun next(): Token =
-            if (inputIterator.hasNext()) {
+            if (hasNextChar()) {
                 ch = inputIterator.next()
                 when (ch) {
                     in letters -> tokenizeIdentifierOrKeyword()
@@ -78,7 +78,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      */
     private fun tokenizeIdentifierOrKeyword(): Token {
         val ident = StringBuilder(ch.toString())
-        while (inputIterator.hasNext()) {
+        while (hasNextChar()) {
             ch = inputIterator.next()
             if (ch in letters || ch in digits) {
                 ident.append(ch)
@@ -105,7 +105,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      */
     private fun tokenizeNumber(): NumberToken {
         val num = StringBuilder(ch.toString())
-        while (inputIterator.hasNext()) {
+        while (hasNextChar()) {
             ch = inputIterator.next()
             if (ch in digits) {
                 num.append(ch)
