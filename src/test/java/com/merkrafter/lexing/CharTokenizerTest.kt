@@ -1,5 +1,7 @@
 package com.merkrafter.lexing
 
+import com.merkrafter.lexing.TokenType.*
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Nested
@@ -75,6 +77,15 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
+
+        @Test
+        fun `scan arithmetic expression without whitespace`() {
+            val input = "a+(b-c)*d/e;".asSequence()
+            val expected = sequenceOf(IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN,
+                    TIMES, IDENT, DIVIDE, IDENT, SEMICOLON).map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
     }
 
     @Nested
@@ -130,7 +141,7 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertFalse(tokenizer.hasNext())
             val actualToken = tokenizer.next()
-            val expectedToken = Token(TokenType.EOF, "", 0, 0)
+            val expectedToken = Token(EOF, "", 0, 0)
             assertEquals(expectedToken, actualToken)
         }
     }

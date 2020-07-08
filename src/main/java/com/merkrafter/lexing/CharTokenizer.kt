@@ -83,6 +83,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             if (ch in letters || ch in digits) {
                 ident.append(ch)
             } else {
+                charQueue.add(ch)
                 break
             }
         }
@@ -110,6 +111,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             if (ch in digits) {
                 num.append(ch)
             } else {
+                charQueue.add(ch)
                 break
             }
         }
@@ -135,10 +137,43 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             ']' -> TokenType.R_SQ_BRACKET
             ';' -> TokenType.SEMICOLON
             ',' -> TokenType.COMMA
-            '=' -> if (hasNextChar() && nextChar() == '=') TokenType.EQUAL else TokenType.ASSIGN
-            '<' -> if (hasNextChar() && nextChar() == '=') TokenType.LOWER_EQUAL else TokenType.LOWER
-            '>' -> if (hasNextChar() && nextChar() == '=') TokenType.GREATER_EQUAL else TokenType.GREATER
-            else -> TokenType.OTHER
+            '=' -> if (hasNextChar()) {
+                ch = nextChar()
+                if (ch == '=') {
+                    TokenType.EQUAL
+                } else {
+                    charQueue.add(ch)
+                    TokenType.ASSIGN
+                }
+            } else {
+                TokenType.ASSIGN
+            }
+            '<' -> if (hasNextChar()) {
+                ch = nextChar()
+                if (ch == '=') {
+                    TokenType.LOWER_EQUAL
+                } else {
+                    charQueue.add(ch)
+                    TokenType.LOWER
+                }
+            } else {
+                TokenType.LOWER
+            }
+            '>' -> if (hasNextChar()) {
+                ch = nextChar()
+                if (ch == '=') {
+                    TokenType.GREATER_EQUAL
+                } else {
+                    charQueue.add(ch)
+                    TokenType.GREATER
+                }
+            } else {
+                TokenType.GREATER
+            }
+            else -> {
+                charQueue.add(ch)
+                TokenType.OTHER
+            }
         }
         return Token(tokenType, "", 0, 0)
     }
