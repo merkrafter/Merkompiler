@@ -1,5 +1,7 @@
 package com.merkrafter.lexing
 
+import java.util.*
+
 /**
  * This tokenizer class takes a sequence of characters and splits it into Tokens.
  *
@@ -38,6 +40,12 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      * The last read character
      */
     private var ch: Char = ' '
+
+    /**
+     * Stores characters that were read from the [inputIterator] but could not be used immediately
+     * as they do not comply with the current token type.
+     */
+    private val charQueue: Queue<Char> = LinkedList<Char>()
 
     override fun hasNext(): Boolean = inputIterator.hasNext()
 
