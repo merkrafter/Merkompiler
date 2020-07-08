@@ -150,4 +150,14 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      * These could be stored in the [charQueue] or in the [inputIterator]
      */
     private fun hasNextChar() = !charQueue.isEmpty() || inputIterator.hasNext()
+
+    /**
+     * Returns the next character to process.
+     * Throws a [NoSuchElementException] iff [hasNextChar] returns false.
+     */
+    private fun nextChar(): Char = if (!charQueue.isEmpty()) {
+        charQueue.remove()
+    } else {
+        inputIterator.next()
+    }
 }
