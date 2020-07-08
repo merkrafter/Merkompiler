@@ -56,7 +56,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      */
     override fun next(): Token =
             if (hasNextChar()) {
-                ch = inputIterator.next()
+                ch = nextChar()
                 when (ch) {
                     in letters -> tokenizeIdentifierOrKeyword()
                     in digits -> tokenizeNumber()
@@ -79,7 +79,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
     private fun tokenizeIdentifierOrKeyword(): Token {
         val ident = StringBuilder(ch.toString())
         while (hasNextChar()) {
-            ch = inputIterator.next()
+            ch = nextChar()
             if (ch in letters || ch in digits) {
                 ident.append(ch)
             } else {
@@ -106,7 +106,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
     private fun tokenizeNumber(): NumberToken {
         val num = StringBuilder(ch.toString())
         while (hasNextChar()) {
-            ch = inputIterator.next()
+            ch = nextChar()
             if (ch in digits) {
                 num.append(ch)
             } else {
@@ -135,15 +135,13 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             ']' -> TokenType.R_SQ_BRACKET
             ';' -> TokenType.SEMICOLON
             ',' -> TokenType.COMMA
-            '=' -> if (nextFromInput() == '=') TokenType.EQUAL else TokenType.ASSIGN
-            '<' -> if (nextFromInput() == '=') TokenType.LOWER_EQUAL else TokenType.LOWER
-            '>' -> if (nextFromInput() == '=') TokenType.GREATER_EQUAL else TokenType.GREATER
+            '=' -> if (hasNextChar() && nextChar() == '=') TokenType.EQUAL else TokenType.ASSIGN
+            '<' -> if (hasNextChar() && nextChar() == '=') TokenType.LOWER_EQUAL else TokenType.LOWER
+            '>' -> if (hasNextChar() && nextChar() == '=') TokenType.GREATER_EQUAL else TokenType.GREATER
             else -> TokenType.OTHER
         }
         return Token(tokenType, "", 0, 0)
     }
-
-    private fun nextFromInput(): Char? = if (inputIterator.hasNext()) inputIterator.next() else null
 
     /**
      * Returns whether there are more characters to process.
