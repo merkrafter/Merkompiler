@@ -22,6 +22,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
     private val lowerAscii = 'a'..'z'
     private val upperAscii = 'A'..'Z'
     private val letters = lowerAscii + upperAscii
+    private val whitespace = arrayOf(' ', '\n', '\t')
     private val specialChars = TokenType.values()
             .asSequence()
             .map { it.symbol }
@@ -61,6 +62,9 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                     in letters -> tokenizeIdentifierOrKeyword()
                     in digits -> tokenizeNumber()
                     in specialChars -> tokenizeSpecialChars()
+                    in whitespace -> {
+                        tokenizeWhitespace(); next()
+                    }
                     else -> OtherToken(ch.toString(), "", 0, 0)
                 }
 
@@ -176,6 +180,23 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             }
         }
         return Token(tokenType, "", 0, 0)
+    }
+
+    /**
+     * Reads characters from [inputIterator] until a non-whitespace character appears.
+     */
+    private fun tokenizeWhitespace() {
+        while (hasNextChar()) {
+            ch = nextChar()
+            /*
+             * Don't use !ch.isWhitespace() below here to be consistent with the when statement
+             * in the [next] method.
+             */
+            if (ch !in whitespace) {
+                charQueue.add(ch)
+                break
+            } // just consume; don't create token (yet)
+        }
     }
 
     /**

@@ -86,6 +86,23 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
+
+        @Test
+        fun `scan assignment expression with whitespace`() {
+            val input = "int result = a + ( b - c ) * d / e;".asSequence()
+            val expected = sequenceOf(KEYWORD, IDENT, ASSIGN, IDENT, PLUS, L_PAREN, IDENT, MINUS, IDENT, R_PAREN,
+                    TIMES, IDENT, DIVIDE, IDENT, SEMICOLON).map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        @Test
+        fun `scan simple assignment with whitespace`() {
+            val input = "int\n\t  a  \n=\n5\t\t\t  ;".asSequence()
+            val expected = sequenceOf(KEYWORD, IDENT, ASSIGN, NUMBER, SEMICOLON).map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
     }
 
     @Nested
@@ -119,14 +136,14 @@ internal class CharTokenizerTest {
         }
 
         /**
-         * The Tokenizer should be able to convert a single whitespace character to an OtherToken
-         * with that exact same character.
+         * The Tokenizer should be able to convert a whitespace character to an EOF token as there
+         * is no real other token to read.
          */
         @ParameterizedTest
         @ValueSource(strings = [" ", "\n", "\t"])
         fun `whitespace should be considered a Token`(s: String) {
             val input = sequenceOf(s.single())
-            val expected = sequenceOf(OtherToken(s, "", 0, 0))
+            val expected = sequenceOf(Token(EOF, "", 0, 0))
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
