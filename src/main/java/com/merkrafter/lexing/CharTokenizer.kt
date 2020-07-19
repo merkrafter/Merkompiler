@@ -132,7 +132,28 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             '+' -> TokenType.PLUS
             '-' -> TokenType.MINUS
             '*' -> TokenType.TIMES
-            '/' -> TokenType.DIVIDE
+            '/' -> if (hasNextChar()) {
+                ch = nextChar()
+                when (ch) {
+                    '/' -> {
+                        // line comment
+                        skipUntilNewline()
+                        return next()
+                    }
+                    '*' -> {
+                        /* block comment */
+                        // TODO skipBlockComment()
+                        return next()
+                    }
+                    else -> {
+                        charQueue.add(ch)
+                        TokenType.DIVIDE
+                    }
+                }
+
+            } else {
+                TokenType.DIVIDE
+            }
             '(' -> TokenType.L_PAREN
             ')' -> TokenType.R_PAREN
             '{' -> TokenType.L_BRACE
@@ -213,5 +234,18 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
         charQueue.remove()
     } else {
         inputIterator.next()
+    }
+
+    /**
+     * Reads and skips characters until it encounters a '\n' character.
+     * After this method, the cursor is placed in front of the first character of the next line.
+     */
+    private fun skipUntilNewline() {
+        while (hasNextChar()) {
+            ch = nextChar()
+            if (ch == '\n') {
+                break
+            }
+        }
     }
 }
