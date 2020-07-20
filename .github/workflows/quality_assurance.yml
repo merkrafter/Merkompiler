@@ -51,3 +51,14 @@ jobs:
         restore-keys: ${{ env.cache-name }}-
     - name: Test with Maven
       run: mvn -B kotlin:compile test --file pom.xml
+  
+  codecov:
+    needs: [functional_tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v1.0.11
+        with:
+          token: ${{ secret.CODECOV_TOKEN }}
+  
+  
