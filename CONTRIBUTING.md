@@ -9,7 +9,8 @@ This project's development is organized using [git flow](https://www.atlassian.c
 Main development runs on the `development` branch, releases can be found on the `master` branch.
 Please use the naming scheme `feature/**` or `refactor/**` for your branches with dashes to separate words, e.g. `feature/graphical-ast`.
 This makes it simpler for everyone to see where this branch belongs.
-It also triggers the GitHub Actions workflows.
+It also triggers the GitHub Actions workflows which in turn run the tests and report the coverage.
+**Submitted code should always be tested, or there should be a good explanation why it is not feasible in the situation at hand.**
 
 Open tasks can be found on the project boards on GitHub (To Do).
 Feel free to pick one and notify the others via the attached issue.
