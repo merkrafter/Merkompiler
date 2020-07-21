@@ -193,6 +193,45 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
+
+        /**
+         * The Tokenizer should be able to scan an empty main procedure.
+         * This is not valid JavaSST code, but it is used here as it contains square brackets.
+         */
+        @Test
+        fun `scan empty main procedure`() {
+            val input = "public void main(String[] args) {}".asSequence()
+            val expected = sequenceOf(KEYWORD, KEYWORD, IDENT, L_PAREN, IDENT, L_SQ_BRACKET,
+                    R_SQ_BRACKET, IDENT, R_PAREN, L_BRACE, R_BRACE)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should be able to scan an empty class.
+         */
+        @Test
+        fun `scan empty class`() {
+            val input = "class Test {}".asSequence()
+            val expected = sequenceOf(KEYWORD, IDENT, L_BRACE, R_BRACE)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should be able to scan a method call with multiple call arguments.
+         * This includes scanning commas.
+         */
+        @Test
+        fun `scan method call with two arguments`() {
+            val input = "int sum = add(a,1)".asSequence()
+            val expected = sequenceOf(KEYWORD, IDENT, ASSIGN, IDENT, L_PAREN, IDENT, COMMA, NUMBER, R_PAREN)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
     }
 
     @Nested
@@ -296,6 +335,19 @@ internal class CharTokenizerTest {
         fun `scan and ignore asterisk in block comments`() {
             val input = "/***/".asSequence()
             val expected = sequenceOf(EOF)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should ignore block comments that are at the end of a line and are not
+         * completely closed but only by an asterisk.
+         */
+        @Test
+        fun `scan and ignore not completely closed block comments at end of line`() {
+            val input = "int a = 5;/*a really important variable*".asSequence()
+            val expected = sequenceOf(KEYWORD, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF)
                     .map { Token(it, "", 0, 0) }
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
