@@ -128,6 +128,19 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
+
+        /**
+         * The Tokenizer should ignore line comments. These start with `//` and end with an EOL
+         * character.
+         */
+        @Test
+        fun `scan and ignore line comments at the end of code lines`() {
+            val input = "} //end of main class".asSequence()
+            val expected = sequenceOf(R_BRACE, EOF)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
     }
 
     @Nested
@@ -185,6 +198,18 @@ internal class CharTokenizerTest {
             val actualToken = tokenizer.next()
             val expectedToken = Token(EOF, "", 0, 0)
             assertEquals(expectedToken, actualToken)
+        }
+
+        /**
+         * The Tokenizer should not scan two slashes with space in between as a line comment.
+         */
+        @Test
+        fun `do not scan as line comment`() {
+            val input = " / /velocity;".asSequence()
+            val expected = sequenceOf(DIVIDE, DIVIDE, IDENT, SEMICOLON)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
         }
     }
 
