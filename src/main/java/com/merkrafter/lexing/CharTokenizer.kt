@@ -196,6 +196,11 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 TokenType.GREATER
             }
             else -> {
+                /*
+                 * This case will never actually happen as this method will only be called when [ch]
+                 * is in [specialChars].
+                 * Hence, it can not be tested.
+                 */
                 charQueue.add(ch)
                 TokenType.OTHER
             }
