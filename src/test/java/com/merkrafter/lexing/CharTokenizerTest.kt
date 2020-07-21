@@ -178,6 +178,21 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
+
+        /**
+         * The Tokenizer should correctly scan comparisons.
+         */
+        @ParameterizedTest
+        @EnumSource(TokenType::class,
+                mode = EnumSource.Mode.INCLUDE,
+                names = ["LOWER_EQUAL", "LOWER", "EQUAL", "GREATER", "GREATER_EQUAL"])
+        fun `scan comparison conditions`(op: TokenType) {
+            val input = "if(a${op.symbol}b)".asSequence()
+            val expected = sequenceOf(KEYWORD, L_PAREN, IDENT, op, IDENT, R_PAREN)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
     }
 
     @Nested
