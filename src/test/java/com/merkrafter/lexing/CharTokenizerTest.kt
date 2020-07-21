@@ -141,6 +141,43 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
+
+        /**
+         * The Tokenizer should ignore block comments that are mid-line. These start with `/*` and
+         * end with `*/`.
+         */
+        @Test
+        fun `scan and ignore block comments in line`() {
+            val input = "int a /*a really important variable*/ = 5;".asSequence()
+            val expected = sequenceOf(KEYWORD, IDENT, ASSIGN, NUMBER, SEMICOLON)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should ignore block comments that are at the end of a line.
+         */
+        @Test
+        fun `scan and ignore block comments at end of line`() {
+            val input = "int a = 5;/*a really important variable*/".asSequence()
+            val expected = sequenceOf(KEYWORD, IDENT, ASSIGN, NUMBER, SEMICOLON, EOF)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should ignore block comments that span multiple lines.
+         */
+        @Test
+        fun `scan and ignore block comments over multiple lines`() {
+            val input = "/*\nThis is a description of the method\n*/public void draw();".asSequence()
+            val expected = sequenceOf(KEYWORD, KEYWORD, IDENT, L_PAREN, R_PAREN, SEMICOLON)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
     }
 
     @Nested
@@ -204,9 +241,46 @@ internal class CharTokenizerTest {
          * The Tokenizer should not scan two slashes with space in between as a line comment.
          */
         @Test
-        fun `do not scan as line comment`() {
+        fun `do not scan separated slashes as line comment`() {
             val input = " / /velocity;".asSequence()
             val expected = sequenceOf(DIVIDE, DIVIDE, IDENT, SEMICOLON)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should not scan a slash and an asterisk with space in between as a
+         * block comment.
+         */
+        @Test
+        fun `do not scan separated slash and asterisk as block comment`() {
+            val input = " / *velocity;".asSequence()
+            val expected = sequenceOf(DIVIDE, TIMES, IDENT, SEMICOLON)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The scanner should not make errors lexing an asterisk followed by a / outside a comment.
+         */
+        @Test
+        fun `do not scan recognize asterisk and slash as end outside block comment`() {
+            val input = " */ velocity".asSequence()
+            val expected = sequenceOf(TIMES, DIVIDE, IDENT)
+                    .map { Token(it, "", 0, 0) }
+            val tokenizer = CharTokenizer(input)
+            assertProduces(tokenizer, expected)
+        }
+
+        /**
+         * The Tokenizer should ignore block comments that contain an asterisk.
+         */
+        @Test
+        fun `scan and ignore asterisk in block comments`() {
+            val input = "/***/".asSequence()
+            val expected = sequenceOf(EOF)
                     .map { Token(it, "", 0, 0) }
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)

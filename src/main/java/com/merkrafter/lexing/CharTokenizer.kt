@@ -142,7 +142,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                     }
                     '*' -> {
                         /* block comment */
-                        // TODO skipBlockComment()
+                        skipUntilBlockCommentEnd()
                         return next()
                     }
                     else -> {
@@ -246,6 +246,23 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
             if (ch == '\n') {
                 break
             }
+        }
+    }
+
+    /**
+     * Reads and skips characters until it encounters a * and a / character.
+     * After this method, the cursor is placed in front of the first character after the above
+     * pattern.
+     * This method assumes that a block comment started already.
+     */
+    private fun skipUntilBlockCommentEnd() {
+        var lastCh = ch
+        while (hasNextChar()) {
+            ch = nextChar()
+            if (lastCh == '*' && ch == '/') {
+                break
+            }
+            lastCh = ch
         }
     }
 }
