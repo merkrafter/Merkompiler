@@ -9,13 +9,15 @@ import java.util.*
  * [hasNext] will still return false in that case.
  * Just keep in mind that it is therefore not possible to create a list of Tokens directly from this
  * CharTokenizer.
+ * The [filename] in the constructor is just echoed to the tokens to make them easier to locate in
+ * the output and does not have any functional impact.
  *
- * @constructor Specifies the character sequence to work on
+ * @constructor Specifies the underlying character sequence and an optional filename
  *
  * @author merkrafter
  * @since v0.4.0
  */
-class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
+class CharTokenizer(input: Sequence<Char>, private val filename: String = "") : Iterator<Token> {
 
     // used instead of CharCategory.DECIMAL_DIGIT_NUMBER, because only ASCII should be recognized
     private val digits = '0'..'9'
@@ -75,11 +77,11 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                     in whitespace -> {
                         tokenizeWhitespace(); next()
                     }
-                    else -> OtherToken(ch.toString(), "", line, column)
+                    else -> OtherToken(ch.toString(), filename, line, column)
                 }
 
             } else {
-                Token(TokenType.EOF, "", line, column)
+                Token(TokenType.EOF, filename, line, column)
             }
 
     /**
@@ -106,9 +108,9 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
 
         val keyword = Keyword.values().firstOrNull { it.name == ident.toString().toUpperCase() }
         return if (keyword != null) {
-            KeywordToken(keyword, "", startingLine, startingColumn)
+            KeywordToken(keyword, filename, startingLine, startingColumn)
         } else {
-            IdentToken(ident.toString(), "", startingLine, startingColumn)
+            IdentToken(ident.toString(), filename, startingLine, startingColumn)
         }
     }
 
@@ -133,7 +135,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 break
             }
         }
-        return NumberToken(num.toString().toLong(), "", startingLine, startingColumn)
+        return NumberToken(num.toString().toLong(), filename, startingLine, startingColumn)
     }
 
     /**
@@ -221,7 +223,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 TokenType.OTHER
             }
         }
-        return Token(tokenType, "", startingLine, startingColumn)
+        return Token(tokenType, filename, startingLine, startingColumn)
     }
 
     /**

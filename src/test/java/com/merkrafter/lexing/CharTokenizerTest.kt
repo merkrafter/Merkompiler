@@ -300,6 +300,20 @@ internal class CharTokenizerTest {
                     NumberToken(14L, "", 2, 4))
             assertProduces(tokenizer, expectedTokens, checkOnlyType = false)
         }
+
+        /**
+         * The Tokenizer should echo the given filename to several token types.
+         */
+        @Test
+        fun `return given filename`() {
+            val filename = "Input.java"
+            val input = "1*a".asSequence()
+            val tokenizer = CharTokenizer(input, filename)
+            val expectedTokens = sequenceOf(NumberToken(1L, filename, 1, 1),
+                    Token(TIMES, filename, 1, 2),
+                    IdentToken("a", filename, 1, 3))
+            assertProduces(tokenizer, expectedTokens, checkOnlyType = false)
+        }
     }
 
     @Nested
