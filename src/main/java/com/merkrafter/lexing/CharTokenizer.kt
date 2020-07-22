@@ -51,12 +51,12 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
     /**
      * Stores the line inside the current file.
      */
-    private val line: Long = 1
+    private var line: Long = 1
 
     /**
      * Stores the character position inside the current line.
      */
-    private val column = 1
+    private var column = 0
 
     override fun hasNext() = hasNextChar()
 
@@ -92,6 +92,8 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      */
     private fun tokenizeIdentifierOrKeyword(): Token {
         val ident = StringBuilder(ch.toString())
+        val startingLine = line
+        val startingColumn = column
         while (hasNextChar()) {
             ch = nextChar()
             if (ch in letters || ch in digits) {
@@ -104,9 +106,9 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
 
         val keyword = Keyword.values().firstOrNull { it.name == ident.toString().toUpperCase() }
         return if (keyword != null) {
-            KeywordToken(keyword, "", line, column)
+            KeywordToken(keyword, "", startingLine, startingColumn)
         } else {
-            IdentToken(ident.toString(), "", line, column)
+            IdentToken(ident.toString(), "", startingLine, startingColumn)
         }
     }
 
@@ -120,6 +122,8 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      */
     private fun tokenizeNumber(): NumberToken {
         val num = StringBuilder(ch.toString())
+        val startingLine = line
+        val startingColumn = column
         while (hasNextChar()) {
             ch = nextChar()
             if (ch in digits) {
@@ -129,7 +133,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 break
             }
         }
-        return NumberToken(num.toString().toLong(), "", line, column)
+        return NumberToken(num.toString().toLong(), "", startingLine, startingColumn)
     }
 
     /**
@@ -138,6 +142,8 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      * This method may read more characters from the underlying sequence to decide the [TokenType].
      */
     private fun tokenizeSpecialChars(): Token {
+        val startingLine = line
+        val startingColumn = column
         val tokenType = when (ch) {
             '+' -> TokenType.PLUS
             '-' -> TokenType.MINUS
@@ -215,7 +221,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 TokenType.OTHER
             }
         }
-        return Token(tokenType, "", line, column)
+        return Token(tokenType, "", startingLine, startingColumn)
     }
 
     /**
@@ -242,13 +248,19 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
     private fun hasNextChar() = !charQueue.isEmpty() || inputIterator.hasNext()
 
     /**
-     * Returns the next character to process.
+     * Returns the next character to process and advances the cursor position if applicable.
      * Throws a [NoSuchElementException] iff [hasNextChar] returns false.
      */
-    private fun nextChar(): Char = if (!charQueue.isEmpty()) {
+    private fun nextChar() = if (!charQueue.isEmpty()) {
         charQueue.remove()
     } else {
-        inputIterator.next()
+        val nCh = inputIterator.next()
+        column++
+        if (nCh == '\n') {
+            column = 0
+            line++
+        }
+        nCh
     }
 
     /**

@@ -262,6 +262,44 @@ internal class CharTokenizerTest {
             val expectedToken = NumberToken(number, "", 1, 1)
             assertEquals(expectedToken, actualToken)
         }
+
+        /**
+         * The Tokenizer should assign column 2 after a space.
+         */
+        @Test
+        fun `scan and assign correct position after space`() {
+            val input = " ab".asSequence()
+            val tokenizer = CharTokenizer(input)
+            val expectedTokens = sequenceOf(IdentToken("ab", "", 1, 2))
+            assertProduces(tokenizer, expectedTokens, checkOnlyType = false)
+        }
+
+        /**
+         * The Tokenizer should assign line 2 after a line break.
+         */
+        @Test
+        fun `scan and assign correct position after newline`() {
+            val input = "a\nb".asSequence()
+            val tokenizer = CharTokenizer(input)
+            val expectedTokens = sequenceOf(IdentToken("a", "", 1, 1),
+                    IdentToken("b", "", 2, 1))
+            assertProduces(tokenizer, expectedTokens, checkOnlyType = false)
+        }
+
+        /**
+         * This test case contains a more complex pattern of a newline and number, ident, and other
+         * tokens that encode special characters.
+         */
+        @Test
+        fun `scan and assign correct position to sequence of tokens`() {
+            val input = "\n1e-14".asSequence()
+            val tokenizer = CharTokenizer(input)
+            val expectedTokens = sequenceOf(NumberToken(1L, "", 2, 1),
+                    IdentToken("e", "", 2, 2),
+                    Token(MINUS, "", 2, 3),
+                    NumberToken(14L, "", 2, 4))
+            assertProduces(tokenizer, expectedTokens, checkOnlyType = false)
+        }
     }
 
     @Nested
@@ -317,7 +355,7 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertFalse(tokenizer.hasNext())
             val actualToken = tokenizer.next()
-            val expectedToken = Token(EOF, "", 1, 1)
+            val expectedToken = Token(EOF, "", 1, 0)
             assertEquals(expectedToken, actualToken)
         }
 
