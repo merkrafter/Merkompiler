@@ -354,18 +354,25 @@ internal class CharTokenizerTest {
         }
     }
 
-    private fun assertProduces(t: CharTokenizer, s: Sequence<Token>) {
+    /**
+     * Checks whether both Iterables produce the same sequence of Tokens.
+     * @param checkOnlyType: if not set, .equals is called on the Tokens
+     */
+    private fun assertProduces(t: CharTokenizer, s: Sequence<Token>, checkOnlyType: Boolean = false) {
         val sIterator = s.iterator()
 
         while (t.hasNext() && sIterator.hasNext()) {
             val expected = sIterator.next()
             val actual = t.next()
-            assertEquals(expected, actual)
+            if (checkOnlyType) {
+                assertEquals(expected.type, actual.type)
+            } else {
+                assertEquals(expected, actual)
+            }
         }
 
         // make sure that both iterators end here
         assertFalse(t.hasNext(), "tokenizer has more tokens; \"${t.next()}\" follows next")
         assertFalse(sIterator.hasNext())
-
     }
 }
