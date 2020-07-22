@@ -48,6 +48,16 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
      */
     private val charQueue: Queue<Char> = LinkedList<Char>()
 
+    /**
+     * Stores the line inside the current file.
+     */
+    private val line: Long = 1
+
+    /**
+     * Stores the character position inside the current line.
+     */
+    private val column = 1
+
     override fun hasNext() = hasNextChar()
 
     /**
@@ -65,11 +75,11 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                     in whitespace -> {
                         tokenizeWhitespace(); next()
                     }
-                    else -> OtherToken(ch.toString(), "", 0, 0)
+                    else -> OtherToken(ch.toString(), "", line, column)
                 }
 
             } else {
-                Token(TokenType.EOF, "", 0, 0)
+                Token(TokenType.EOF, "", line, column)
             }
 
     /**
@@ -94,9 +104,9 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
 
         val keyword = Keyword.values().firstOrNull { it.name == ident.toString().toUpperCase() }
         return if (keyword != null) {
-            KeywordToken(keyword, "", 0, 0)
+            KeywordToken(keyword, "", line, column)
         } else {
-            IdentToken(ident.toString(), "", 0, 0)
+            IdentToken(ident.toString(), "", line, column)
         }
     }
 
@@ -119,7 +129,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 break
             }
         }
-        return NumberToken(num.toString().toLong(), "", 0, 0)
+        return NumberToken(num.toString().toLong(), "", line, column)
     }
 
     /**
@@ -205,7 +215,7 @@ class CharTokenizer(input: Sequence<Char>) : Iterator<Token> {
                 TokenType.OTHER
             }
         }
-        return Token(tokenType, "", 0, 0)
+        return Token(tokenType, "", line, column)
     }
 
     /**

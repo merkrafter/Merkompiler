@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
+import kotlin.test.assertTrue
 
 internal class CharTokenizerTest {
 
@@ -25,11 +26,12 @@ internal class CharTokenizerTest {
          */
         @ParameterizedTest
         @ValueSource(strings = ["a", "B", "xyz", "someIdentifier", "l33t"])
-        fun `should recognize simple identifier as IdentToken`(s: String) {
-            val input = s.asSequence()
-            val expected = sequenceOf(IdentToken(s, "", 0, 0))
+        fun `should recognize simple identifier as IdentToken`(expectedIdent: String) {
+            val input = expectedIdent.asSequence()
             val tokenizer = CharTokenizer(input)
-            assertProduces(tokenizer, expected)
+            val actualToken = tokenizer.next()
+            assertTrue(actualToken is IdentToken)
+            assertEquals(expectedIdent, actualToken.ident)
         }
 
         /**
@@ -39,11 +41,12 @@ internal class CharTokenizerTest {
          */
         @ParameterizedTest
         @ValueSource(longs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 321, Long.MAX_VALUE])
-        fun `positive number should be recognized as NumberToken`(n: Long) {
-            val input = n.toString().asSequence()
-            val expected = sequenceOf(NumberToken(n, "", 0, 0))
+        fun `positive number should be recognized as NumberToken`(expectedNumber: Long) {
+            val input = expectedNumber.toString().asSequence()
             val tokenizer = CharTokenizer(input)
-            assertProduces(tokenizer, expected)
+            val actualToken = tokenizer.next()
+            assertTrue(actualToken is NumberToken)
+            assertEquals(expectedNumber, actualToken.number)
         }
 
         /**
@@ -232,6 +235,33 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
         }
+
+        /**
+         * The Tokenizer should assign line 1, character position 1 to the first Token.
+         * This case tests an identifier.
+         */
+        @Test
+        fun `scan and assign correct starting position to identifier`() {
+            val input = "a".asSequence()
+            val tokenizer = CharTokenizer(input)
+            val actualToken = tokenizer.next()
+            val expectedToken = IdentToken("a", "", 1, 1)
+            assertEquals(expectedToken, actualToken)
+        }
+
+        /**
+         * The Tokenizer should assign line 1, character position 1 to the first Token.
+         * This case tests a number.
+         */
+        @Test
+        fun `scan and assign correct starting position to number`() {
+            val number = 4L
+            val input = "$number".asSequence()
+            val tokenizer = CharTokenizer(input)
+            val actualToken = tokenizer.next()
+            val expectedToken = NumberToken(number, "", 1, 1)
+            assertEquals(expectedToken, actualToken)
+        }
     }
 
     @Nested
@@ -287,7 +317,7 @@ internal class CharTokenizerTest {
             val tokenizer = CharTokenizer(input)
             assertFalse(tokenizer.hasNext())
             val actualToken = tokenizer.next()
-            val expectedToken = Token(EOF, "", 0, 0)
+            val expectedToken = Token(EOF, "", 1, 1)
             assertEquals(expectedToken, actualToken)
         }
 
@@ -358,7 +388,7 @@ internal class CharTokenizerTest {
      * Checks whether both Iterables produce the same sequence of Tokens.
      * @param checkOnlyType: if not set, .equals is called on the Tokens
      */
-    private fun assertProduces(t: CharTokenizer, s: Sequence<Token>, checkOnlyType: Boolean = false) {
+    private fun assertProduces(t: CharTokenizer, s: Sequence<Token>, checkOnlyType: Boolean = true) {
         val sIterator = s.iterator()
 
         while (t.hasNext() && sIterator.hasNext()) {
