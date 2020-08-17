@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     container: openjdk:11
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
       - name: Cache google-java-format jar
         id: cache-formatter
         uses: actions/cache@v2
@@ -36,7 +36,7 @@ jobs:
     # this step runs the project's functional tests using mvn test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.3.1
+    - uses: actions/checkout@v2.3.2
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
@@ -52,7 +52,7 @@ jobs:
     - name: Test with Maven
       run: mvn -B kotlin:compile test --file pom.xml
     - name: Upload to Codecov
-      uses: codecov/codecov-action@v1.0.11
+      uses: codecov/codecov-action@v1.0.12
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./target/site/jacoco/jacoco.xml
