@@ -51,6 +51,11 @@ class CharTokenizer(input: Sequence<Char>, private val filename: String = "") : 
     private val charQueue: Queue<Char> = LinkedList<Char>()
 
     /**
+     * Stores a token temporarily to help out during the call to [hasNext].
+     */
+    private var nextToken: Token? = null
+
+    /**
      * Stores the line inside the current file.
      */
     private var line: Long = 1
@@ -60,7 +65,15 @@ class CharTokenizer(input: Sequence<Char>, private val filename: String = "") : 
      */
     private var column = 0
 
-    override fun hasNext() = hasNextChar()
+    /**
+     * Returns true if there are more Tokens.
+     */
+    override fun hasNext(): Boolean {
+        if (nextToken == null) {
+            nextToken = next()
+        }
+        return TokenType.EOF != nextToken!!.type
+    }
 
     /**
      * Returns the next Token based on this CharTokenizer's char sequence.
@@ -68,20 +81,28 @@ class CharTokenizer(input: Sequence<Char>, private val filename: String = "") : 
      * an Exception.
      */
     override fun next(): Token =
-            if (hasNextChar()) {
-                ch = nextChar()
-                when (ch) {
-                    in letters -> tokenizeIdentifierOrKeyword()
-                    in digits -> tokenizeNumber()
-                    in specialChars -> tokenizeSpecialChars()
-                    in whitespace -> {
-                        tokenizeWhitespace(); next()
-                    }
-                    else -> OtherToken(ch.toString(), filename, line, column)
+            when {
+                nextToken != null -> {
+                    val tmpToken = nextToken as Token
+                    nextToken = null
+                    tmpToken
                 }
+                hasNextChar() -> {
+                    ch = nextChar()
+                    when (ch) {
+                        in letters -> tokenizeIdentifierOrKeyword()
+                        in digits -> tokenizeNumber()
+                        in specialChars -> tokenizeSpecialChars()
+                        in whitespace -> {
+                            tokenizeWhitespace(); next()
+                        }
+                        else -> OtherToken(ch.toString(), filename, line, column)
+                    }
 
-            } else {
-                Token(TokenType.EOF, filename, line, column)
+                }
+                else -> {
+                    Token(TokenType.EOF, filename, line, column)
+                }
             }
 
     /**
