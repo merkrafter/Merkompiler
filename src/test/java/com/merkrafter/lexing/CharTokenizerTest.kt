@@ -4,7 +4,6 @@ import com.merkrafter.lexing.TokenType.*
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -426,14 +425,11 @@ internal class CharTokenizerTest {
         /**
          * The Tokenizer should ignore block comments that contain an asterisk.
          */
-        @Disabled
         @Test
-        fun `scan and ignore asterisk in block comments`() {
+        fun `ignore asterisk in block comments`() {
             val input = "/***/".asSequence()
-            val expected = sequenceOf(EOF)
-                    .map { Token(it, "", 0, 0) }
             val tokenizer = CharTokenizer(input)
-            assertProduces(tokenizer, expected)
+            assertFalse(tokenizer.hasNext())
         }
 
         /**
