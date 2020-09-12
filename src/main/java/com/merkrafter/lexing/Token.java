@@ -1,6 +1,7 @@
 package com.merkrafter.lexing;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /****
  * This class represents a token that is emitted by a Scanner.
@@ -58,7 +59,10 @@ public class Token {
    * @return whether this is equal to obj
    */
   @Override
-  public boolean equals(@NotNull final Object obj) {
+  public boolean equals(@Nullable final Object obj) {
+    if (obj == null) {
+      return false;
+    }
     if (obj instanceof Token) {
       final Token other = (Token) obj;
       return eqTypes(other) && position.equals(other.position);
