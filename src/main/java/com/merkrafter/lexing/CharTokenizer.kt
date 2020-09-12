@@ -47,7 +47,7 @@ class CharTokenizer(input: Sequence<Char>, private val filename: String = "") : 
      * Stores characters that were read from the [inputIterator] but could not be used immediately
      * as they do not comply with the current token type.
      */
-    private val charQueue: Queue<Char> = LinkedList<Char>()
+    private val charQueue: Queue<Char> = LinkedList()
 
     /**
      * Stores a token temporarily to help out during the call to [hasNext].
