@@ -1,14 +1,13 @@
 package com.merkrafter.lexing
 
 import java.util.*
+import kotlin.NoSuchElementException
 
 /**
  * This tokenizer class takes a sequence of characters and splits it into Tokens.
  *
- * In case the underlying sequence has ended, infinitely many EOF tokens will be returned.
- * [hasNext] will still return false in that case.
- * Just keep in mind that it is therefore not possible to create a list of Tokens directly from this
- * CharTokenizer.
+ * It is safe to create a [List] from this [Iterator] (i.e. it will create a finite list) if the
+ * underlying sequence is finite as well.
  * The [filename] in the constructor is just echoed to the tokens to make them easier to locate in
  * the output and does not have any functional impact.
  *
@@ -68,17 +67,26 @@ class CharTokenizer(input: Sequence<Char>, private val filename: String = "") : 
     /**
      * Returns true if there are more Tokens.
      */
-    override fun hasNext(): Boolean {
-        if (nextToken == null) {
-            nextToken = next()
-        }
-        return TokenType.EOF != nextToken!!.type
-    }
+    override fun hasNext() =
+            try {
+                /*
+                 * This method attempts to create a new Token already which may or may not be a problem.
+                 * In the current implementation this is necessary because [next] does not have any other
+                 * way to decide whether there is another token behind following whitespace and/or comments.
+                 */
+                if (nextToken == null) {
+                    nextToken = next() // throws NoSuchElementException if underlying sequence ended
+                }
+                TokenType.EOF != nextToken!!.type
+            } catch (nseE: NoSuchElementException) {
+                false
+            }
+
 
     /**
      * Returns the next Token based on this CharTokenizer's char sequence.
-     * In case the underlying sequence has ended, an EOF token will be returned instead of throwing
-     * an Exception.
+     *
+     * @throws NoSuchElementException if there are no more Tokens
      */
     override fun next(): Token =
             when {
@@ -101,7 +109,7 @@ class CharTokenizer(input: Sequence<Char>, private val filename: String = "") : 
 
                 }
                 else -> {
-                    Token(TokenType.EOF, filename, line, column)
+                    throw NoSuchElementException()
                 }
             }
 

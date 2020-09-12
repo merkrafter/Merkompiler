@@ -1,14 +1,17 @@
 package com.merkrafter.lexing
 
 import com.merkrafter.lexing.TokenType.*
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Assumptions.assumeTrue
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
+import java.util.concurrent.TimeUnit
+import kotlin.NoSuchElementException
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 internal class CharTokenizerTest {
@@ -339,6 +342,62 @@ internal class CharTokenizerTest {
             tokenizer.next()
             assertFalse(tokenizer.hasNext())
         }
+
+        /**
+         * The Tokenizer should be convertible to a (finite) list of tokens if the input sequence is
+         * finite as well.
+         * If the Tokenizer returned an endless sequence of EOF tokens (as it used to do for some
+         * time) it would cause unexpected behavior that decreases usability.
+         */
+        @Test
+        /* Prevent the test from crashing with OutOfMemoryError in case the sequence is infinite.
+        * Usually, the execution should not take longer than 200ms*/
+        @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+        fun `should be able to create a list`() {
+            val input = "class Test {final int a = 4;}" // arbitrary, non-trivial program code
+            val tokenizer = CharTokenizer(input.asSequence())
+            val actualTokenList = tokenizer.asSequence().toList()
+            val expectedTokenList = listOf(KeywordToken(Keyword.CLASS, "", 1, 1),
+                    IdentToken("Test", "", 1, 7),
+                    Token(L_BRACE, "", 1, 12),
+                    KeywordToken(Keyword.FINAL, "", 1, 13),
+                    KeywordToken(Keyword.INT, "", 1, 19),
+                    IdentToken("a", "", 1, 23),
+                    Token(ASSIGN, "", 1, 25),
+                    NumberToken(4L, "", 1, 27),
+                    Token(SEMICOLON, "", 1, 28),
+                    Token(R_BRACE, "", 1, 29))
+            assertEquals(expectedTokenList, actualTokenList)
+        }
+
+        /**
+         * A Tokenizer with an empty input string should return false when hasNext is called.
+         * If next() is called in that situation anyway, a [NoSuchElementException] should be thrown
+         * to comply with the [Iterator.next] interface.
+         */
+        @Test
+        fun `throw a NoSuchElementException if next is called on empty string`() {
+            val input = "".asSequence()
+            val tokenizer = CharTokenizer(input)
+            assumeFalse(tokenizer.hasNext())
+            assertFailsWith<NoSuchElementException> { tokenizer.next() }
+        }
+
+        /**
+         * A Tokenizer with a non-empty input string should return false when hasNext is called
+         * after the input has been processed.
+         * If next() is called in that situation anyway, a [NoSuchElementException] should be thrown
+         * to comply with the [Iterator.next] interface.
+         */
+        @Test
+        fun `throw a NoSuchElementException if next is called after hasNext is false`() {
+            val input = "Test".asSequence()
+            val tokenizer = CharTokenizer(input)
+            assumeTrue(tokenizer.hasNext())
+            tokenizer.next() // return value does not matter for this test case
+            assumeFalse(tokenizer.hasNext())
+            assertFailsWith<NoSuchElementException> { tokenizer.next() }
+        }
     }
 
     @Nested
@@ -369,20 +428,6 @@ internal class CharTokenizerTest {
             val expected = sequenceOf(OtherToken(s, "", 0, 0))
             val tokenizer = CharTokenizer(input)
             assertProduces(tokenizer, expected)
-        }
-
-        /**
-         * A Tokenizer with an empty input string should return false when hasNext is called.
-         * If next() is called in that situation anyway, an EOF token should be returned.
-         */
-        @Test
-        fun `produce EOF token on empty string`() {
-            val input = "".asSequence()
-            val tokenizer = CharTokenizer(input)
-            assertFalse(tokenizer.hasNext())
-            val actualToken = tokenizer.next()
-            val expectedToken = Token(EOF, "", 1, 0)
-            assertEquals(expectedToken, actualToken)
         }
 
         /**
@@ -506,7 +551,7 @@ internal class CharTokenizerTest {
         }
 
         // make sure that both iterators end here
-        assertFalse(t.hasNext(), "tokenizer has more tokens; \"${t.next()}\" follows next")
+        assertFalse(t.hasNext(), "tokenizer has more tokens")
         assertFalse(sIterator.hasNext(), "sequence has more chars")
     }
 }
