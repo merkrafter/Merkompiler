@@ -52,7 +52,7 @@ jobs:
     - name: Test with Maven
       run: mvn -B kotlin:compile test --file pom.xml
     - name: Upload to Codecov
-      uses: codecov/codecov-action@v1.0.13
+      uses: codecov/codecov-action@v1.0.14
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./target/site/jacoco/jacoco.xml
