@@ -20,7 +20,7 @@ jobs:
         java-version: '8'
         distribution: 'zulu'
     - name: Cache mvn dependencies
-      uses: actions/cache@v2.1.4
+      uses: actions/cache@v2.1.5
       env:
         cache-name: mvn-deps
       with:
